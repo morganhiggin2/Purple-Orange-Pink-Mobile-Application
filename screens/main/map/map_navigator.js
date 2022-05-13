@@ -1,11 +1,11 @@
 import 'react-native-gesture-handler';
+import { GlobalValues } from '../../../global/global_properties.js';
+
 import { createStackNavigator, CardStyleInterpolators} from '@react-navigation/stack';
 import {Easing, Image, StyleSheet, Text} from 'react-native';
 import React from 'react';
-
-import {ExploreScreen} from './explore_screen.js';
-import {OtherProfileScreen} from './other_profile_screen.js'
-import {ExploreFiltersScreen} from './explore_filters_screen.js'
+import { MapScreen } from './map_screen.js';
+import { MapFiltersScreen } from './map_filters_screen.js';
 
 const MainStack = createStackNavigator();
 //const RootStack = createStackNavigator();
@@ -33,13 +33,7 @@ const HeaderTitle = (props) => {
     );
 }
 
-/*
-<MainStack.Screen name="Map Screen" component={MapScreen} options={{headerTitle: () => <ActionBarIcon />, headerStyle: {backgroundColor: '#FFEBE7'}}} initialParams={{bottomTabBarHeight: 50}}/>
-                <MainStack.Screen name="Map Filters Screen" component={MapFiltersScreen} options={{headerTitle: () => <HeaderTitle title="Filters"/>, headerStyle: {backgroundColor: '#FFEBE7'}, gestureEnabled: true, gestureDirection: 'vertical', cardStyleInterpolator:CardStyleInterpolators.forVerticalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}} />
-                <MainStack.Screen name="Social Circle Screen" component={SocialCircleScreen} options={{headerTitle: () => <ActionBarIcon />, headerStyle: {backgroundColor: '#FFEBE7'}}} />
-*/
-
-export class ExploreNavigator extends React.Component {
+export class MapNavigator extends React.Component {
 
     constructor(props) {
         super(props);
@@ -48,14 +42,16 @@ export class ExploreNavigator extends React.Component {
     render() {
 
         return (
-            <MainStack.Navigator initialRouteName="Map Drawer"
-                screenOptions={{gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}} headerMode="float" animation="fade">
+            <MainStack.Navigator initialRouteName="Map Screen" screenOptions={{headerMode:"float", gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}animation="fade">
+                <MainStack.Screen component={MapScreen} name="Map Screen" options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title="Map"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}}/>
+                <MainStack.Screen name="Map Filters Screen" component={MapFiltersScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title="Filters"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'vertical', cardStyleInterpolator:CardStyleInterpolators.forVerticalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}} />
 
-                
             </MainStack.Navigator>
         );
     }
 }
+
+//                <Stack.Screen name="Your Feed Filters Screen" component={YourFeedFiltersScreen} options={{headerTitle: () => <HeaderTitle title="Filters"/>, gestureEnabled: true, gestureDirection: 'vertical', cardStyleInterpolator:CardStyleInterpolators.forVerticalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
 
 
 const transition_config = {

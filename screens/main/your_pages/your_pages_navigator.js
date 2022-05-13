@@ -1,8 +1,10 @@
 import 'react-native-gesture-handler';
+import { GlobalValues } from '../../../global/global_properties.js';
 import { NavigationContainer, StackActions,} from '@react-navigation/native';
 import { createStackNavigator, CardStyleInterpolators} from '@react-navigation/stack';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import {Easing, Image, StyleSheet, Text} from 'react-native';
+import {Easing, Image, StyleSheet, Text, View, StatusBar} from 'react-native';
+import { useHeaderHeight } from '@react-navigation/stack';
 import React from 'react';
 
 import {FeedScreen} from './feed_screen.js';
@@ -11,11 +13,27 @@ import {ManageScreen} from './manage_screen.js';
 import { PostOptionsScreen } from './post_options_screen.js';
 import { YourFeedFiltersScreen } from './your_feed_filters_screen.js';
 import { ActivityCreationScreen } from './creationScreens/activity_creation_screen.js';
+import { GroupCreationScreen } from './creationScreens/group_creation_screen.js';
 import { ImageCreationScreen } from './creationScreens/image_creation_screen.js';
 import { BlurbCreationScreen } from './creationScreens/blurb_creation_screen.js';
+import { ManageActivityScreen } from './manageScreens/manage_activity_screen.js';
+import { SettingsNavigator } from './settings/settings_navigator.js';
+import { MainSettingsScreen } from './settings/main_settings_screen.js';
+import { ManageGroupScreen } from './manageScreens/manage_group_screen.js';
+import { EditImagesScreen } from './edit_images_screen.js';
+import { SearchMapScreen } from './creationScreens/search_map_screen.js';
+import { EditGroupImagesScreen } from './manageScreens/edit_group_images.js';
+import { EditActivityImagesScreen } from './manageScreens/edit_activity_images.js';
+import { ViewAdminsScreen } from './manageScreens/view_admins_screen.js';
+import { ViewParticipantsScreen } from './manageScreens/view_participants_screen.js';
+import { EditActivityScreen } from './edit screens/edit_activity_screen.js';
+import { ResetPasswordScreen } from './settings/reset_password_screen.js';
+import { ResetEmailScreen } from './settings/reset_email_screen.js';
+import { PrivacyScreen } from './settings/privacy_screen.js';
+import { ValidateResetEmailScreen } from './settings/validate_email_screen.js';
 
 const Stack = createStackNavigator();
-const FeedStack = createMaterialTopTabNavigator()
+const FeedStack = createMaterialTopTabNavigator();
 
 const main_styles = StyleSheet.create({
     logo: {
@@ -32,13 +50,10 @@ const ActionBarIcon = (props) => {
     );
 }
 
-const HeaderTitle = (props) => {
-    return(
-        <Text style={{fontSize: 24, color: 'black'}}>
-            {props.title}
-        </Text>
-    );
-}
+//<FeedStack.Screen component={FeedScreen} name="Your Feed" initialParams={{poop: 5}}/>
+//screenOptions={{headerShown: true, alignSelf: 'center', headerTitleAlign:'center'}} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title="Map"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}} HeaderTitleStyle={{alignSelf: 'center'}} tabBarOptions={{style: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, indicatorStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}}
+
+//tabBarOptions={{style: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, indicatorStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}}
 
 class FeedNavigator extends React.Component {
     constructor(props) {
@@ -47,25 +62,30 @@ class FeedNavigator extends React.Component {
 
     render() {
         return(
-        <FeedStack.Navigator initialRouteName="Your Feed" swipeEnabled={true} tabBarOptions={{style: {backgroundColor: '#FFEBE7'}, indicatorStyle: {backgroundColor: '#FFEBE7'}}} >
-            <FeedStack.Screen component={FeedScreen} name="Your Feed" initialParams={{poop: 5}}/>
-            <FeedStack.Screen component={YourProfileScreen} name="Your Profile" />
+        <FeedStack.Navigator initialRouteName="Manage" screenOptions={{swipeEnabled: true, tabBarStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, tabBarIndicatorStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}}>
+            
             <FeedStack.Screen component={ManageScreen} name="Manage"/>
+            <FeedStack.Screen component={YourProfileScreen} name="Your Profile" />
+            <FeedStack.Screen component={SettingsNavigator} name = "Settings"/>
+
         </FeedStack.Navigator>
         );
-
-        //change the background color for the selected one, not just the text going gray
-        /*
-            <FeedStack.Screen component={YourFeedScreen} name="Your Feed" />
-            <FeedStack.Screen component={YourProfileScreen} name="Your Profile" />
-            <FeedStack.Screen component={ManageScreen} name="Manage" />*/
     }
 }
 
-// options={{headerTitle: () => <HeaderTitle: () => <HeaderTitle title="Post"/>, headerStyle: {backgroundColor: '#FFEBE7'}, gestureEnabled: true, gestureDirection: 'vertical', cardStyleInterpolator:CardStyleInterpolators.forVerticalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
-//headerTitle: () => <HeaderTitle title="Post"/>, headerStyle: {backgroundColor: '#FFEBE7'},
-//                <Stack.Screen name="Your Feed Filters Screen" component={YourFeedFiltersScreen} options={{headerTitle: () => <HeaderTitle title="Post"/>, headerStyle: {backgroundColor: '#FFEBE7'}, gestureEnabled: true, gestureDirection: 'vertical', cardStyleInterpolator:CardStyleInterpolators.forVerticalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
+// options={{headerTitle: () => <HeaderTitle: () => <HeaderTitle title="Post"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'vertical', cardStyleInterpolator:CardStyleInterpolators.forVerticalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
+//headerTitle: () => <HeaderTitle title="Post"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR},
+//                <Stack.Screen name="Your Feed Filters Screen" component={YourFeedFiltersScreen} options={{headerTitle: () => <HeaderTitle title="Post"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'vertical', cardStyleInterpolator:CardStyleInterpolators.forVerticalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
 
+
+
+const HeaderTitle = (props) => {
+    return(
+        <Text style={{fontSize: 24, color: 'black'}}>
+            {props.title}
+        </Text>
+    );
+}
 
 export class YourPagesNavigator extends React.Component {
 
@@ -73,15 +93,43 @@ export class YourPagesNavigator extends React.Component {
         super(props);
     }
     
+    //headerStatusBarHeight:StatusBar.currentHeight , headerStyle: {backgroundColor: "white", height: StatusBar.currentHeight}}
+    //headerTitle: (<View style={{height: 0}}></View>), 
+    // screenOptions={{headerStatusBarHeight:StatusBar.currentHeight, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}}
+    //options={{headerStatusBarHeight:StatusBar.currentHeight, headerStyle: {backgroundColor: "white", alignSelf: 'center', headerShown: true}}}
+
     render() {
         return (
-            <Stack.Navigator screenOptions={{headerShown: false,}}>
-                <Stack.Screen component={FeedNavigator} name="Your Feed"/>                
-                <Stack.Screen name="Post Options Screen" component={PostOptionsScreen} options={{ gestureEnabled: true, gestureDirection: 'vertical', cardStyleInterpolator:CardStyleInterpolators.forVerticalIOS, headerShown: false,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
-                <Stack.Screen name="Your Feed Filters Screen" component={YourFeedFiltersScreen} options={{headerTitle: () => <HeaderTitle title="Filters"/>, gestureEnabled: true, gestureDirection: 'vertical', cardStyleInterpolator:CardStyleInterpolators.forVerticalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
-                <Stack.Screen name="Activity Creation Screen" component={ActivityCreationScreen} options={{headerTitle: () => <HeaderTitle title="Create Activity"/>, headerStyle: {backgroundColor: '#FFEBE7'}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forVerticalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
-                <Stack.Screen name="Image Creation Screen" component={ImageCreationScreen} options={{headerTitle: () => <HeaderTitle title="Create Activity"/>, headerStyle: {backgroundColor: '#FFEBE7'}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forVerticalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
-                <Stack.Screen name="Blurb Creation Screen" component={BlurbCreationScreen} options={{headerTitle: () => <HeaderTitle title="Create Activity"/>, headerStyle: {backgroundColor: '#FFEBE7'}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forVerticalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
+            <Stack.Navigator >
+                <Stack.Screen name="Your Feed" component={FeedNavigator} options={{headerStatusBarHeight:StatusBar.currentHeight, headerLeft: null, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, headerShown: true,  headerTitleAlign:'center'}}/>                
+                <Stack.Screen name="Post Options Screen" component={PostOptionsScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title="Create"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'vertical', cardStyleInterpolator:CardStyleInterpolators.forVerticalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
+                <Stack.Screen name="Your Feed Filters Screen" component={YourFeedFiltersScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title="Filters"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'vertical', cardStyleInterpolator:CardStyleInterpolators.forVerticalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
+                <Stack.Screen name="Activity Creation Screen" component={ActivityCreationScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title="Create Activity"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
+                <Stack.Screen name="Group Creation Screen" component={GroupCreationScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title="Create Group"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
+                <Stack.Screen name="Image Creation Screen" component={ImageCreationScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title="Create Activity"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'vertical', cardStyleInterpolator:CardStyleInterpolators.forVerticalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
+                <Stack.Screen name="Blurb Creation Screen" component={BlurbCreationScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title="Create Activity"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'vertical', cardStyleInterpolator:CardStyleInterpolators.forVerticalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
+
+                <Stack.Screen name="Manage Activity Screen"  component={ManageActivityScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"Manage Activity"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
+                <Stack.Screen name="Manage Group Screen"  component={ManageGroupScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"Manage Activity"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
+
+                <Stack.Screen name="Edit Activity Screen" component={EditActivityScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"Edit Activity"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
+
+                <Stack.Screen name="Edit Images Screen" component={EditImagesScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"Edit Images"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
+                <Stack.Screen name="Edit Group Images Screen" component={EditGroupImagesScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"Edit Group Images"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
+                <Stack.Screen name="Edit Activity Images Screen" component={EditActivityImagesScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"Edit Group Images"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
+
+                <Stack.Screen name="Map Search Screen" component={SearchMapScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title="Search Map"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
+
+                <Stack.Screen name="View Admins Screen" component={ViewAdminsScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"View Admins"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
+                <Stack.Screen name="View Participants Screen" component={ViewParticipantsScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"View Participants"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
+
+
+                <Stack.Screen name="Reset Password Screen" component={ResetPasswordScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"Reset Password"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
+                <Stack.Screen name="Reset Email Screen" component={ResetEmailScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"Reset Email"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
+                <Stack.Screen name="Privacy Screen" component={PrivacyScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"Privacy"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
+
+                <Stack.Screen name="Validate Reset Email Screen" component={ValidateResetEmailScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"Validate Email"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
+
              </Stack.Navigator>
         );
     }
@@ -103,12 +151,12 @@ then can access them at this.props.route.params.[param_name]
 /*
 
             <Stack.Navigator initialRouteName="Your Pages Screen"  
-                screenOptions={{gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: false, 
+                screenOptions={{headerMode:"float", gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: false, 
                 transitionSpec: {
                     open: transition_config,
                     close: transition_config,
                 }}
-                } headerMode="float" animation="fade">
+                } animation="fade">
 
                 <Stack.Screen name="Your Pages Screen" component={YourPagesScreen}/>
 

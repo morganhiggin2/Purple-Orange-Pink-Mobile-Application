@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     StyleSheet,
     Text,
@@ -27,7 +27,7 @@ const post_styles = StyleSheet.create(
     {
         body: {
             backgroundColor: 'white', //#FFCDCD
-            borderRadius: 10,
+            borderRadius: 5,
             padding: 8,
             marginVertical: "2%",
             marginHorizontal: '2%',
@@ -66,7 +66,7 @@ const post_styles = StyleSheet.create(
         post_button: {
             flexDirection: "row",
             alignItems: 'flex-start',
-            borderRadius: 5,
+            borderRadius: 3,
             borderWidth: 4,
             backgroundColor: '#FE3C3C',
             borderColor: '#FE3C3C',
@@ -88,10 +88,11 @@ const blip_styles = StyleSheet.create(
     {
         body: {
             backgroundColor: 'white', //#FFCDCD
-            borderRadius: 10,
+            borderRadius: 5,
             padding: 8,
             marginVertical: "2%",
-            marginHorizontal: '2%'
+            marginHorizontal: '2%',
+            borderLeftWidth: 5,
         },
         title_text: {
             color: 'black',
@@ -236,13 +237,15 @@ export class FeedScreen extends React.Component{
         );
     }
 
+    //backgroundColor: color, 
+
     renderItem({item}) {
         var color = colorCode(item);
 
         return (
-            <View style={blip_styles.body}>
+            <View style={[blip_styles.body, {borderColor: color}]}>
                 <View style={blip_styles.top_bar}>
-                    <View style={[blip_styles.inner_top_bar_left, {backgroundColor: color, borderColor: color}]}>
+                    <View style={blip_styles.inner_top_bar_left}>
                         <Image style={{width: 16, height: 16, alignSelf: 'center'}} source={require("../../../images/fakelogo.jpg")}/>
                         <Text style={blip_styles.top_text}>
                             {item.name}
@@ -259,22 +262,23 @@ export class FeedScreen extends React.Component{
                         </TouchableHighlight>
                     </View>
                 </View>
-                    {dataType(item)}
-                </View>
+                
+                {dataType(item)}
+            </View>
         );
     }
 
     postBar() {
         return (
             <View style={post_styles.body}>
-                <TouchableHighlight underlayColor="white" onPress={() => {this.props.navigation.dangerouslyGetParent().navigate("Post Options Screen")}} onHideUnderlay={() => {}} onShowUnderlay={() => {}}>
+                <TouchableHighlight underlayColor="white" onPress={() => {this.props.navigation.navigate("Post Options Screen")}} onHideUnderlay={() => {}} onShowUnderlay={() => {}}>
                     <View style={post_styles.post_button}>
                         <Text style={post_styles.post_button_text}>
                             Post
                         </Text>
                     </View>
                 </TouchableHighlight>
-                <TouchableHighlight style={{marginLeft: 10}} underlayColor="white" onPress={() => {this.props.navigation.dangerouslyGetParent().navigate("Your Feed Filters Screen")}} onHideUnderlay={() => {}} onShowUnderlay={() => {}}>
+                <TouchableHighlight style={{marginLeft: 10}} underlayColor="white" onPress={() => {this.props.navigation.navigate("Your Feed Filters Screen")}} onHideUnderlay={() => {}} onShowUnderlay={() => {}}>
                     <Feather name="list" size={30} color="gray" />
                 </TouchableHighlight>
             </View>

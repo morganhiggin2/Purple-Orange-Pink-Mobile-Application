@@ -2,11 +2,12 @@ import React from 'react';
 import {StyleSheet, View, Text, TextInput, Image} from 'react-native';
 import {TouchableHighlight} from 'react-native-gesture-handler';
 import { AntDesign } from '@expo/vector-icons'; 
+import { GlobalValues } from '../../../global/global_properties';
 
 const main_styles = StyleSheet.create(
     {
         page: {
-            backgroundColor: 'white',
+            backgroundColor: GlobalValues.DARKER_WHITE,
             height: '50%',
             width: '100%',
             flexDirection: "column",
@@ -19,9 +20,9 @@ const main_styles = StyleSheet.create(
         title_text: {
             alignSelf: 'center',
             fontSize: 24,
-            color: 'gray',
+            color: 'black',
             padding: 5,
-            marginTop: "5%",
+            marginTop: "10%",
         }, 
         sub_button: {
             alignSelf: 'center',
@@ -60,11 +61,9 @@ const main_styles = StyleSheet.create(
 const post_styles = StyleSheet.create(
     {
         body: {
-            backgroundColor: 'white', //#FFCDCD
-            borderRadius: 10,
-            padding: 8,
-            marginVertical: "4%",
-            width: '80%',            
+            justifyContent: 'center',
+            flexDirection: "column",
+            flex: 1,
         },
         title_text: {
             color: 'black',
@@ -95,18 +94,21 @@ const post_styles = StyleSheet.create(
         },
         post_button: {
             borderRadius: 5,
-            borderWidth: 4,
+            //borderWidth: 4,
             padding: 3,
             paddingVertical: 2,
             alignSelf: 'center',
             alignContent: 'center',
             marginTop: "5%",
             width: '90%',
+            borderLeftWidth: 5,
+            borderLeftColor: 'black'
         },
         post_button_text: {
             color: 'white',
             fontSize: 20,
             alignSelf: 'center',
+            marginVertical: 4,
         }
     }
 );
@@ -118,7 +120,7 @@ const filter_styles = StyleSheet.create(
             //borderRadius: 10,
             paddingHorizontal: 8,
             marginTop: '5%',
-            marginHorizontal: '3%'
+            marginHorizontal: '3%',
         },
         title_text: {
             color: 'black',
@@ -143,35 +145,29 @@ export class PostOptionsScreen extends React.Component {
 
     }
 
+//backgroundColor: '#FE3C3C',
+
     render() {
         return (
             <View style={main_styles.page}>
                 <View>
                     <Text style={main_styles.title_text}>
-                        What should you post?
+                        What should you create?
                     </Text>
                 </View>
-                <TouchableHighlight underlayColor="white" onPress={() => {this.props.navigation.dangerouslyGetParent().navigate("Activity Creation Screen")}} onHideUnderlay={() => {}} onShowUnderlay={() => {}}>
-                    <View style={[post_styles.post_button, { backgroundColor: '#FE3C3C', borderColor: '#FE3C3C',}]}>
-                        <Text style={post_styles.post_button_text}>
+                <View style={post_styles.body}>
+                    <TouchableHighlight style={[post_styles.post_button, { backgroundColor: 'white', borderColor: GlobalValues.ACTIVITY_COLOR}]} underlayColor={GlobalValues.DISTINCT_GRAY} onPress={() => {this.props.navigation.navigate("Activity Creation Screen")}} onHideUnderlay={() => {}} onShowUnderlay={() => {}}>
+                        <Text style={[post_styles.post_button_text, {color: 'black'}]}>
                             Activity
                         </Text>
-                    </View>
-                </TouchableHighlight>
-                <TouchableHighlight underlayColor="white" onPress={() => {this.props.navigation.dangerouslyGetParent().navigate("Blurb Creation Screen")}}>
-                    <View style={[post_styles.post_button, { backgroundColor: '#4194f2', borderColor: '#4194f2',}]}>
-                        <Text style={post_styles.post_button_text}>
-                            Blurb
+                    </TouchableHighlight>
+                    <TouchableHighlight style={[post_styles.post_button, { backgroundColor: 'white', borderColor: GlobalValues.GROUP_COLOR}]}  underlayColor={GlobalValues.DISTINCT_GRAY} onPress={() => {this.props.navigation.navigate("Group Creation Screen")}} onHideUnderlay={() => {}} onShowUnderlay={() => {}}>
+                        <Text style={[post_styles.post_button_text, {color: 'black'}]}>
+                            Group
                         </Text>
-                    </View>
-                </TouchableHighlight>
-                <TouchableHighlight underlayColor="white" onPress={() => {this.props.navigation.dangerouslyGetParent().navigate("Image Creation Screen")}}>
-                    <View style={[post_styles.post_button, { backgroundColor: '#f24159', borderColor: '#f24159',}]}>
-                        <Text style={post_styles.post_button_text}>
-                            Image
-                        </Text>
-                    </View>
-                </TouchableHighlight>
+                    </TouchableHighlight>
+                </View>
+                
             </View>
         );
     }
