@@ -1,6 +1,7 @@
-/*import { GlobalProperties } from "./global_properties";
+import { GlobalProperties } from "./global_properties";
 import Realm from "realm";
 import { UIImagePickerControllerQualityType } from "expo-image-picker";
+import { fround } from "core-js/core/number";
 
 const { UUID } = Realm.BSON;
 
@@ -11,29 +12,7 @@ const MAX_MESSAGES_PER_CHAT_RECORD = 50
 const MAX_NUM_MESSAGE_BLOCKS = 20;
 
 //find way to make ids
-
-const HeaderRecordSchema = {
-    name: "HeaderRecord",
-    properties: {
-        _id: "int",
-        type: "int", //index of type in types array
-        body: "",
-        //for types with data blocks
-        start_index: "int",
-        end_intex: "int"
-    },
-    primaryKey: "_id"
-}
-
-const ChatRecordSchema = {
-    name: "ChatRecord",
-    properties: {
-        _id: "int",
-
-    }
-}*/
-
-/*const MasterHeaderSchema = {
+const MasterHeaderSchema = {
     name: "Messages_Master_Header",
     primaryKey: "_id",
     properties: {
@@ -50,6 +29,7 @@ const HeaderRecordSchema = {
         title: "string", //for direct message, person who sent it. for conversation, conversation name. 
         body: "string", //body of message to be displayed in messages feed
         last_timestamp: { type: "int64", indexed: true},
+        type_id: "string", //id of type, [conversation is conversation id, direct message is other user id, invitation is invitation id, none for announcemnet]
         sub_header_id: "uuid"
     },
 }
@@ -155,7 +135,105 @@ export class MessgaeHandler {
 
     //json object
     async insertMessage(message) {
+
+        //make query to find it
+        const query = {"Messages_Header_Record": {}};
+        const projection = {
+            "type": message.type,
+            "type_id": message.id,
+        };
+
+        var fround;
+
+        const headerRow = await this.masterHeader.headerRecords.findOne(query, projection)
+            .then((result) => {
+                //found
+                found = true;
+                return result;
+            })
+            .catch((err) => {
+                //not found
+                found = false;
+                return err;
+            });
+
+        if (found) {
+            if (message.type == "direct message") {
+                //write
+                  //change title
+                  //change body
+                  //change time stamp
+
+                //get sub header id
+                  //update other user name if it changed
+                  //get first message container in list
+                    //if full
+                      //add new one to front with new message
+                    //else
+                      //add message to front of existing one
+            }
+            else if (message.type == "conversation") {
+                //write
+                  //change title
+                  //change body
+                  //change time stamp
+
+                //get sub header id
+                  //update other users names if they changed
+                  //get first message container in list
+                    //if full
+                      //add new one to front with new message
+                    //else
+                      //add message to front of existing one
+            }
+            else if (message.type == "announcement") {
+                //delete current announcement
+
+                //create new one
+            }
+            else if (message.type == "invitation") {
+                //delete current invitation
+
+                //create new one
+            }
+        }
+        else {
+            if (message.type == "direct message") {
+                //create sub header
+                  //set values
+                
+                //create first message block
+                  //add message to front it
+            }
+            else if (message.type == "conversation") {
+                //create sub header
+                  //ask server for all conversation person's ids and names  
+                  //set values
+                
+                //create first message block
+                  //add message to front it
+            }
+            else if (message.type == "announcement") {
+              //no sub header needed?  
+            }
+            else if (message.type == "invitation") {
+              //create sub header
+                //set values  
+            }
+        }
+
+        this.masterHeaderRealm.write(() => {
+            
+        });
+
+        //get the header component if it exists
+
+        //if it does not, create it
+          //and it's sub components
         
+        //else
+          //change header component
+          //change sub components as needed
     }
 
     //json array
@@ -164,7 +242,66 @@ export class MessgaeHandler {
             this.insertMessage(messages[i]);
         }
     }
-}*/
+
+    //messages screen already go on masterheader, since they are always linked
+    //so just call messages to be reloaded and it will auto update after insertion
+
+    //get direct message sub header
+    async getDirectMessageInformation(id) {
+        const type = "invitation";
+
+        //query for first one
+        
+        //if does not exist
+          //delete header record
+          //queue messages screen to releod to refresh deletion
+          //send bad request to signal messages page to abandon and go back
+        
+        //else
+          //get first message block of information
+          //and other information
+          //return sub header
+    }
+
+    async getNextMessageBlockDirectMessage(id, num, subHeader) {
+        //get next message block from subHeader
+    }
+
+    //get conversation sub header
+    async getConversationInformation(id) {
+        const type = "invitation";
+
+        //query for first one
+        
+        //if does not exist
+          //delete header record
+          //queue messages screen to releod to refresh deletion
+          //send bad request to signal messages page to abandon and go back
+        
+          //else
+            //get first message block of information
+            //and other information
+            //return sub header
+    }
+
+    async getNextMessageBlockConverstaion(id, num, subHeader) {
+        //get next message block from subHeader
+    }
+
+    //get invitation sub header
+    async getInvitationInformation(id) {
+        const type = "invitation";
+
+        //query for first one
+        
+        //if does not exist
+          //delete header record
+          //queue messages screen to releod to refresh deletion
+          //send bad request to signal messages page to abandon and go back
+
+        //else, send back relevant information
+    }
+}
 
 //PROBLEM making primary keys
 
