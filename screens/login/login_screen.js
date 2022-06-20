@@ -132,7 +132,7 @@ export class LoginScreen extends React.Component {
                 var reg = RegExp("\=(.*?)\;");
 
                 //get token
-                var token = reg.exec(result["request"]["responseHeaders"]["Set-Cookie"])[0];
+                var token = reg.exec(result["request"]["responseHeaders"]["set-cookie"])[0];
 
                 //avoid delimiters
                 token = token.substring(1, token.length - 1);

@@ -43,6 +43,8 @@ const SubHeaderDirectMessageRecord = {
         parent_header_id: "uuid", //id of parent header
         other_user_id: "string",
         other_user_name: "string",
+        last_user_id: "string", //last user for message of conversation, can be current user, for show_me
+        last_index: "int", //for assigning unique and incremental id
         message_blocks: { type: "list", objectType: "Messages_Message_Block"}
     }
 }
@@ -56,6 +58,8 @@ const SubHeaderConversationRecord = {
         parent_header_id: "uuid", //id of parent header
         conversation_id: "string",
         user_ids_to_names: "string{}", //user ids to user names (first and last initialed names)
+        last_user_id: "string", //last user for message of conversation, can be current user, for show_me
+        last_index: "int", //for assigning unique and incremental id
         message_blocks: { type: "list", objectType: "Messages_Message_Block"}
     }
 }
@@ -68,6 +72,8 @@ const SubHeaderInvitationRecord = {
         _id: "uuid",
         parent_header_id: "uuid", //id of parent header
         invitation_id: "string",
+        invitation_from_name: "string",
+        invitation_message: "string",
     }
 }
 
@@ -97,11 +103,13 @@ const MessageRecord = {
     embedded: true,
     properties: {
         fromId: "string",
-        message: "string"
+        id: "", //has to be unique for the flat list to render
+        message: "string",
+        showName: "bool", //wether to show name, based on if the last message is from the same person or not
     }
 }
 
-export class MessgaeHandler {
+export class MessageHandler {
     masterHeaderRealm = null;
     masterHeader = null;
 
@@ -136,14 +144,14 @@ export class MessgaeHandler {
     //json object
     async insertMessage(message) {
 
-        //make query to find it
+        //make query to find it if it exists
         const query = {"Messages_Header_Record": {}};
         const projection = {
             "type": message.type,
             "type_id": message.id,
         };
 
-        var fround;
+        var found;
 
         const headerRow = await this.masterHeader.headerRecords.findOne(query, projection)
             .then((result) => {
@@ -157,6 +165,7 @@ export class MessgaeHandler {
                 return err;
             });
 
+        //if it exists
         if (found) {
             if (message.type == "direct message") {
                 //write
@@ -200,25 +209,65 @@ export class MessgaeHandler {
         else {
             if (message.type == "direct message") {
                 //create sub header
-                  //set values
+                  //set parent header id
+                  //set other user's id
+                  //set other user's name
+                  //set last user id to 0
+                  //set last index to 0
+                  //initialize empty message blocks
+
+                //create sub header record
                 
                 //create first message block
-                  //add message to front it
+
+                //add message block to sub header
+                
+                //create message record
+                  //add message
+                  //set show me
+                  //set last index
+
+                //in sub header, set last user id
+                //in sub header, incremenet last index by 1
+
+                //add message to front of message block
             }
             else if (message.type == "conversation") {
-                //create sub header
-                  //ask server for all conversation person's ids and names  
-                  //set values
-                
-                //create first message block
-                  //add message to front it
+              //ask server for all conversation person's ids and names  
+
+              //create sub header
+                //set parent header id
+                //set other users ids and names to dictionary
+                //set last user id to 0
+                //set last index to 0
+                //initialize empty message blocks
+
+              //create sub header record
+              
+              //create first message block
+
+              //add message block to sub header
+              
+              //create message record
+                //add message
+
+              //in sub header, set last user id
+              //in sub header, incremenet last index by 1
+
+              //add message to front of message block
             }
             else if (message.type == "announcement") {
-              //no sub header needed?  
+              //create sub header
+                //set parent header id
+                //set announcement from name
+                //set announcement message 
             }
             else if (message.type == "invitation") {
               //create sub header
-                //set values  
+                //set parent header id
+                //set invitation id
+                //set invitation from name
+                //set invitation message
             }
         }
 

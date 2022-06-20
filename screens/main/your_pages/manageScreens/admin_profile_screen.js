@@ -502,7 +502,7 @@ export class AdminProfileScreen extends React.Component {
 
 function ProfileImage (props) {
     return(
-        <Image style={image_styles.image} source={{uri: 'https://d.newsweek.com/en/full/1889499/trump-speaks-rally-arizona.jpg'}}/>
+        <Image style={image_styles.image} source={{uri: 'https://upload.wikimedia.org/wikipedia/commons/e/e4/Morgan_Freeman_Deauville_2018.jpg'}}/>
     );
 }
 

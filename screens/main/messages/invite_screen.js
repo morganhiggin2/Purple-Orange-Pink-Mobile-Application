@@ -226,24 +226,27 @@ export class InviteScreen extends React.Component {
         this.state = {
             id: this.props.route.params.id,
             type: "",
-            first_name: "",
-            last_name: "",
+            name: "",
+            message: "",
 
             //for loading screen
-            loading: true,
+            loading: false,
             reload: false,
 
-            profile_images: [],
+            profile_images: ["https://ichef.bbci.co.uk/news/976/cpsprodpb/EAB5/production/_121158006_gettyimages-1328227222.jpg", "https://ichef.bbci.co.uk/news/976/cpsprodpb/EAB5/production/_121158006_gettyimages-1328227222.jpg"],
         };
 
-        if (this.state.type == "activity") {
-            this.state.activity_id = this.props.route.params.activity_id;
+        if (this.state.type == "person") {
+            this.state.activity_id = this.props.route.params.other_id;
+        }
+        else if (this.state.type == "activity") {
+            this.state.activity_id = this.props.route.params.other_id;
         }
         else if (this.state.type == "group") {
-            this.state.group_id = this.props.route.params.group_id;
+            this.state.group_id = this.props.route.params.other_id;
         }
 
-        this.fetchUserData = this.fetchUserData.bind(this);
+        this.fetchInvitationData = this.fetchInvitationData.bind(this);
         this.acceptInvitation = this.acceptInvitation.bind(this);
         this.removeInvitation = this.removeInvitation.bind(this);
 
@@ -261,10 +264,10 @@ export class InviteScreen extends React.Component {
         //init
 
         //fetch data
-        //this.fetchUserData();
+        //this.fetchInvitationData();
     }
 
-    async fetchUserData() {
+    async fetchInvitationData() {
         if (this.state.reload) {
             this.state.reload = false;
     
@@ -390,7 +393,7 @@ export class InviteScreen extends React.Component {
                 </View>
             );
         }
-        else if (this.state.is_invitee) {
+        else {
             renderActions = (
                 <View>
                     <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {recindInvitationAlert(this.removeInvitation);}}>
@@ -404,14 +407,13 @@ export class InviteScreen extends React.Component {
                 </View>
             );
         }
-
         var renderViewOther = {};
 
         if (this.state.type == "person")
         {
             renderViewOther = (
                 <View>
-                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("Other Profile Screen", {id: this.props.id, type: "none", viewing:""});}}>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("Other Profile Screen", {id: this.state.person_id, type: "none", viewing:""});}}>
                         <View style={actions_styles.action_button_inner}>
                             <AntDesign name="message1" size={20} color="white" style={actions_styles.action_button_icon}/>
                             <Text style={actions_styles.action_button_text}>
@@ -425,7 +427,7 @@ export class InviteScreen extends React.Component {
         else {
             renderViewOther = (
                 <View>
-                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("Other Activity Screen", {id: this.props.id, type: "none", viewing:""});}}>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("Other Activity Screen", {id: this.state.activity_id, type: "none", viewing:""});}}>
                         <View style={actions_styles.action_button_inner}>
                             <AntDesign name="message1" size={20} color="white" style={actions_styles.action_button_icon}/>
                             <Text style={actions_styles.action_button_text}>
@@ -439,7 +441,7 @@ export class InviteScreen extends React.Component {
         
         if (this.state.loading == true || this.state.loading == null) {
             return (
-                <LoadingScreen tryAgain={this.fetchUserData} reload={this.state.reload}/>
+                <LoadingScreen tryAgain={this.fetchInvitationData} reload={this.state.reload}/>
             );
         }
         else {
@@ -464,12 +466,8 @@ export class InviteScreen extends React.Component {
                         </View>
                         <View style={info_styles.body}>
                             <Text style={info_styles.title_text}>
-                                Requests
+                                {this.state.message}
                             </Text>
-                            <Text style={info_styles.inner_text}>
-                                To join their activity
-                            </Text>
-                            <View style={info_styles.horizontal_bar}/>
                         </View>
                         <View style={info_styles.body}>
                             <Text style={info_styles.title_text}>
@@ -485,7 +483,7 @@ export class InviteScreen extends React.Component {
             );
         }
     }
-
+    
     //get rid of any null entries
     cleanImages() {
         var cleaned_images = [];
@@ -691,15 +689,6 @@ const recindInvitationAlert = (recindInvitation) => {
         }
     );
 };
-
-function handleImageURI(uri) {
-    if (uri == undefined) {
-        return(require("../../../images/default_image.png"));
-    }
-    else {
-        return({uri: uri});
-    }
-}
 
 //<View style={{ borderBottomColor: '#CCCCCC', borderBottomWidth: 2, width: '95%', alignSelf: 'center', marginBottom: 0,}}/>
 //<FilterSnap innerText="light" color="#9A39E2"/>
@@ -931,7 +920,7 @@ export class InviteScreen extends React.Component {
                             </View>
                             <View style={info_styles.body}>
                                 <View style={other_profile_image_styles.box}>
-                                    <ProfileImage image_url={'https://d.newsweek.com/en/full/1889499/trump-speaks-rally-arizona.jpg'} />
+                                    <ProfileImage image_url={'https://upload.wikimedia.org/wikipedia/commons/e/e4/Morgan_Freeman_Deauville_2018.jpg'} />
                                 </View>
 
                                 <View style={main_styles.name_view}>
@@ -992,6 +981,6 @@ export class InviteScreen extends React.Component {
 //return the image component of the other pofile
 function ProfileImage (props) {
     return(
-        <Image style={other_profile_image_styles.image} source={{uri: 'https://d.newsweek.com/en/full/1889499/trump-speaks-rally-arizona.jpg'}}/>
+        <Image style={other_profile_image_styles.image} source={{uri: 'https://upload.wikimedia.org/wikipedia/commons/e/e4/Morgan_Freeman_Deauville_2018.jpg'}}/>
     );
 }*/

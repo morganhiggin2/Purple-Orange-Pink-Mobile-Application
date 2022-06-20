@@ -268,6 +268,7 @@ export class ExploreFiltersScreen extends React.Component {
                 typeSpecificFilters = (
                     <View>
                         
+                        <View style={main_styles.horizontal_bar}/>
                     </View>
                 );
             }
@@ -275,6 +276,7 @@ export class ExploreFiltersScreen extends React.Component {
                 typeSpecificFilters = (
                     <View>
                         
+                        <View style={main_styles.horizontal_bar}/>
                     </View>
                 );
             }

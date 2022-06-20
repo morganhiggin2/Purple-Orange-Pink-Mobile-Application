@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, View, Text, TextInput, Image, SafeAreaView, ScrollView, Dimensions, FlatList, ImageBackground, TouchableWithoutFeedbackBase, Alert} from 'react-native';
 import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
-import { AntDesign, Feather, FontAwesome } from '@expo/vector-icons'; 
+import { AntDesign, Feather, FontAwesome, MaterialIcons } from '@expo/vector-icons'; 
 import {Route} from '@react-navigation/native';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { render } from 'react-dom';
@@ -49,16 +49,20 @@ const main_styles = StyleSheet.create(
         scroll_area: {
             
         },
-        map_button: {
+        map_button_container: {
             zIndex: 10,
             position: 'absolute',
             bottom: 40,
+            alignSelf: 'center',
+            flexDirection: 'row'
+        },
+        map_button: {
             borderRadius: 3,
             borderWidth: 4,
             backgroundColor: GlobalValues.ORANGE_COLOR,
             borderColor: GlobalValues.ORANGE_COLOR,
             padding: 3,
-            paddingVertical: 3,
+            marginRight: 4,
             alignSelf: 'center',
         },
         map_button_text: {
@@ -68,6 +72,18 @@ const main_styles = StyleSheet.create(
         },
     }
 );
+
+/**
+            zIndex: 10,
+            position: 'absolute',
+            bottom: 40,
+            borderRadius: 3,
+            borderWidth: 4,
+            backgroundColor: GlobalValues.ORANGE_COLOR,
+            borderColor: GlobalValues.ORANGE_COLOR,
+            padding: 3,
+            paddingVertical: 3,
+            alignSelf: 'center',*/
 
 const map_styles = StyleSheet.create(
     {
@@ -107,7 +123,11 @@ export class MapScreen extends React.Component {
             initialized: false,
 
             //for button
-            grayout_button: false
+            grayout_map_button: false,
+            grayout_reset_location_button: true,
+
+            //map reference
+            map_ref: null,
         };
 
         this.renderMarkers = this.renderMarkers.bind(this);
@@ -120,6 +140,7 @@ export class MapScreen extends React.Component {
 
         this.validateAttributes = this.validateAttributes.bind(this);
         this.searchRegion = this.searchRegion.bind(this);
+        this.resetLocation = this.resetLocation.bind(this);
 
         this.lazyUpdate = this.lazyUpdate.bind(this);
 
@@ -152,7 +173,7 @@ export class MapScreen extends React.Component {
 
     async updateSearch() {
         //gray out button while loading results
-        this.state.grayout_button = true;
+        this.state.grayout_map_button = true;
         this.lazyUpdate();
 
         let search_radius = GlobalProperties.map_search_radius;
@@ -343,7 +364,7 @@ export class MapScreen extends React.Component {
         }
 
         //un-gray out button
-        this.state.grayout_button = false;
+        this.state.grayout_map_button = false;
 
         //once done, lazy update
         this.lazyUpdate();
@@ -372,15 +393,19 @@ export class MapScreen extends React.Component {
                             style={map_styles.body}
                             initialRegion={this.state.initialRegion}
                             onRegionChangeComplete={this.onRegionChange}
+                            ref={(ref) => {this.state.map_ref = ref;}}
                         >
                             {this.renderMarkers()}
                         </MapView>
                     </View>
-                    <View style={main_styles.map_button}>
-                        <TouchableOpacity disabled={this.state.grayout_button} activeOpacity={this.state.grayout_button ? 0.5 : GlobalValues.ACTIVE_OPACITY} onPress={() => {this.searchRegion();}}>
+                    <View style={main_styles.map_button_container}>
+                        <TouchableOpacity style={main_styles.map_button} disabled={this.state.grayout_map_button} activeOpacity={this.state.grayout_map_button ? 0.5 : GlobalValues.ACTIVE_OPACITY} onPress={() => {this.searchRegion();}}>
                             <Text style={main_styles.map_button_text}>
-                                {this.state.grayout_button ? "Loading..." : "Search this region"}
+                                {this.state.grayout_map_button ? "Loading..." : "Search this region"}
                             </Text>
+                        </TouchableOpacity> 
+                        <TouchableOpacity style={main_styles.map_button} disabled={this.state.grayout_reset_location_button} activeOpacity={this.state.grayout_reset_location_button ? 0.5 : GlobalValues.ACTIVE_OPACITY} onPress={() => {this.resetLocation();}}>
+                            <MaterialIcons name="my-location" size={24} color="white" />
                         </TouchableOpacity> 
                     </View>
                 </View>); 
@@ -436,7 +461,14 @@ export class MapScreen extends React.Component {
             //assuming at this point region is not null, 
             this.boundary = this.region;
             return;
-        }
+        }  
+
+        //make usable the reset location button
+        if (this.state.grayout_reset_location_button) {
+            this.state.grayout_reset_location_button = false;
+
+            this.lazyUpdate();
+        }      
 
         /*if (this.isOutsideBoundary() || this.isInNextZoomLevel()) {
             this.fetchNewMarkers();
@@ -534,6 +566,47 @@ export class MapScreen extends React.Component {
 
     searchRegion() {
         this.updateSearch();
+    }
+
+    async resetLocation() {
+        //get location
+        var locationResult = await GlobalEndpoints.getLocation();
+
+        if (!locationResult.granted) {
+            Alert.alert("Permission to access location was denied.\nUsing map settings.");
+
+            //use map settings
+            GlobalProperties.use_map_settings = true;
+        }
+        else if (locationResult.location == null) {
+            Alert.alert("Location could not be determined.\nUsing map settings.");
+
+            //use map settings
+            GlobalProperties.use_map_settings = true;
+        }
+        else {
+            //grayout button as we are already in said location
+            this.state.grayout_reset_location_button = true;
+
+            //animate change
+            this.state.map_ref.animateToRegion({
+                latitude: locationResult.location.coords.latitude,
+                longitude: locationResult.location.coords.longitude,
+                latitudeDelta: GlobalProperties.map_latitude_delta,
+                longitudeDelta: GlobalProperties.map_longitude_delta,
+            });
+
+            //set the initial region
+            this.state.initialRegion = {
+                latitude: locationResult.location.coords.latitude,
+                longitude: locationResult.location.coords.longitude,
+                latitudeDelta: GlobalProperties.map_latitude_delta,
+                longitudeDelta: GlobalProperties.map_longitude_delta,
+            };
+
+            //update map
+            this.lazyUpdate();
+        }
     }
 
     lazyUpdate() {

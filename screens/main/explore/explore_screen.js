@@ -174,8 +174,6 @@ class FrameComponent extends React.Component{
             </TouchableHighlight>
         );*/
 
-        console.log()
-
         return (
             <TouchableHighlight style={frame_styles.box} onPress={() => {
                 if (this.props.type == "person") {
@@ -315,9 +313,6 @@ export class ExploreScreen extends React.Component {
 
     componentDidMount() {
         this.props.navigation.addListener('focus', () => {
-            console.log(GlobalProperties.return_screen);
-            console.log(GlobalProperties.screen_props);
-
             if (GlobalProperties.return_screen == "Explore Filters Screen" && GlobalProperties.screen_props.search_filters_updated == true) {
                 this.updateSearch();
             }

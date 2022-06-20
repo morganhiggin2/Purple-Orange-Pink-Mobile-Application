@@ -119,6 +119,7 @@ const DATA = [
         first_name: "Melissa",
         last_name: "Warming",
         message: "Hew, what's up. I inow you have been busy but just wanted to say high.",
+        show_name: true,
         me: false,
     },
     {
@@ -126,6 +127,7 @@ const DATA = [
         first_name: "Morgan",
         last_name: "Higginbotham",
         message: "Not much, how about you??????",
+        show_name: true,
         me: true,
     },
     {
@@ -133,6 +135,7 @@ const DATA = [
         first_name: "Melissa",
         last_name: "Warming",
         message: "Just chillin.",
+        show_name: true,
         me: false,
     },
     {
@@ -140,6 +143,7 @@ const DATA = [
         first_name: "Morgan",
         last_name: "Higginbotham",
         message: "Just gonna go see whats up",
+        show_name: true,
         me: true,
     },
     {
@@ -147,6 +151,7 @@ const DATA = [
         first_name: "Morgan",
         last_name: "Higginbotham",
         message: "the place is called mario's pizza, by the way, it is really really good",
+        show_name: false,
         me: true,
     },
     {
@@ -154,6 +159,7 @@ const DATA = [
         first_name: "Melissa",
         last_name: "Warming",
         message: "Oh really?",
+        show_name: true,
         me: false,
     },
     {
@@ -161,6 +167,7 @@ const DATA = [
         first_name: "Melissa",
         last_name: "Warming",
         message: "sweet",
+        show_name: false,
         me: false,
     },
     {
@@ -168,6 +175,7 @@ const DATA = [
         first_name: "Morgan",
         last_name: "Higginbotham",
         message: "oh yea, yea/nrealy cool",
+        show_name: true,
         me: true,
     },
     {
@@ -175,6 +183,7 @@ const DATA = [
         first_name: "Melissa",
         last_name: "Warming",
         message: "well",
+        show_name: true,
         me: false,
     },
     {
@@ -182,6 +191,7 @@ const DATA = [
         first_name: "Melissa",
         last_name: "Warming",
         message: "if you want",
+        show_name: false,
         me: false,
     },
     {
@@ -189,6 +199,7 @@ const DATA = [
         first_name: "Melissa",
         last_name: "Warming",
         message: "we can, ya know, haha",
+        show_name: false,
         me: false,
     },
   ];
@@ -329,13 +340,28 @@ class FrameComponent extends React.Component {
     }
 
     render() { 
+        var renderName = {};
+
+        if (this.props.item.show_name) {
+            renderName = (
+                <View style={[blip_styles.top_bar, {alignSelf: getHorizontalPositionStyle(this.props.item.me)}, getMargin(this.props.item.me)]}>
+                    <Text style={[blip_styles.top_text]}>
+                        {this.state.first_name + " " + this.state.last_initial}
+                    </Text>
+                </View>
+            );
+        }
+        else {
+            renderName = (
+                <View>
+
+                </View>
+            );
+        }
+
         return (
         <View style={[frame_styles.box, {alignSelf: getHorizontalPositionStyle(this.props.item.me)}]}>
-            <View style={[blip_styles.top_bar, {alignSelf: getHorizontalPositionStyle(this.props.item.me)}, getMargin(this.props.item.me)]}>
-                <Text style={[blip_styles.top_text]}>
-                    {this.state.first_name + " " + this.state.last_initial}
-                </Text>
-            </View>
+            {renderName}
             <View style={[blip_styles.body, getBorderDirection(this.props.item.me), {borderColor: colorCode(this.props.item.me)}]}>
                 <TouchableHighlight>
                     <Text style={blip_styles.inner_text}>

@@ -5,7 +5,7 @@ import * as SecureStore from 'expo-secure-store';
 //static values
 export const GlobalValues = {
   //for server
-  HOST: "https://www.purpleorangepink.com", //"https://localhost:5001/",
+  HOST: "https://api.purpleorangepink.com", //"https://localhost:5001/",
   //timout value
   CONNECTION_RETRY_TIME: 5000,
 
