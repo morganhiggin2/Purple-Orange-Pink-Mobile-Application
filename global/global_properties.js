@@ -20,6 +20,8 @@ export const GlobalValues = {
   DARKER_WHITE: "#f1f1f1",//"#f2f2f2",
   DARKER_OUTLINE: "#ebebeb",
   DISTINCT_GRAY: '#c9c9c9',
+  PINK_COLOR: '#FF2DC7',
+  PURPLE_COLOR: 'A221FF',
 
   //for other profiles
   MALE_COLOR: "#1b72e3",

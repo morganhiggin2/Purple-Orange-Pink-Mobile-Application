@@ -178,8 +178,9 @@ export class MessageHandler {
                   //get first message container in list
                     //if full
                       //add new one to front with new message
+                      //increment index
                     //else
-                      //add message to front of existing one
+                      //add message with properties to front of existing one
             }
             else if (message.type == "conversation") {
                 //write
@@ -193,7 +194,7 @@ export class MessageHandler {
                     //if full
                       //add new one to front with new message
                     //else
-                      //add message to front of existing one
+                      //add message with properties to front of existing one
             }
             else if (message.type == "announcement") {
                 //delete current announcement
@@ -208,6 +209,11 @@ export class MessageHandler {
         }
         else {
             if (message.type == "direct message") {
+                //create header record
+                  //set title
+                  //set body
+                  //set last timestamp
+              
                 //create sub header
                   //set parent header id
                   //set other user's id
@@ -217,6 +223,8 @@ export class MessageHandler {
                   //initialize empty message blocks
 
                 //create sub header record
+
+                //set sub header id in header record
                 
                 //create first message block
 
@@ -234,6 +242,11 @@ export class MessageHandler {
             }
             else if (message.type == "conversation") {
               //ask server for all conversation person's ids and names  
+              
+              //create header record
+                //set title
+                //set body
+                //set last timestamp
 
               //create sub header
                 //set parent header id
@@ -243,6 +256,8 @@ export class MessageHandler {
                 //initialize empty message blocks
 
               //create sub header record
+
+              //set sub header id in header record
               
               //create first message block
 
@@ -261,6 +276,13 @@ export class MessageHandler {
                 //set parent header id
                 //set announcement from name
                 //set announcement message 
+
+              //create header record
+                //set title
+                //set body
+                //set last timestamp
+
+              //set sub header id in header record
             }
             else if (message.type == "invitation") {
               //create sub header
@@ -268,6 +290,13 @@ export class MessageHandler {
                 //set invitation id
                 //set invitation from name
                 //set invitation message
+
+              //create header record
+                //set title
+                //set body
+                //set last timestamp
+
+              //set sub header id in header record
             }
         }
 
@@ -299,13 +328,15 @@ export class MessageHandler {
     async getDirectMessageInformation(id) {
         const type = "invitation";
 
-        //query for first one
-        
+        //find and get sub header
+
         //if does not exist
-          //delete header record
+          //delete corresponding record header
           //queue messages screen to releod to refresh deletion
           //send bad request to signal messages page to abandon and go back
         
+        //query for first message block in sub header
+
         //else
           //get first message block of information
           //and other information
@@ -320,17 +351,19 @@ export class MessageHandler {
     async getConversationInformation(id) {
         const type = "invitation";
 
-        //query for first one
-        
+        //find and get sub header
+
         //if does not exist
-          //delete header record
+          //delete corresponding record header
           //queue messages screen to releod to refresh deletion
           //send bad request to signal messages page to abandon and go back
         
-          //else
-            //get first message block of information
-            //and other information
-            //return sub header
+        //query for first message block in sub header
+
+        //else
+          //get first message block of information
+          //and other information
+          //return sub header
     }
 
     async getNextMessageBlockConverstaion(id, num, subHeader) {
@@ -349,6 +382,30 @@ export class MessageHandler {
           //send bad request to signal messages page to abandon and go back
 
         //else, send back relevant information
+    }
+
+    //delete a message
+    async delete(id) {
+      if (message.type == "direct message") {
+        //get sub header
+        //delete sub header
+        //delete record header
+      }
+      else if (message.type == "conversation") {
+        //get sub header
+        //delete sub header
+        //delete record header
+      }
+      else if (message.type == "announcement") {
+        //get sub header
+        //delete sub header
+        //delete record header
+      }
+      else if (message.type == "invitation") {
+        //get sub header
+        //delete sub header
+        //delete record header
+      }
     }
 }
 
