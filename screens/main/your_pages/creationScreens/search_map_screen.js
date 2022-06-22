@@ -1,9 +1,11 @@
 import React from 'react';
-import {StyleSheet, View, Text, Dimensions, Alert} from 'react-native';
+import {StyleSheet, View, Text, Dimensions, Alert, TouchableOpacity} from 'react-native';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { MaterialIcons } from '@expo/vector-icons'; 
 import MapView from 'react-native-maps';
 import { Marker } from 'react-native-maps';
 import { GlobalProperties, GlobalValues } from '../../../../global/global_properties.js';
+import { GlobalEndpoints } from '../../../../global/global_endpoints.js';
 import * as Location from 'expo-location';
 import { LoadingScreen } from '../../../misc/loading_screen.js';
 
@@ -36,6 +38,27 @@ const main_styles = StyleSheet.create(
             flexDirection: 'row',
             padding: "3%",
             backgroundColor: 'white',
+        },
+        map_button_container: {
+            zIndex: 10,
+            position: 'absolute',
+            bottom: 40,
+            alignSelf: 'center',
+            flexDirection: 'row'
+        },
+        map_button: {
+            borderRadius: 3,
+            borderWidth: 4,
+            backgroundColor: GlobalValues.ORANGE_COLOR,
+            borderColor: GlobalValues.ORANGE_COLOR,
+            padding: 3,
+            marginRight: 4,
+            alignSelf: 'center',
+        },
+        map_button_text: {
+            color: 'white',
+            fontSize: 18,
+            alignSelf: 'center',
         },
         scroll_area: {
             
@@ -76,6 +99,9 @@ export class SearchMapScreen extends React.Component {
             initialized: false,
 
             markers: [],
+
+            //map reference
+            map_ref: null,
         };
 
         this.updateSearch = this.updateSearch.bind(this);
@@ -105,6 +131,15 @@ export class SearchMapScreen extends React.Component {
                 latitudeDelta: 0.092200000,
                 longitudeDelta: 0.042100000,
             };
+            this.state.markers = [
+                {
+                    description: "",
+                    latitude: givenLocation.latitude,
+                    longitude: givenLocation.longitude,
+                    title: "",
+                    type: "generic",
+                }
+            ];
         }
         
         this.state.region = this.state.initialRegion;
@@ -174,9 +209,15 @@ export class SearchMapScreen extends React.Component {
                                 initialRegion={this.state.initialRegion}
                                 onRegionChangeComplete={this.onRegionChange}
                                 onPress={this.onPress}
+                                ref={(ref) => {this.state.map_ref = ref;}}
                             >
                                 {this.renderMarkers()}
                             </MapView>
+                        </View>
+                        <View style={main_styles.map_button_container}>
+                            <TouchableOpacity style={main_styles.map_button} onPress={() => {this.resetLocation();}}>
+                                <MaterialIcons name="my-location" size={24} color="white" />
+                            </TouchableOpacity> 
                         </View>
                     </View>) 
                     }
@@ -238,6 +279,48 @@ export class SearchMapScreen extends React.Component {
         //lazy update
         this.lazyUpdate();
     }
+
+    async resetLocation() {
+        //get location
+        var locationResult = await GlobalEndpoints.getLocation();
+
+        if (!locationResult.granted) {
+            Alert.alert("Permission to access location was denied.\nUsing map settings.");
+
+            //use map settings
+            GlobalProperties.use_map_settings = true;
+        }
+        else if (locationResult.location == null) {
+            Alert.alert("Location could not be determined.\nUsing map settings.");
+
+            //use map settings
+            GlobalProperties.use_map_settings = true;
+        }
+        else {
+            //grayout button as we are already in said location
+            this.state.grayout_reset_location_button = true;
+
+            //animate change
+            this.state.map_ref.animateToRegion({
+                latitude: locationResult.location.coords.latitude,
+                longitude: locationResult.location.coords.longitude,
+                latitudeDelta: 0.092200000,
+                longitudeDelta: 0.042100000,
+            });
+
+            //set the initial region
+            this.state.initialRegion = {
+                latitude: locationResult.location.coords.latitude,
+                longitude: locationResult.location.coords.longitude,
+                latitudeDelta: 0.092200000,
+                longitudeDelta: 0.042100000,
+            };
+
+            //update map
+            this.lazyUpdate();
+        }
+    }
+
 
     lazyUpdate() {
         this.forceUpdate();

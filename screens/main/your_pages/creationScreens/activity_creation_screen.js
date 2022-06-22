@@ -13,6 +13,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 import { GlobalProperties, GlobalValues } from '../../../../global/global_properties.js';
 import { GlobalEndpoints } from '../../../../global/global_endpoints.js';
+import { setNotificationHandler } from 'expo-notifications';
 
 const main_styles = StyleSheet.create(
     {
@@ -492,7 +493,7 @@ export class ActivityCreationScreen extends React.Component {
                         <View style={actions_styles.action_button_inner}>
                             <Feather name="map-pin" size={20} color="white" style={actions_styles.action_button_icon}/>
                             <Text style={actions_styles.action_button_text}>
-                                Set Search
+                                Set Search Location
                             </Text>
                         </View>
                     </TouchableOpacity>
@@ -570,9 +571,6 @@ export class ActivityCreationScreen extends React.Component {
             physicalEventLocation = (
                 <View>
                     <View style={attribute_styles.body}>
-                        <Text style={attribute_styles.title_text}>
-                            Set activity location
-                        </Text>
                         <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => 
                             {
                                 this.state.searchMapRequest = "Target";
@@ -584,7 +582,7 @@ export class ActivityCreationScreen extends React.Component {
                             <View style={actions_styles.action_button_inner}>
                                 <Feather name="map-pin" size={20} color="white" style={actions_styles.action_button_icon}/>
                                 <Text style={actions_styles.action_button_text}>
-                                    Set Pin
+                                    Set Activity Location
                                 </Text>
                             </View>
                         </TouchableOpacity>
@@ -613,6 +611,27 @@ export class ActivityCreationScreen extends React.Component {
                     </View>
                     {searchLocationRender}
                     <View style={main_styles.horizontal_bar}/>
+                    <View style={attribute_styles.body}>
+                        <View style={attribute_styles.title_with_value}>
+                            <Text style={attribute_styles.title_text}>
+                                Search Range
+                            </Text>
+                            <Text style={attribute_styles.title_value}>
+                                {this.state.search_range + " miles"}
+                            </Text>
+
+                        </View>
+                        <View style={attribute_styles.slider}>
+                            <Slider twoSlider={false} onChangeValue={this.updateSearchRange} min={0} max={20} step={1} initialValue={this.state.search_range} backgroundColor={'#FF7485'}/> 
+                        </View>
+                    </View>
+                </View>
+            )
+        }
+        else {
+            var virtualEventSearch;
+            
+/*
                     <View style={inline_attribute_styles.body}>
                         <Text style={inline_attribute_styles.title_text}>
                             Only show to people in search radius
@@ -624,13 +643,9 @@ export class ActivityCreationScreen extends React.Component {
                             onValueChange = {this.updateSetSearchRadiusToEnable}
                             value = {this.state.setSearchRadiusToEnable}
                         />
-                    </View>
-                    {searchRadiusRender}
-                </View>
-            )
-        }
-        else {
-            var virtualEventSearch;
+                    </View> */
+
+/*
 
             if (this.state.vitrual_event_search_location_enable) {
                 virtualEventSearch = (
@@ -639,7 +654,7 @@ export class ActivityCreationScreen extends React.Component {
                             <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => 
                                 {
                                     this.state.searchMapRequest = "Search";
-                                    this.props.navigation.navigate("Map Search Screen");
+                                    this.props.navigation.navigate("Map Search Screen", {latitude: this.state.search_latitude, longitude: this.state.search_longitude});
                                 }}>
                                 <View style={actions_styles.action_button_inner}>
                                     <Feather name="map-pin" size={20} color="white" style={actions_styles.action_button_icon}/>
@@ -649,6 +664,7 @@ export class ActivityCreationScreen extends React.Component {
                                 </View>
                             </TouchableOpacity>
                         </View>
+                        <View style={main_styles.horizontal_bar}/>
                         <View style={attribute_styles.body}>
                             <View style={attribute_styles.title_with_value}>
                                 <Text style={attribute_styles.title_text}>
@@ -668,6 +684,8 @@ export class ActivityCreationScreen extends React.Component {
             else {
                 
             }
+            
+            
 
             physicalEventLocation = (
             <View>
@@ -693,6 +711,48 @@ export class ActivityCreationScreen extends React.Component {
                     />
                 </View>
                 {virtualEventSearch}
+            </View>
+            );*/
+
+            physicalEventLocation = (
+            <View>
+                <View style={inline_attribute_styles.body}>
+                    <Text style={inline_attribute_styles.title_text}>
+                        Virtual Link
+                    </Text>
+                    <View style={inline_attribute_styles.input_text_view}>
+                        <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="black" autoCorrect={false} editable={true} maxLength={160} placeholder={this.state.virtual_link} onChangeText={(value) => {this.updateVirtualLink;}}/>
+                    </View>
+                </View>
+                <View style={main_styles.horizontal_bar}/>
+                <View style={attribute_styles.body}>
+                        <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => 
+                            {
+                                this.state.searchMapRequest = "Search";
+                                this.props.navigation.navigate("Map Search Screen", {latitude: this.state.search_latitude, longitude: this.state.search_longitude});
+                            }}>
+                            <View style={actions_styles.action_button_inner}>
+                                <Feather name="map-pin" size={20} color="white" style={actions_styles.action_button_icon}/>
+                                <Text style={actions_styles.action_button_text}>
+                                    Set Search Location
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={main_styles.horizontal_bar}/>
+                    <View style={attribute_styles.body}>
+                        <View style={attribute_styles.title_with_value}>
+                            <Text style={attribute_styles.title_text}>
+                                Search Range
+                            </Text>
+                            <Text style={attribute_styles.title_value}>
+                                {(this.state.search_range == -1 ? "max" : this.state.search_range + " miles")}
+                            </Text>
+                        </View>
+                        <View style={attribute_styles.slider}>
+                            <Slider twoSlider={false} onChangeValue={this.updateSearchRange} min={0} max={20} step={1} initialValue={this.state.search_range} backgroundColor={'#FF7485'}/> 
+                        </View>
+                    </View>
             </View>
             );
         }
@@ -733,21 +793,12 @@ export class ActivityCreationScreen extends React.Component {
                         {this.showDatePicker()}
                         {this.showTimePicker()}
                         <View style={main_styles.horizontal_bar}/>
-                        <View style={attribute_styles.body}>
-                            <Text style={attribute_styles.title_text}>
-                                Description
-                            </Text>     
-                            <View style={attribute_styles.input_text_view}>
-                                <TextInput style={[attribute_styles.text_input, {fontSize: 18, textAlignVertical: "top"}]} multiline={true} editable={true} maxLength={160} numberOfLines={4} scrollEnables={true} onChangeText={(value) => {this.updateDescription(value);}}/>
-                            </View>                   
-                        </View>
-                        <View style={main_styles.horizontal_bar}/>
                         <View style={inline_attribute_styles.body}>
                             <View style={inline_attribute_styles.title_view}>
                                 <Text style={inline_attribute_styles.title_text}>
-                                    {"Attributes, we do "}
+                                    {"Attributes "}
                                 </Text>
-                                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Attributes", "They are the defining features of your activity.\nUse words ending in \'ing\'");}}>
+                                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Attributes", GlobalValues.ATTRIBUTES_INFORMATION);}}>
                                     <AntDesign name="infocirlceo" size={14} color="black" />
                                 </TouchableOpacity>
                             </View>
@@ -761,7 +812,16 @@ export class ActivityCreationScreen extends React.Component {
                                     <FilterSnap key={key} parent={this} innerText={data} data={this.state.attributes} id={key}/>
                                 );
                             })}
-                        </View>                            
+                        </View>
+                        <View style={main_styles.horizontal_bar}/>     
+                        <View style={attribute_styles.body}>
+                            <Text style={attribute_styles.title_text}>
+                                Description
+                            </Text>     
+                            <View style={attribute_styles.input_text_view}>
+                                <TextInput style={[attribute_styles.text_input, {fontSize: 18, textAlignVertical: "top"}]} multiline={true} editable={true} maxLength={160} numberOfLines={4} scrollEnables={true} onChangeText={(value) => {this.updateDescription(value);}}/>
+                            </View>                   
+                        </View>
                     </View>
                     <View style={section_styles.gap} />
                     <View style={info_styles.body}>
@@ -813,9 +873,14 @@ export class ActivityCreationScreen extends React.Component {
                         </View>
                         <View style={main_styles.horizontal_bar}/>
                         <View style={inline_attribute_styles.body}>
-                            <Text style={inline_attribute_styles.title_text}>
-                                Cap invitation count
-                            </Text>
+                            <View style={inline_attribute_styles.title_view}>
+                                <Text style={inline_attribute_styles.title_text}>
+                                    {"Cap invitation count "}
+                                </Text>
+                                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Attributes", GlobalValues.INVITATION_CAP_INFORMATION);}}>
+                                        <AntDesign name="infocirlceo" size={14} color="black" />
+                                </TouchableOpacity>
+                            </View>
                             <Switch
                                 trackColor = {{false: GlobalValues.DISTINCT_GRAY, true: GlobalValues.ORANGE_COLOR}}
                                 thumbColor = {this.state.invite_cap_enable ? 'white': 'white'}
@@ -827,9 +892,14 @@ export class ActivityCreationScreen extends React.Component {
                         {inviteCapRender}
                         <View style={main_styles.horizontal_bar}/>
                         <View style={inline_attribute_styles.body}>
-                            <Text style={inline_attribute_styles.title_text}>
-                                Cap participant count
-                            </Text>
+                            <View style={inline_attribute_styles.title_view}>
+                                <Text style={inline_attribute_styles.title_text}>
+                                    {"Cap participant count "}
+                                </Text>
+                                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Attributes", GlobalValues.PARTICIPANT_CAP_INFORMATION);}}>
+                                        <AntDesign name="infocirlceo" size={14} color="black" />
+                                </TouchableOpacity>
+                            </View>
                             <Switch
                                 trackColor = {{false: GlobalValues.DISTINCT_GRAY, true: GlobalValues.ORANGE_COLOR}}
                                 thumbColor = {this.state.participants_cap_enable ? 'white': 'white'}
@@ -1114,8 +1184,6 @@ export class ActivityCreationScreen extends React.Component {
 
     //update the dropdown selector for activities
     updateGenderDropDownValue(value) {
-        GlobalProperties.map_filters_updated = true;
-
         GlobalProperties.search_gender = value;
 
         this.state.gender_dropdown_value = value;

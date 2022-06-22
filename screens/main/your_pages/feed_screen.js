@@ -246,7 +246,7 @@ export class FeedScreen extends React.Component{
             <View style={[blip_styles.body, {borderColor: color}]}>
                 <View style={blip_styles.top_bar}>
                     <View style={blip_styles.inner_top_bar_left}>
-                        <Image style={{width: 16, height: 16, alignSelf: 'center'}} source={require("../../../images/fakelogo.jpg")}/>
+                        <Image style={{width: 16, height: 16, alignSelf: 'center'}} source={require("../../../images/fakelogo.png")}/>
                         <Text style={blip_styles.top_text}>
                             {item.name}
                         </Text>

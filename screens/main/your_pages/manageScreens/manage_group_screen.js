@@ -161,15 +161,15 @@ const filter_snaps_styles = StyleSheet.create(
 const PROFILE_IMAGES = [
     {
         id: 1,
-        image_url: "../../../images/fakelogo.jpg",
+        image_url: "../../../images/fakelogo.png",
     }, 
     {
         id: 2,
-        image_url: "../../../images/fakelogo.jpg",
+        image_url: "../../../images/fakelogo.png",
     }, 
     {
         id: 3,
-        image_url: "../../../images/fakelogo.jpg",
+        image_url: "../../../images/fakelogo.png",
     }
 ];
 

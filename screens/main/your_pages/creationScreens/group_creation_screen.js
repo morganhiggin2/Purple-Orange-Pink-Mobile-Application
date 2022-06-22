@@ -809,8 +809,6 @@ export class GroupCreationScreen extends React.Component {
 
     //update the dropdown selector for activities
     updateGenderDropDownValue(value) {
-        GlobalProperties.map_filters_updated = true;
-
         GlobalProperties.search_gender = value;
 
         this.state.gender_dropdown_value = value;

@@ -313,8 +313,10 @@ export class ExploreScreen extends React.Component {
 
     componentDidMount() {
         this.props.navigation.addListener('focus', () => {
-            if (GlobalProperties.return_screen == "Explore Filters Screen" && GlobalProperties.screen_props.search_filters_updated == true) {
+            if (GlobalProperties.search_filters_updated) {
                 this.updateSearch();
+                this.lazyUpdate();
+                GlobalProperties.search_filters_updated = true;
             }
 
             if (GlobalProperties.return_screen == "Other Profile Screen" && GlobalProperties.screen_props != null) {

@@ -574,21 +574,12 @@ export class YourProfileScreen extends React.Component {
                     </View>
                     <View style={section_styles.gap} />
                     <View style={info_styles.body}>
-                        <View style={attribute_styles.body}>
-                            <Text style={attribute_styles.title_text}>
-                                Description
-                            </Text>     
-                            <View style={attribute_styles.input_text_view}>
-                                <TextInput style={[attribute_styles.text_input, {fontSize: 18, textAlignVertical: "top"}]} multiline={true} editable={true} maxLength={160} numberOfLines={4} scrollEnables={true} defaultValue={this.state.description} onChangeText={(value) => {this.updateDescription(value);}} onEndEditing={(value) => {this.updateUpdateMade(false)}}/>
-                            </View>                   
-                        </View>
-                        <View style={main_styles.horizontal_bar}/>
                         <View style={inline_attribute_styles.body}>
                             <View style={inline_attribute_styles.title_view}>
                                 <Text style={inline_attribute_styles.title_text}>
-                                    {"Attributes,\nI like "}
+                                    {"Attributes "}
                                 </Text>
-                                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Attributes", "They are your interests.\nUse words ending in \'ing\'");}}>
+                                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Attributes", GlobalValues.ATTRIBUTES_INFORMATION);}}>
                                     <AntDesign name="infocirlceo" size={14} color="black" />
                                 </TouchableOpacity>
                             </View>
@@ -602,7 +593,16 @@ export class YourProfileScreen extends React.Component {
                                     <FilterSnap key={key} parent={this} innerText={data} data={this.state.attributes} id={key}/>
                                 );
                             })}
-                        </View>                            
+                        </View>  
+                        <View style={main_styles.horizontal_bar}/>
+                        <View style={attribute_styles.body}>
+                            <Text style={attribute_styles.title_text}>
+                                Description
+                            </Text>     
+                            <View style={attribute_styles.input_text_view}>
+                                <TextInput style={[attribute_styles.text_input, {fontSize: 18, textAlignVertical: "top"}]} multiline={true} editable={true} maxLength={160} numberOfLines={4} scrollEnables={true} defaultValue={this.state.description} onChangeText={(value) => {this.updateDescription(value);}} onEndEditing={(value) => {this.updateUpdateMade(false)}}/>
+                            </View>                   
+                        </View>                    
                     </View>
                     <View style={section_styles.gap} />
                     <View style={info_styles.body}>
@@ -921,9 +921,6 @@ export class YourProfileScreen extends React.Component {
 
     //update the dropdown selector for activities
     updateGenderDropDownValue(value) {
-
-        GlobalProperties.map_filters_updated = true;
-
         GlobalProperties.search_gender = value;
 
         this.state.gender_dropdown_value = value;
@@ -1152,12 +1149,6 @@ export class YourProfileScreen extends React.Component {
 
         if (this.state.last_name.length > 256) {
             this.showError("last name field is too long");
-            return false;
-        }
-
-        //validate description
-        if (this.state.description.length == 0) {
-            this.showError("description field must not be empty");
             return false;
         }
 

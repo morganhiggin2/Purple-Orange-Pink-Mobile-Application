@@ -211,6 +211,10 @@ export class MapFiltersScreen extends React.Component {
         this.afterDeleteAlertAttributes = this.afterDeleteAlertAttributes.bind(this);
     }
 
+    componentDidMount() {
+
+    }
+
     render() {
         var typeSpecificFilters = {};
         if (GlobalProperties.search_type == "people") {
@@ -270,7 +274,7 @@ export class MapFiltersScreen extends React.Component {
                         <View style={inline_attribute_styles.body}>
                             <View style={inline_attribute_styles.title_view}>
                                 <Text style={inline_attribute_styles.title_text}>
-                                    {"Attributes, they like "}
+                                    {"Attributes "}
                                 </Text>
                                 <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Attributes", "They are the defining features of the things you want to search.\nUse words ending in \'ing\'");}}>
                                     <AntDesign name="infocirlceo" size={14} color="black" />
@@ -299,7 +303,7 @@ export class MapFiltersScreen extends React.Component {
                             <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {width: '50%', alignSelf: 'flex-end'}]}>
                                     <DropDown 
                                         style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
-                                        items={[{label: 'People', value: 'people'}, {label: 'Activities', value: 'activities', }, {label: "Groups", value: "groups"}]}
+                                        items={[{label: 'People', value: 'people'}, {label: 'Activities', value: 'activities', }]}
                                         onChangeValue = {this.updateTypeDropDownValue}
                                         currentValue = {this.state.type_dropdown_value}
                                         />
@@ -330,6 +334,7 @@ export class MapFiltersScreen extends React.Component {
 
     //for the filters
     addFilter(input) {
+        GlobalProperties.search_filters_updated = true;
         GlobalProperties.map_filters_updated = true;
 
         this.addAttribute(input);
@@ -361,6 +366,7 @@ export class MapFiltersScreen extends React.Component {
 
     //update the dropdown selector for activities
     updateTypeDropDownValue(value) {
+        GlobalProperties.search_filters_updated = true;
         GlobalProperties.map_filters_updated = true;
 
         GlobalProperties.search_type = value;
@@ -372,6 +378,7 @@ export class MapFiltersScreen extends React.Component {
 
     //update the dropdown selector for activities
     updateGenderDropDownValue(value) {
+        GlobalProperties.search_filters_updated = true;
         GlobalProperties.map_filters_updated = true;
 
         GlobalProperties.search_gender = value;
@@ -380,6 +387,7 @@ export class MapFiltersScreen extends React.Component {
     }
 
     updateAgeRangeValues(value) {
+        GlobalProperties.search_filters_updated = true;
         GlobalProperties.map_filters_updated = true;
 
         GlobalProperties.search_minAge = value[0];
@@ -390,6 +398,7 @@ export class MapFiltersScreen extends React.Component {
 
     //after delete alert, delete attribute and update screen
     afterDeleteAlertAttributes(attr) {
+        GlobalProperties.search_filters_updated = true;
         GlobalProperties.map_filters_updated = true;
 
         this.removeAttribute(attr);

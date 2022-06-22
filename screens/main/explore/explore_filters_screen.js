@@ -178,21 +178,13 @@ export class ExploreFiltersScreen extends React.Component {
             //for the genders
             gender_dropdown_value: GlobalProperties.search_gender,
 
-            //for using map's locaiton
-            use_map_search_settings: GlobalProperties.use_map_settings,
-
             //age range values
             age_range_values: [18, 100],
-
-            //search range
-            search_range: GlobalProperties.search_radius,
         }
 
         this.updateTypeDropDownValue = this.updateTypeDropDownValue.bind(this);
         this.updateGenderDropDownValue = this.updateGenderDropDownValue.bind(this);
-        this.updateUseMapLocation = this.updateUseMapLocation.bind(this);
         this.updateAgeRangeValues = this.updateAgeRangeValues.bind(this);
-        this.updateSearchRange = this.updateSearchRange.bind(this);
 
         this.addAttribute = this.addAttribute.bind(this);
         this.addFilter = this.addFilter.bind(this);
@@ -200,33 +192,14 @@ export class ExploreFiltersScreen extends React.Component {
         this.afterDeleteAlertAttributes = this.afterDeleteAlertAttributes.bind(this);
 
         this.lazyUpdate = this.lazyUpdate.bind(this);
-    }
-
-    componentDidMount() {
+        
         GlobalProperties.return_screen = "Explore Filters Screen";
-        GlobalProperties.screen_props = {search_filters_update: false}
+        GlobalProperties.screen_props = {search_filters_update: false};
     }
 
     render() {
         const renderComponent = ({item}) => {
             var typeSpecificFilters = {};
-
-/**
-                    <View style={main_styles.horizontal_bar}/>
-                        <View style={inline_attribute_styles.body}>
-                            <Text style={inline_attribute_styles.title_text}>
-                                Gender
-                            </Text>
-                            <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {width: '50%', alignSelf: 'flex-end'}]}>
-                                <DropDown 
-                                    style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
-                                    items={[{label: 'All', value: ''}, {label: 'Male', value: 'male'}, {label: 'Female', value: 'female', }, {label: "Other", value: "other"}]}
-                                    onChangeValue = {this.updateGenderDropDownValue}
-                                    currentValue = {this.state.gender_dropdown_value}
-                                    />
-                            </View>
-                        </View>
-                    </View> */
 
             if (GlobalProperties.search_type == "people") {
                 typeSpecificFilters = (
@@ -260,23 +233,18 @@ export class ExploreFiltersScreen extends React.Component {
                                     />
                             </View>
                         </View>
-                        <View style={main_styles.horizontal_bar}/>
                     </View>
                 );
             }
             else if (GlobalProperties.search_type == "activities") {
                 typeSpecificFilters = (
                     <View>
-                        
-                        <View style={main_styles.horizontal_bar}/>
                     </View>
                 );
             }
             else if (GlobalProperties.search_type == "groups") {
                 typeSpecificFilters = (
                     <View>
-                        
-                        <View style={main_styles.horizontal_bar}/>
                     </View>
                 );
             }
@@ -289,7 +257,7 @@ export class ExploreFiltersScreen extends React.Component {
                                 <Text style={inline_attribute_styles.title_text}>
                                 {"Attributes "}
                                 </Text>
-                                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Attributes", "They are the defining features of the things you want to search.\nUse words ending in \'ing\'");}}>
+                                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Attributes", GlobalValues.ATTRIBUTES_INFORMATION);}}>
                                     <AntDesign name="infocirlceo" size={14} color="black" />
                                 </TouchableOpacity>
                             </View>
@@ -303,20 +271,7 @@ export class ExploreFiltersScreen extends React.Component {
                                     <FilterSnap key={index} id={index} innerText={attr} parent={this}/>
                                 );
                             })}
-                        </View>                            
-                        <View style={main_styles.horizontal_bar}/>
-                        <View style={inline_attribute_styles.body}>
-                            <Text style={inline_attribute_styles.title_text}>
-                                Use Map For Search
-                            </Text>
-                            <Switch
-                                trackColor = {{false: GlobalValues.DISTINCT_GRAY, true: GlobalValues.ORANGE_COLOR}}
-                                thumbColor = {this.state.enable_value ? 'white': 'white'}
-                                ios_backgroundColor = {GlobalValues.DISTINCT_GRAY}
-                                onValueChange = {this.updateUseMapLocation}
-                                value = {this.state.use_map_search_settings}
-                            />
-                        </View>
+                        </View>      
                         
                     </View>
 
@@ -330,27 +285,13 @@ export class ExploreFiltersScreen extends React.Component {
                             <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {width: '50%', alignSelf: 'flex-end'}]}>
                                     <DropDown 
                                         style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
-                                        items={[{label: 'People', value: 'people'}, {label: 'Activities', value: 'activities', }, {label: "Groups", value: "groups"}]}
+                                        items={[{label: 'People', value: 'people'}, {label: 'Activities', value: 'activities', }]}
                                         onChangeValue = {this.updateTypeDropDownValue}
                                         currentValue = {this.state.type_dropdown_value}
                                         />
                             </View>
                         </View>
                         {typeSpecificFilters}
-                        <View style={attribute_styles.body}>
-                            <View style={attribute_styles.title_with_value}>
-                                <Text style={attribute_styles.title_text}>
-                                   Search Range
-                                </Text>
-                                <Text style={attribute_styles.title_value}>
-                                    {this.state.search_range + " miles"}
-                                </Text>
-
-                            </View>
-                            <View style={attribute_styles.slider}>
-                                <Slider twoSlider={false} onChangeValue={this.updateSearchRange} min={0} max={50} step={1} initialValue={this.state.search_range} backgroundColor={'#FF7485'}/> 
-                            </View>
-                        </View>
                     </View>
 
                     <View style={section_styles.gap} />
@@ -375,7 +316,8 @@ export class ExploreFiltersScreen extends React.Component {
 
     //for the filters
     addFilter(input) {
-        GlobalProperties.screen_props.search_filters_updated = true;
+        GlobalProperties.search_filters_updated = true;
+        GlobalProperties.map_filters_updated = true;
 
         this.addAttribute(input);
         //clear the text input
@@ -406,7 +348,8 @@ export class ExploreFiltersScreen extends React.Component {
 
     //update the dropdown selector for activities
     updateTypeDropDownValue(value) {
-        GlobalProperties.screen_props.search_filters_updated = true;
+        GlobalProperties.search_filters_updated = true;
+        GlobalProperties.map_filters_updated = true;
 
         GlobalProperties.search_type = value;
 
@@ -416,24 +359,17 @@ export class ExploreFiltersScreen extends React.Component {
 
     //update the dropdown selector for activities
     updateGenderDropDownValue(value) {
-        GlobalProperties.screen_props.search_filters_updated = true;
+        GlobalProperties.search_filters_updated = true;
+        GlobalProperties.map_filters_updated = true;
 
         GlobalProperties.search_gender = value;
 
         this.state.gender_dropdown_value = value;
     }
 
-    //update the enable value
-    updateUseMapLocation(value) {
-        GlobalProperties.screen_props.search_filters_updated = true;
-
-        GlobalProperties.use_map_settings = value;
-        this.state.use_map_search_settings = value;
-        this.lazyUpdate();
-    }
-
     updateAgeRangeValues(value) {
-        GlobalProperties.screen_props.search_filters_updated = true;
+        GlobalProperties.search_filters_updated = true;
+        GlobalProperties.map_filters_updated = true;
 
         GlobalProperties.search_minAge = value[0];
         GlobalProperties.search_maxAge = value[1];
@@ -442,18 +378,10 @@ export class ExploreFiltersScreen extends React.Component {
         this.lazyUpdate();
     }
 
-    updateSearchRange(value) {
-        GlobalProperties.screen_props.search_filters_updated = true;
-
-        GlobalProperties.search_radius = value[0];
-
-        this.state.search_range= value[0];
-        this.lazyUpdate();
-    }
-
     //after delete alert, delete attribute and update screen
     afterDeleteAlertAttributes(attr) {
-        GlobalProperties.screen_props.search_filters_updated = true;
+        GlobalProperties.search_filters_updated = true;
+        GlobalProperties.map_filters_updated = true;
 
         this.removeAttribute(attr);
         this.lazyUpdate();

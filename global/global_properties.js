@@ -46,6 +46,11 @@ export const GlobalValues = {
 
   //misc
   SALMON_COLOR: '#FF7485',
+
+  //for information icons
+  ATTRIBUTES_INFORMATION: "These are interests you both will have in common. Use words ending in \'ing\'.\n\nExamples: Swimming, Biking, Jogging, Coding.",
+  INVITATION_CAP_INFORMATION: "This limits the number of pending invitations at one time.",
+  PARTICIPANT_CAP_INFORMATION: "This limits the number of people than can join your activity.",
 }
 
 export class GlobalProperties {
@@ -85,6 +90,7 @@ export class GlobalProperties {
 
     //handlers for the filters going back to their modified screens
     static map_filters_updated = false;
+    static search_filters_updated = false;
 
     //if messages should be releoaded when page is opened
     static reload_messages = true;

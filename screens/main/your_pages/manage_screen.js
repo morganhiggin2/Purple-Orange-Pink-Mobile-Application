@@ -283,7 +283,7 @@ export class ManageScreen extends React.Component {
     createBar() {
         return (
             <View style={post_styles.body}>
-                <TouchableHighlight underlayColor="white" onPress={() => {this.props.navigation.navigate("Post Options Screen")}} onHideUnderlay={() => {}} onShowUnderlay={() => {}}>
+                <TouchableHighlight underlayColor="white" onPress={() => {this.props.navigation.navigate("Activity Creation Screen")}} onHideUnderlay={() => {}} onShowUnderlay={() => {}}>
                     <View style={post_styles.post_button}>
                         <Text style={post_styles.post_button_text}>
                             Create

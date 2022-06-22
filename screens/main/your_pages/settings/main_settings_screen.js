@@ -149,6 +149,24 @@ export class MainSettingsScreen extends React.Component {
                                 <MaterialIcons name="keyboard-arrow-right" size={28} color="black" style={selector_styles.arrow}/>
                             </View>
                         </TouchableHighlight>
+                        <View style={main_styles.horizontal_bar}/>
+                        <TouchableHighlight underlayColor={"#b8b8b8"} onPress = {() => {this.props.navigation.navigate("Contact Support Screen");}}>
+                            <View style={selector_styles.body}>
+                                <Text style={selector_styles.title_text}>
+                                    Contact Support
+                                </Text>
+                                <MaterialIcons name="keyboard-arrow-right" size={28} color="black" style={selector_styles.arrow}/>
+                            </View>
+                        </TouchableHighlight>
+                        <View style={main_styles.horizontal_bar}/>
+                        <TouchableHighlight underlayColor={"#b8b8b8"} onPress = {() => {this.props.navigation.navigate("About Screen");}}>
+                            <View style={selector_styles.body}>
+                                <Text style={selector_styles.title_text}>
+                                    About
+                                </Text>
+                                <MaterialIcons name="keyboard-arrow-right" size={28} color="black" style={selector_styles.arrow}/>
+                            </View>
+                        </TouchableHighlight>
                     </View>
                     <View style={section_styles.body}>
                         <TouchableHighlight underlayColor={"#b8b8b8"} onPress = {() => {signOutAlert(this.signOut);}}>
