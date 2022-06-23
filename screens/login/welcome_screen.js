@@ -76,7 +76,7 @@ export class WelcomeScreen extends React.Component {
     render() {
         return (
                 <View style={main_styles.page}>
-                    <Image style={main_styles.logo} source={require("../../images/fakelogo.jpg")} resizeMode='contain'/>
+                    <Image style={main_styles.logo} source={require("../../images/fakelogo.png")} resizeMode='contain'/>
                     <View style={main_styles.quote_section}>
                         <Text style={main_styles.quote_text}>
                             This is an app, the best app, clearly ever made.

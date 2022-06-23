@@ -51,6 +51,8 @@ export const GlobalValues = {
   ATTRIBUTES_INFORMATION: "These are interests you both will have in common. Use words ending in \'ing\'.\n\nExamples: Swimming, Biking, Jogging, Coding.",
   INVITATION_CAP_INFORMATION: "This limits the number of pending invitations at one time.",
   PARTICIPANT_CAP_INFORMATION: "This limits the number of people than can join your activity.",
+  INVITATION_TYPE_INFORMATION: "Anyone: anyone can join\nInvitation Required: anyone can request to join, and you must then accept their invite for them to join.\nInvite Only: Only you can invite people to join",
+  SEARCH_LOCATION_IS_ACTIVITY_LOCATION_INFORMATION: "The location in which people can find your activity is the same as the location of your activity."
 }
 
 export class GlobalProperties {
@@ -65,7 +67,7 @@ export class GlobalProperties {
     static search_maxAge = 100;
     static search_gender = "";
     static search_type = "activities";
-    static search_radius = 50;
+    static search_radius = 5;
     static use_map_settings = false;
     //blank is no preference
 

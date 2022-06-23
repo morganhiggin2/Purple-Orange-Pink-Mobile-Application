@@ -25,7 +25,7 @@ const frame_styles = StyleSheet.create(
             borderColor: GlobalValues.DISTINCT_GRAY,
             //alignItems: 'flex-end',
             //justifyContent: 'flex-start',
-            direction: 'inherit', 
+            //direction: 'inherit', 
         },
         inner_box: {
             flexDirection: 'row',
@@ -85,8 +85,9 @@ const main_styles = StyleSheet.create(
             marginLeft: 5,
         },
         top_bar: {
-            flexDirection: 'row',
-            padding: "3%",
+            flexDirection: 'row-reverse',
+            padding: 4,
+            paddingHorizontal: 8,
             backgroundColor: 'white',
         },
         scroll_area: {
@@ -126,11 +127,9 @@ class FrameComponent extends React.Component{
 
         if (this.props.type == "person") {
             renderAge = (
-                <View style={frame_styles.inner_text_container}>
-                    <Text style={frame_styles.main_text}>
-                        {this.props.age + " years old"}
-                    </Text>
-                </View>
+                <Text style={[frame_styles.main_text, {marginRight: 100}]}>
+                    {this.props.age + " years old"}
+                </Text>
             );
         }
         else {
@@ -138,6 +137,8 @@ class FrameComponent extends React.Component{
                 <View />
             );
         }
+        
+        //character limit for descriptions
 
         /*return(
             <TouchableHighlight style={frame_styles.box} onPress={() => {
@@ -191,12 +192,12 @@ class FrameComponent extends React.Component{
                                 {this.state.name}
                             </Text> 
                         </View>
-                        <View style={frame_styles.inner_text_container}>
+                        <View style={[frame_styles.inner_text_container]}>
                             <Text style={frame_styles.main_text}>
                                 {this.props.distance + " miles away"}
                             </Text> 
+                            {renderAge}
                         </View>
-                        {renderAge}
                     </View>
                 </View>
             </TouchableHighlight>
@@ -301,6 +302,7 @@ export class ExploreScreen extends React.Component {
         };
 
         this.validateAttributes = this.validateAttributes.bind(this);
+        this.ScrollViewIsCloseToBottom = this.ScrollViewIsCloseToBottom.bind(this);
         
         this.updateSearch = this.updateSearch.bind(this);
         this.updateUsers = this.updateUsers.bind(this);
@@ -573,16 +575,23 @@ export class ExploreScreen extends React.Component {
                     ) : (
                     <View style={{flex: 1}}>
                         <View style={main_styles.top_bar}>
-                            <View style={main_styles.search_bar}>
-                                <Feather name="search" size={30} color="gray" style={{alignSelf: 'center'}}/>
-                                <TextInput style={main_styles.text_input} placeholderTextColor="black"/>
-                            </View>
                             <TouchableHighlight style={{marginLeft: 5}} underlayColor="white" onPress={() => {this.props.navigation.navigate("Explore Filters Screen");}}>
                                 <Feather name="list" size={36} color="gray" />
                             </TouchableHighlight>
                         </View>
                         <View>
-                            <ScrollView contentContainerStyle={{alignItems: 'center'}} refreshControl={<RefreshControl refreshing={false} onRefresh={() => {this.state.loading = true; this.updateSearch();}}/>}>  
+                            <ScrollView 
+                                contentContainerStyle={{alignItems: 'center'}}
+                                refreshControl={<RefreshControl refreshing={false} 
+                                onRefresh={() => {this.state.loading = true; this.updateSearch();}}/>}
+                                onScroll={({nativeEvent}) => {
+                                    if (this.ScrollViewIsCloseToBottom(nativeEvent)) {
+                                        console.log("at bottom");
+                                        //do something
+                                    }
+                                }}
+                                scrollEventThrottle={400}
+                            >  
                                 {this.state.frameComponents.map((component) => (component))}
                                 <EmptySpace key={0}/>
                             </ScrollView>
@@ -592,6 +601,19 @@ export class ExploreScreen extends React.Component {
             </View>
         );
     }
+
+    ScrollViewIsCloseToBottom(layoutMeasurement, contentOffset, contentSize) {
+        const paddingToBottom = 20;
+        return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
+    }
+
+    /**
+     * 
+                            <View style={main_styles.search_bar}>
+                                <Feather name="search" size={30} color="gray" style={{alignSelf: 'center'}}/>
+                                <TextInput style={main_styles.text_input} placeholderTextColor="black"/>
+                            </View>
+     */
 
     // contentContainerStyle={{flexDirection: "row", flexWrap: "wrap", flexGrow: 1}} 
 

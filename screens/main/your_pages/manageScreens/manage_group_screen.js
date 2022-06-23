@@ -222,7 +222,7 @@ FilterSnap.defaultProps = {
                             })}
                         </ImageStack.Navigator>*/
 
-                        //../../../images/fakelogo.jpg
+                        //../../../images/fakelogo.png
 
 export class ManageGroupScreen extends React.Component {
     constructor(props) {

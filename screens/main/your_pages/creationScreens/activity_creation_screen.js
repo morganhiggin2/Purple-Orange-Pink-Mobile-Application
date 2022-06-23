@@ -342,8 +342,8 @@ export class ActivityCreationScreen extends React.Component {
             setSearchLocationToTargetLocation: true,
             setSearchRadiusToEnable: false,
             invite_cap_enable: false,
-            vitrual_event_search_location_enable: false,
             participants_cap_enable: false,
+            advanced_settings_enabled: false,
 
             //for sliders
             age_range_values: [18, 100],
@@ -373,9 +373,9 @@ export class ActivityCreationScreen extends React.Component {
         this.updateSetSearchLocationToTargetLocation = this.updateSetSearchLocationToTargetLocation.bind(this);
         this.updateSetSearchRadiusToEnable = this.updateSetSearchRadiusToEnable.bind(this);
         this.updateSetPhysicalEventToEnable = this.updateSetPhysicalEventToEnable.bind(this);
-        this.updateVirtualEventSearchLocationToEnable = this.updateVirtualEventSearchLocationToEnable.bind(this);
         this.updateParticipantsCap = this.updateParticipantsCap.bind(this);
         this.updateParticipantsCapEnable = this.updateParticipantsCapEnable.bind(this);
+        this.updateAdvancedSettingsEnable = this.updateAdvancedSettingsEnable.bind(this);
         this.validateFields = this.validateFields.bind(this);
         this.makeRequest = this.makeRequest.bind(this);
         this.showError = this.showError.bind(this);
@@ -472,10 +472,12 @@ export class ActivityCreationScreen extends React.Component {
 
     render() {
         let searchLocationRender;
-        let searchRadiusRender;
         let inviteCapRender;
         let physicalEventLocation;
+        let advancedPhysicalEventLocation;
         let participantsCapRender;
+        let searchRadiusRender;
+        let advancedSettings;
 
         //if they decide to set search location elsewhere, then show options 
         if (!this.state.setSearchLocationToTargetLocation) {
@@ -504,7 +506,7 @@ export class ActivityCreationScreen extends React.Component {
         else {
 
         }
-
+        
         //if they decide to set search radius, then show options 
         if (this.state.setSearchRadiusToEnable) {
             searchRadiusRender = (
@@ -527,7 +529,9 @@ export class ActivityCreationScreen extends React.Component {
             );
         }
         else {
-
+            searchRadiusRender = (
+                    <View/>
+                );
         }
 
         //if they decide to set a cap on invites
@@ -596,61 +600,70 @@ export class ActivityCreationScreen extends React.Component {
                             <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="black" autoCorrect={false} editable={true} maxLength={160} defaultValue={this.state.target_address} onChangeText={(value) => {this.updateAddress(value);}} onEndEditing={(event) => {}}/>
                         </View>
                     </View>
-                    <View style={main_styles.horizontal_bar}/>
-                    <View style={inline_attribute_styles.body}>
-                        <Text style={inline_attribute_styles.title_text}>
-                            Search location is activity location
-                        </Text>
-                        <Switch
-                            trackColor = {{false: GlobalValues.DISTINCT_GRAY, true: GlobalValues.ORANGE_COLOR}}
-                            thumbColor = {this.state.setSearchLocationToTargetLocation ? 'white': 'white'}
-                            ios_backgroundColor = {GlobalValues.DISTINCT_GRAY}
-                            onValueChange = {this.updateSetSearchLocationToTargetLocation}
-                            value = {this.state.setSearchLocationToTargetLocation}
-                        />
-                    </View>
-                    {searchLocationRender}
-                    <View style={main_styles.horizontal_bar}/>
-                    <View style={attribute_styles.body}>
-                        <View style={attribute_styles.title_with_value}>
-                            <Text style={attribute_styles.title_text}>
-                                Search Range
-                            </Text>
-                            <Text style={attribute_styles.title_value}>
-                                {this.state.search_range + " miles"}
-                            </Text>
-
-                        </View>
-                        <View style={attribute_styles.slider}>
-                            <Slider twoSlider={false} onChangeValue={this.updateSearchRange} min={0} max={20} step={1} initialValue={this.state.search_range} backgroundColor={'#FF7485'}/> 
-                        </View>
-                    </View>
+                    
                 </View>
-            )
+            );
+
+            if (this.state.advanced_settings_enabled) {
+                advancedPhysicalEventLocation = (
+                    <View style={info_styles.body}>
+                        <View style={inline_attribute_styles.body}>
+                            <View style={inline_attribute_styles.title_view}>
+                                <Text style={inline_attribute_styles.title_text}>
+                                    {"Activity location is Search Location "}
+                                </Text>
+                                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Invitation Type", GlobalValues.SEARCH_LOCATION_IS_ACTIVITY_LOCATION_INFORMATION);}}>
+                                    <AntDesign name="infocirlceo" size={14} color="black" />
+                                </TouchableOpacity>
+                            </View>
+                            <Switch
+                                trackColor = {{false: GlobalValues.DISTINCT_GRAY, true: GlobalValues.ORANGE_COLOR}}
+                                thumbColor = {this.state.setSearchLocationToTargetLocation ? 'white': 'white'}
+                                ios_backgroundColor = {GlobalValues.DISTINCT_GRAY}
+                                onValueChange = {this.updateSetSearchLocationToTargetLocation}
+                                value = {this.state.setSearchLocationToTargetLocation}
+                            />
+                        </View>
+                        {searchLocationRender}
+                        <View style={main_styles.horizontal_bar}/>
+                        <View style={inline_attribute_styles.body}>
+                            <Text style={inline_attribute_styles.title_text}>
+                                Only show to people in search radius
+                            </Text>
+                            <Switch
+                                trackColor = {{false: GlobalValues.DISTINCT_GRAY, true: GlobalValues.ORANGE_COLOR}}
+                                thumbColor = {'white'}
+                                ios_backgroundColor = {GlobalValues.DISTINCT_GRAY}
+                                onValueChange = {this.updateSetSearchRadiusToEnable}
+                                value = {this.state.setSearchRadiusToEnable}
+                            />
+                        </View>
+                        {searchRadiusRender}
+                    </View>
+                );
+            }
+            else {
+                advancedPhysicalEventLocation = (
+                    <View>
+
+                    </View>
+                );
+            }
         }
         else {
-            var virtualEventSearch;
-            
-/*
+
+            physicalEventLocation = (
+                <View>
                     <View style={inline_attribute_styles.body}>
                         <Text style={inline_attribute_styles.title_text}>
-                            Only show to people in search radius
+                            Virtual Link
                         </Text>
-                        <Switch
-                            trackColor = {{false: GlobalValues.DISTINCT_GRAY, true: GlobalValues.ORANGE_COLOR}}
-                            thumbColor = {this.state.setSearchRadiusToEnable ? 'white': 'white'}
-                            ios_backgroundColor = {GlobalValues.DISTINCT_GRAY}
-                            onValueChange = {this.updateSetSearchRadiusToEnable}
-                            value = {this.state.setSearchRadiusToEnable}
-                        />
-                    </View> */
-
-/*
-
-            if (this.state.vitrual_event_search_location_enable) {
-                virtualEventSearch = (
-                    <View>
-                        <View style={attribute_styles.body}>
+                        <View style={inline_attribute_styles.input_text_view}>
+                            <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="black" autoCorrect={false} editable={true} maxLength={160} placeholder={this.state.virtual_link} onChangeText={(value) => {this.updateVirtualLink;}}/>
+                        </View>
+                    </View>
+                    <View style={main_styles.horizontal_bar}/>
+                    <View style={attribute_styles.body}>
                             <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => 
                                 {
                                     this.state.searchMapRequest = "Search";
@@ -659,12 +672,17 @@ export class ActivityCreationScreen extends React.Component {
                                 <View style={actions_styles.action_button_inner}>
                                     <Feather name="map-pin" size={20} color="white" style={actions_styles.action_button_icon}/>
                                     <Text style={actions_styles.action_button_text}>
-                                        Set Search
+                                        Set Search Location
                                     </Text>
                                 </View>
                             </TouchableOpacity>
                         </View>
-                        <View style={main_styles.horizontal_bar}/>
+                </View>
+            );
+
+            if (this.state.advanced_settings_enabled) {
+                advancedPhysicalEventLocation = (
+                    <View style={info_styles.body}>
                         <View style={attribute_styles.body}>
                             <View style={attribute_styles.title_with_value}>
                                 <Text style={attribute_styles.title_text}>
@@ -682,82 +700,119 @@ export class ActivityCreationScreen extends React.Component {
                 );
             }
             else {
-                
+                advancedPhysicalEventLocation = (
+                    <View>
+
+                    </View>
+                );
             }
             
-            
-
-            physicalEventLocation = (
-            <View>
-                <View style={inline_attribute_styles.body}>
-                    <Text style={inline_attribute_styles.title_text}>
-                        Virtual Link
-                    </Text>
-                    <View style={inline_attribute_styles.input_text_view}>
-                        <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="black" autoCorrect={false} editable={true} maxLength={160} placeholder={this.state.virtual_link} onChangeText={(value) => {this.updateVirtualLink;}}/>
-                    </View>
-                </View>
-                <View style={main_styles.horizontal_bar}/>
-                <View style={inline_attribute_styles.body}>
-                    <Text style={inline_attribute_styles.title_text}>
-                        Virtual event set search location
-                    </Text>
-                    <Switch
-                        trackColor = {{false: GlobalValues.DISTINCT_GRAY, true: GlobalValues.ORANGE_COLOR}}
-                        thumbColor = {this.state.setSearchLocationToTargetLocation ? 'white': 'white'}
-                        ios_backgroundColor = {GlobalValues.DISTINCT_GRAY}
-                        onValueChange = {this.updateVirtualEventSearchLocationToEnable}
-                        value = {this.state.vitrual_event_search_location_enable}
-                    />
-                </View>
-                {virtualEventSearch}
-            </View>
-            );*/
-
-            physicalEventLocation = (
-            <View>
-                <View style={inline_attribute_styles.body}>
-                    <Text style={inline_attribute_styles.title_text}>
-                        Virtual Link
-                    </Text>
-                    <View style={inline_attribute_styles.input_text_view}>
-                        <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="black" autoCorrect={false} editable={true} maxLength={160} placeholder={this.state.virtual_link} onChangeText={(value) => {this.updateVirtualLink;}}/>
-                    </View>
-                </View>
-                <View style={main_styles.horizontal_bar}/>
-                <View style={attribute_styles.body}>
-                        <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => 
-                            {
-                                this.state.searchMapRequest = "Search";
-                                this.props.navigation.navigate("Map Search Screen", {latitude: this.state.search_latitude, longitude: this.state.search_longitude});
-                            }}>
-                            <View style={actions_styles.action_button_inner}>
-                                <Feather name="map-pin" size={20} color="white" style={actions_styles.action_button_icon}/>
-                                <Text style={actions_styles.action_button_text}>
-                                    Set Search Location
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={main_styles.horizontal_bar}/>
-                    <View style={attribute_styles.body}>
-                        <View style={attribute_styles.title_with_value}>
-                            <Text style={attribute_styles.title_text}>
-                                Search Range
-                            </Text>
-                            <Text style={attribute_styles.title_value}>
-                                {(this.state.search_range == -1 ? "max" : this.state.search_range + " miles")}
-                            </Text>
-                        </View>
-                        <View style={attribute_styles.slider}>
-                            <Slider twoSlider={false} onChangeValue={this.updateSearchRange} min={0} max={20} step={1} initialValue={this.state.search_range} backgroundColor={'#FF7485'}/> 
-                        </View>
-                    </View>
-            </View>
-            );
         }
 
-        //TODO add physical option to virtual component (both setting location and search radius)
+        if (this.state.advanced_settings_enabled) {
+            advancedSettings = (
+                <View>
+                    <View style={info_styles.body}>
+                        <View style={inline_attribute_styles.body}>
+                            <View style={inline_attribute_styles.title_view}>
+                                <Text style={inline_attribute_styles.title_text}>
+                                    {"Invitation Type "}
+                                </Text>
+                                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Invitation Type", GlobalValues.INVITATION_TYPE_INFORMATION);}}>
+                                    <AntDesign name="infocirlceo" size={14} color="black" />
+                                </TouchableOpacity>
+                            </View>
+                            <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {width: '50%', alignSelf: 'flex-end'}]}>
+                                    <DropDown 
+                                        style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
+                                        items={[{label: "Anyone", value: "anyone"}, {label: 'Invitation Required', value: 'invite_required', }, {label: 'Invite Only', value: 'invite_only'}]}
+                                        onChangeValue = {this.updateInvitationTypeValueOnRender}
+                                        currentValue={this.state.invitation_type_dropdown_value}
+                                        />
+                            </View>
+                        </View>
+                        <View style={main_styles.horizontal_bar}/>
+                        <View style={inline_attribute_styles.body}>
+                            <View style={inline_attribute_styles.title_view}>
+                                <Text style={inline_attribute_styles.title_text}>
+                                    {"Cap invitation count "}
+                                </Text>
+                                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Attributes", GlobalValues.INVITATION_CAP_INFORMATION);}}>
+                                        <AntDesign name="infocirlceo" size={14} color="black" />
+                                </TouchableOpacity>
+                            </View>
+                            <Switch
+                                trackColor = {{false: GlobalValues.DISTINCT_GRAY, true: GlobalValues.ORANGE_COLOR}}
+                                thumbColor = {this.state.invite_cap_enable ? 'white': 'white'}
+                                ios_backgroundColor = {GlobalValues.DISTINCT_GRAY}
+                                onValueChange = {this.updateInviteCapEnable}
+                                value = {this.state.invite_cap_enable}
+                            />
+                        </View>
+                        {inviteCapRender}
+                        <View style={main_styles.horizontal_bar}/>
+                        <View style={inline_attribute_styles.body}>
+                            <View style={inline_attribute_styles.title_view}>
+                                <Text style={inline_attribute_styles.title_text}>
+                                    {"Cap participant count "}
+                                </Text>
+                                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Attributes", GlobalValues.PARTICIPANT_CAP_INFORMATION);}}>
+                                        <AntDesign name="infocirlceo" size={14} color="black" />
+                                </TouchableOpacity>
+                            </View>
+                            <Switch
+                                trackColor = {{false: GlobalValues.DISTINCT_GRAY, true: GlobalValues.ORANGE_COLOR}}
+                                thumbColor = {this.state.participants_cap_enable ? 'white': 'white'}
+                                ios_backgroundColor = {GlobalValues.DISTINCT_GRAY}
+                                onValueChange = {this.updateParticipantsCapEnable}
+                                value = {this.state.participants_cap_enable}
+                            />
+                        </View>
+                        {participantsCapRender}
+                    </View>
+                    <View style={section_styles.gap} />
+                    {advancedPhysicalEventLocation}
+                    <View style={section_styles.gap} />
+                    <View style={info_styles.body}>
+                        <View style={inline_attribute_styles.body}>
+                            <Text style={inline_attribute_styles.title_text}>
+                                Participant gender
+                            </Text>
+                            <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {width: '50%', alignSelf: 'flex-end'}]}>
+                                    <DropDown 
+                                        style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
+                                        items={[{label: 'All', value: 'all'}, {label: 'Male', value: 'male'}, {label: 'Female', value: 'female', }, {label: "Other", value: "other"}]}
+                                        onChangeValue = {this.updateGenderDropDownValue}
+                                        currentValue = {this.state.gender_dropdown_value}
+                                        />
+                            </View>
+                        </View>
+                        <View style={main_styles.horizontal_bar}/>
+                        <View style={attribute_styles.body}>
+                            <View style={attribute_styles.title_with_value}>
+                                <Text style={attribute_styles.title_text}>
+                                   Participant age range
+                                </Text>
+                                <Text style={attribute_styles.title_value}>
+                                    {this.state.age_range_values[0] + " to " + this.state.age_range_values[1]}
+                                </Text>
+
+                            </View>
+                            <View style={attribute_styles.slider}>
+                                <Slider twoSlider={true} onChangeValue={this.updateAgeRangeValues} min={18} max={100} step={2} initialValue={this.state.age_range_values} backgroundColor={'#FF7485'}/> 
+                            </View>
+                        </View>
+                    </View>
+                </View>
+            );
+        }
+        else {
+            advancedSettings = (
+                <View>
+
+                </View>
+            );
+        }
 
         const renderComponent = ({item}) => {
             return (
@@ -847,7 +902,7 @@ export class ActivityCreationScreen extends React.Component {
                             </Text>
                             <Switch
                                 trackColor = {{false: GlobalValues.DISTINCT_GRAY, true: GlobalValues.ORANGE_COLOR}}
-                                thumbColor = {this.state.setSearchRadiusToEnable ? 'white': 'white'}
+                                thumbColor = 'white'
                                 ios_backgroundColor = {GlobalValues.DISTINCT_GRAY}
                                 onValueChange = {this.updateSetPhysicalEventToEnable}
                                 value = {this.state.is_physical_event}
@@ -858,89 +913,15 @@ export class ActivityCreationScreen extends React.Component {
                     </View>
                     <View style={section_styles.gap} />
                     <View style={info_styles.body}>
-                        <View style={inline_attribute_styles.body}>
+                        <TouchableOpacity style={inline_attribute_styles.body}  activeOpacity={1.0} onPress={() => {this.updateAdvancedSettingsEnable(!this.state.advanced_settings_enabled);}}>
                             <Text style={inline_attribute_styles.title_text}>
-                                Invitation type
-                            </Text>
-                            <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {width: '50%', alignSelf: 'flex-end'}]}>
-                                    <DropDown 
-                                        style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
-                                        items={[{label: "Anyone", value: "anyone"}, {label: 'Invitation Required', value: 'invite_required', }, {label: 'Invite Only', value: 'invite_only'}]}
-                                        onChangeValue = {this.updateInvitationTypeValueOnRender}
-                                        currentValue={this.state.invitation_type_dropdown_value}
-                                        />
-                            </View>
-                        </View>
-                        <View style={main_styles.horizontal_bar}/>
-                        <View style={inline_attribute_styles.body}>
-                            <View style={inline_attribute_styles.title_view}>
-                                <Text style={inline_attribute_styles.title_text}>
-                                    {"Cap invitation count "}
-                                </Text>
-                                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Attributes", GlobalValues.INVITATION_CAP_INFORMATION);}}>
-                                        <AntDesign name="infocirlceo" size={14} color="black" />
-                                </TouchableOpacity>
-                            </View>
-                            <Switch
-                                trackColor = {{false: GlobalValues.DISTINCT_GRAY, true: GlobalValues.ORANGE_COLOR}}
-                                thumbColor = {this.state.invite_cap_enable ? 'white': 'white'}
-                                ios_backgroundColor = {GlobalValues.DISTINCT_GRAY}
-                                onValueChange = {this.updateInviteCapEnable}
-                                value = {this.state.invite_cap_enable}
-                            />
-                        </View>
-                        {inviteCapRender}
-                        <View style={main_styles.horizontal_bar}/>
-                        <View style={inline_attribute_styles.body}>
-                            <View style={inline_attribute_styles.title_view}>
-                                <Text style={inline_attribute_styles.title_text}>
-                                    {"Cap participant count "}
-                                </Text>
-                                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Attributes", GlobalValues.PARTICIPANT_CAP_INFORMATION);}}>
-                                        <AntDesign name="infocirlceo" size={14} color="black" />
-                                </TouchableOpacity>
-                            </View>
-                            <Switch
-                                trackColor = {{false: GlobalValues.DISTINCT_GRAY, true: GlobalValues.ORANGE_COLOR}}
-                                thumbColor = {this.state.participants_cap_enable ? 'white': 'white'}
-                                ios_backgroundColor = {GlobalValues.DISTINCT_GRAY}
-                                onValueChange = {this.updateParticipantsCapEnable}
-                                value = {this.state.participants_cap_enable}
-                            />
-                        </View>
-                        {participantsCapRender}
+                                Advanced Settings
+                            </Text>       
+                            <AntDesign name={this.state.advanced_settings_enabled ? "down" : "up"} size={20} color="black" style={actions_styles.action_button_icon}/>
+                        </TouchableOpacity>
                     </View>
+                    {advancedSettings}
                     <View style={section_styles.gap} />
-                    <View style={info_styles.body}>
-                        <View style={inline_attribute_styles.body}>
-                            <Text style={inline_attribute_styles.title_text}>
-                                Participant gender
-                            </Text>
-                            <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {width: '50%', alignSelf: 'flex-end'}]}>
-                                    <DropDown 
-                                        style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
-                                        items={[{label: 'All', value: 'all'}, {label: 'Male', value: 'male'}, {label: 'Female', value: 'female', }, {label: "Other", value: "other"}]}
-                                        onChangeValue = {this.updateGenderDropDownValue}
-                                        currentValue = {this.state.gender_dropdown_value}
-                                        />
-                            </View>
-                        </View>
-                        <View style={main_styles.horizontal_bar}/>
-                        <View style={attribute_styles.body}>
-                            <View style={attribute_styles.title_with_value}>
-                                <Text style={attribute_styles.title_text}>
-                                   Participant age range
-                                </Text>
-                                <Text style={attribute_styles.title_value}>
-                                    {this.state.age_range_values[0] + " to " + this.state.age_range_values[1]}
-                                </Text>
-
-                            </View>
-                            <View style={attribute_styles.slider}>
-                                <Slider twoSlider={true} onChangeValue={this.updateAgeRangeValues} min={18} max={100} step={2} initialValue={this.state.age_range_values} backgroundColor={'#FF7485'}/> 
-                            </View>
-                        </View>
-                    </View>
                     <TouchableOpacity style={[info_styles.body, {flexDirection: "row", justifyContent: 'center'}]} onPress={() => {this.addPoint();}}>
                         <Ionicons name="add-circle-outline" size={20} color={GlobalValues.ORANGE_COLOR} style={actions_styles.action_button_icon}/>
                         <Text style={[actions_styles.action_button_text, {color: GlobalValues.ORANGE_COLOR}]}>
@@ -1052,6 +1033,10 @@ export class ActivityCreationScreen extends React.Component {
 
     updateParticipantsCapEnable(value) {
         this.setState({participants_cap_enable: value});
+    }
+
+    updateAdvancedSettingsEnable(value) {
+        this.setState({advanced_settings_enabled: value});
     }
 
     //for the time setting
@@ -1222,10 +1207,6 @@ export class ActivityCreationScreen extends React.Component {
 
     updateSetPhysicalEventToEnable(value) {
         this.setState({is_physical_event: value});
-    }
-
-    updateVirtualEventSearchLocationToEnable(value) {
-        this.setState({vitrual_event_search_location_enable: value});
     }
 
     updateSliderValue(value) {
