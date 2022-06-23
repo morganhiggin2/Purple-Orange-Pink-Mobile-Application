@@ -1059,17 +1059,18 @@ export class EditActivityScreen extends React.Component {
                         {this.showTimePicker()}
                         <View style={main_styles.horizontal_bar}/>
                         <View style={inline_attribute_styles.body}>
-                            <Text style={inline_attribute_styles.title_text}>
-                                {"Attributes "}
-                            </Text>
-                            <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Attributes", GlobalValues.ATTRIBUTES_INFORMATION);}}>
-                                <AntDesign name="infocirlceo" size={14} color="black" />
-                            </TouchableOpacity>
+                            <View style={inline_attribute_styles.title_view}>
+                                <Text style={inline_attribute_styles.title_text}>
+                                    {"Attributes "}
+                                </Text>
+                                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Attributes", GlobalValues.ATTRIBUTES_INFORMATION);}}>
+                                    <AntDesign name="infocirlceo" size={14} color="black" />
+                                </TouchableOpacity>  
+                            </View>
                             <View style={inline_attribute_styles.input_text_view}>
                                 <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="black" editable={true} maxLength={160} ref={(input) => {this.state.attributes_input_handler = input}} onEndEditing={(event) => {this.addFilter(event.nativeEvent.text)}}/>
                             </View>
                         </View>
-                        <View style={main_styles.horizontal_bar}/>
                         <View style={filter_snaps_styles.container}> 
                             {this.state.attributes.map((data, key) => {
                                 return (
@@ -1077,6 +1078,7 @@ export class EditActivityScreen extends React.Component {
                                 );
                             })}
                         </View>  
+                        <View style={main_styles.horizontal_bar}/>
                         <View style={attribute_styles.body}>
                             <Text style={attribute_styles.title_text}>
                                 Description

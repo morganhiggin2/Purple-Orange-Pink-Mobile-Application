@@ -263,8 +263,6 @@ export class MapScreen extends React.Component {
         if (GlobalProperties.search_type == "people") {
             body = {
                 "radius": search_radius,
-                "page_size": 20,
-                "page_number": 1,
                 "minimum_age": GlobalProperties.search_minAge,
                 "maximum_age": GlobalProperties.search_maxAge,
                 "location": {
@@ -278,8 +276,6 @@ export class MapScreen extends React.Component {
         else if (GlobalProperties.search_type == "activities") {
             body = {
                 "radius": search_radius,
-                "page_size": 20,
-                "page_number": 1,
                 "location": {
                     "latitude": location.latitude,
                     "longitude": location.longitude,

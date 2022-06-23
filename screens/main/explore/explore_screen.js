@@ -176,31 +176,38 @@ class FrameComponent extends React.Component{
         );*/
 
         return (
-            <TouchableHighlight style={frame_styles.box} onPress={() => {
-                if (this.props.type == "person") {
-                    this.props.navigation.navigate("Other Profile Screen", {id: this.props.id, type: "none", viewing:""});
-                }
-                else if (this.props.type == "activity") {
-                    this.props.navigation.navigate("Other Activity Screen", {id: this.props.id, type: "none", viewing:""});
-                }
-            }}>
-                <View style={frame_styles.inner_box}>
-                    <Image style={frame_styles.background_image} source={{uri: "https://image.cnbcfm.com/api/v1/image/106926992-1628885077267-elon.jpg"}}/>
-                    <View style={frame_styles.text_container}>
-                        <View style={frame_styles.inner_text_container}>
-                            <Text style={frame_styles.name_text}>
-                                {this.state.name}
-                            </Text> 
-                        </View>
-                        <View style={[frame_styles.inner_text_container]}>
-                            <Text style={frame_styles.main_text}>
-                                {this.props.distance + " miles away"}
-                            </Text> 
-                            {renderAge}
+            <View style={frame_styles.box} >
+                <TouchableHighlight onPress={() => {
+                    if (this.props.type == "person") {
+                        this.props.navigation.navigate("Other Profile Screen", {id: this.props.id, type: "none", viewing:""});
+                    }
+                    else if (this.props.type == "activity") {
+                        this.props.navigation.navigate("Other Activity Screen", {id: this.props.id, type: "none", viewing:""});
+                    }
+                }}>
+                    <View style={frame_styles.inner_box}>
+                        <Image style={frame_styles.background_image} source={{uri: "https://image.cnbcfm.com/api/v1/image/106926992-1628885077267-elon.jpg"}}/>
+                        <View style={frame_styles.text_container}>
+                            <View style={frame_styles.inner_text_container}>
+                                <Text style={frame_styles.name_text}>
+                                    {this.state.name}
+                                </Text> 
+                            </View>
+                            <View style={[frame_styles.inner_text_container]}>
+                                <Text style={frame_styles.main_text}>
+                                    {this.props.distance + " miles away"}
+                                </Text> 
+                                {renderAge}
+                            </View>
+                            <View style={frame_styles.inner_text_container}>
+                                <Text style={[frame_styles.main_text, {flexWrap: "wrap"}]}>
+                                    {this.props.description}
+                                </Text>
+                            </View>
                         </View>
                     </View>
-                </View>
-            </TouchableHighlight>
+                </TouchableHighlight>
+            </View>
         );
     }
 }
@@ -369,10 +376,10 @@ export class ExploreScreen extends React.Component {
             var json = this.state.frames[i];
 
             if (json.type == "person") {
-                this.state.frameComponents.push(<FrameComponent key={json.id} id={json.id} type={json.type} firstName={json.first_name} lastInitial={json.last_initial} age={json.age} distance={json.distance} navigation={this.props.navigation}/>);
+                this.state.frameComponents.push(<FrameComponent key={json.id} id={json.id} type={json.type} firstName={json.first_name} lastInitial={json.last_initial} description={json.description} age={json.age} distance={json.distance} navigation={this.props.navigation}/>);
             }
             else if (json.type == "activity") {
-                this.state.frameComponents.push(<FrameComponent key={json.id} id={json.id} type={json.type} name={json.name} distance={json.distance} navigation={this.props.navigation}/>);
+                this.state.frameComponents.push(<FrameComponent key={json.id} id={json.id} type={json.type} name={json.name} description={json.description}  distance={json.distance} navigation={this.props.navigation}/>);
             }
         }
     }
