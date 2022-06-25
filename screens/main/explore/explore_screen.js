@@ -19,8 +19,7 @@ const frame_styles = StyleSheet.create(
             marginLeft: Math.trunc(Dimensions.get('window').width * 0.029),
             marginBottom: Math.trunc(Dimensions.get('window').width * 0.029),*/
             width: Math.trunc(Dimensions.get('window').width * 0.98),
-            marginTop: Math.trunc(Dimensions.get('window').width * 0.01),
-            borderWidth: 2,
+            marginTop: Math.trunc(Dimensions.get('window').width * 0.02),
             borderRadius: 3,
             borderColor: GlobalValues.DISTINCT_GRAY,
             //alignItems: 'flex-end',
@@ -41,6 +40,7 @@ const frame_styles = StyleSheet.create(
             justifyContent: 'flex-start',
             flexDirection: 'column',
             backgroundColor: 'white',
+            width: Math.trunc(Dimensions.get('window').width * 0.65),
         },
         inner_text_container: {
             flexDirection: 'row',
@@ -51,6 +51,11 @@ const frame_styles = StyleSheet.create(
             fontSize: 14,
             marginRight: 16,
             color: 'black',
+        },
+        description_text: {
+            fontSize: 14,
+            marginRight: 16,
+            color: 'gray',
         },
         name_text: {
             fontSize: 18,
@@ -123,20 +128,6 @@ class FrameComponent extends React.Component{
     }
 
     render() {
-        var renderAge = {};
-
-        if (this.props.type == "person") {
-            renderAge = (
-                <Text style={[frame_styles.main_text, {marginRight: 100}]}>
-                    {this.props.age + " years old"}
-                </Text>
-            );
-        }
-        else {
-            renderAge = (
-                <View />
-            );
-        }
         
         //character limit for descriptions
 
@@ -175,40 +166,84 @@ class FrameComponent extends React.Component{
             </TouchableHighlight>
         );*/
 
-        return (
-            <View style={frame_styles.box} >
-                <TouchableHighlight onPress={() => {
-                    if (this.props.type == "person") {
+        var windowWidth = Math.trunc(Dimensions.get('window').width);
+
+        if (this.props.type == "person") {
+            return (
+                <View style={frame_styles.box} >
+                    <TouchableHighlight onPress={() => {
                         this.props.navigation.navigate("Other Profile Screen", {id: this.props.id, type: "none", viewing:""});
-                    }
-                    else if (this.props.type == "activity") {
-                        this.props.navigation.navigate("Other Activity Screen", {id: this.props.id, type: "none", viewing:""});
-                    }
-                }}>
-                    <View style={frame_styles.inner_box}>
-                        <Image style={frame_styles.background_image} source={{uri: "https://image.cnbcfm.com/api/v1/image/106926992-1628885077267-elon.jpg"}}/>
-                        <View style={frame_styles.text_container}>
-                            <View style={frame_styles.inner_text_container}>
-                                <Text style={frame_styles.name_text}>
-                                    {this.state.name}
-                                </Text> 
-                            </View>
-                            <View style={[frame_styles.inner_text_container]}>
-                                <Text style={frame_styles.main_text}>
-                                    {this.props.distance + " miles away"}
-                                </Text> 
-                                {renderAge}
-                            </View>
-                            <View style={frame_styles.inner_text_container}>
-                                <Text style={[frame_styles.main_text, {flexWrap: "wrap"}]}>
-                                    {this.props.description}
-                                </Text>
+                    }}>
+                        <View style={frame_styles.inner_box}>
+                            <Image style={frame_styles.background_image} source={{uri: "https://image.cnbcfm.com/api/v1/image/106926992-1628885077267-elon.jpg"}}/>
+                            <View style={frame_styles.text_container}>
+                                <View style={frame_styles.inner_text_container}>
+                                    <Text style={frame_styles.name_text}>
+                                        {this.state.name}
+                                    </Text> 
+                                </View>
+                                <View style={[frame_styles.inner_text_container]}>
+                                    <Text style={frame_styles.main_text}>
+                                        {this.props.distance + " miles away"}
+                                    </Text> 
+                                    <Text style={[frame_styles.main_text, {marginRight: 100}]}>
+                                        {this.props.age + " years old"}
+                                    </Text>
+                                </View>
+                                <View style={[frame_styles.inner_text_container, {maxHight: 50}]}>
+                                    <Text numberOfLines={4} style={[frame_styles.description_text, {flex: 1, flexWrap: 'wrap'}]}>
+                                        {this.props.description}
+                                    </Text>
+                                </View>
                             </View>
                         </View>
-                    </View>
-                </TouchableHighlight>
-            </View>
-        );
+                    </TouchableHighlight>
+                </View>
+            );
+        }
+        else if (this.props.type == "activity") {
+            return (
+                <View style={frame_styles.box} >
+                    <TouchableHighlight onPress={() => {
+                        this.props.navigation.navigate("Other Activity Screen", {id: this.props.id, type: "none", viewing:""});
+                    }}>
+                        <View style={frame_styles.inner_box}>
+                            <Image style={frame_styles.background_image} source={{uri: "https://image.cnbcfm.com/api/v1/image/106926992-1628885077267-elon.jpg"}}/>
+                            <View style={frame_styles.text_container}>
+                                <View style={frame_styles.inner_text_container}>
+                                    <Text style={frame_styles.name_text}>
+                                        {this.state.name}
+                                    </Text> 
+                                </View>
+                                <View style={[frame_styles.inner_text_container]}>
+                                    <Text style={frame_styles.main_text}>
+                                        {this.props.distance + " miles away"}
+                                    </Text> 
+                                </View>
+                                <View style={[frame_styles.inner_text_container]}>
+                                    <Text style={frame_styles.main_text}>
+                                        {this.props.date_time}
+                                    </Text> 
+                                </View>
+                                <View style={[frame_styles.inner_text_container, {maxHight: 50}]}>
+                                    <Text numberOfLines={3} style={[frame_styles.description_text, {flex: 1, flexWrap: 'wrap'}]}>
+                                        {this.props.description}
+                                    </Text>
+                                </View>
+                            </View>
+                        </View>
+                    </TouchableHighlight>
+                </View>
+            );
+        }
+        else {
+            return (
+                <View>
+
+                </View>
+            );
+        }
+
     }
 }
 
@@ -379,7 +414,7 @@ export class ExploreScreen extends React.Component {
                 this.state.frameComponents.push(<FrameComponent key={json.id} id={json.id} type={json.type} firstName={json.first_name} lastInitial={json.last_initial} description={json.description} age={json.age} distance={json.distance} navigation={this.props.navigation}/>);
             }
             else if (json.type == "activity") {
-                this.state.frameComponents.push(<FrameComponent key={json.id} id={json.id} type={json.type} name={json.name} description={json.description}  distance={json.distance} navigation={this.props.navigation}/>);
+                this.state.frameComponents.push(<FrameComponent key={json.id} id={json.id} type={json.type} name={json.name} description={json.description} date_time={json.date_time} distance={json.distance} navigation={this.props.navigation}/>);
             }
         }
     }

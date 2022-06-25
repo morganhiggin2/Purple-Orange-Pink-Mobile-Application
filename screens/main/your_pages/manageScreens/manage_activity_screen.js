@@ -3,7 +3,7 @@ import {StyleSheet, View, Text, TextInput, Image, ScrollView, FlatList, Alert, D
 import { createStackNavigator, CardStyleInterpolators} from '@react-navigation/stack';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import {TouchableHighlight, TouchableOpacity} from 'react-native-gesture-handler';
-import { AntDesign, Feather, Entypo } from '@expo/vector-icons'; 
+import { AntDesign, MaterialIcons, Feather, Entypo } from '@expo/vector-icons'; 
 import {SliderBox } from "react-native-image-slider-box";
 
 import { GlobalProperties, GlobalValues } from '../../../../global/global_properties';
@@ -298,7 +298,7 @@ export class ManageActivityScreen extends React.Component {
             if (result.request.status ==  200) {
                 //get request body
                 var activity_information = JSON.parse(result.request.response).activity_information;
-
+ 
                 this.state.title = activity_information.title;
                 this.state.address = activity_information.address;
                 this.state.attributes = activity_information.attributes;
@@ -307,9 +307,10 @@ export class ManageActivityScreen extends React.Component {
                 this.state.description = activity_information.description;
                 this.state.points = activity_information.points;
                 this.state.invitation_type = activity_information.invitation_type;
+                this.state.num_members = activity_information.num_members;
                 this.state.distance = activity_information.distance;
-
-                console.log(activity_information);
+                this.state.is_admin = activity_information.is_admin;
+                this.state.is_participant = activity_information.is_participant;
 
                 this.state.loading = false;
 
@@ -353,6 +354,9 @@ export class ManageActivityScreen extends React.Component {
     }
     render() {
         var imagesRender;
+        var distanceRender;
+        var addressTitle;
+        var actionsRender;
 
         if (this.state.activity_images.length > 0) {
             imagesRender = (
@@ -375,6 +379,127 @@ export class ManageActivityScreen extends React.Component {
             )
         }
 
+        var joinRender;
+
+        if (this.state.invitation_type == "anyone") {
+            joinRender = (
+                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {}}>
+                    <View style={actions_styles.action_button_inner}>
+                        <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
+                        <Text style={actions_styles.action_button_text}>
+                            Join
+                        </Text>
+                    </View>
+                </TouchableOpacity>
+            );
+        }
+        else if (this.state.invitation_type == "invite_required") {
+            joinRender = (
+                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {}}>
+                    <View style={actions_styles.action_button_inner}>
+                        <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
+                        <Text style={actions_styles.action_button_text}>
+                            Request to Join
+                        </Text>
+                    </View>
+                </TouchableOpacity>
+            );
+        }
+
+        if (this.state.distance) {
+            distanceRender = (
+                <View style={[filter_snaps_styles.inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
+                    <Entypo name="location-pin" size={24} color="red" style={filter_snaps_styles.icon}/>
+                    <Text style={{color: 'black', fontSize: 18}}>
+                        {this.state.distance + " mi"}
+                    </Text>
+                </View>
+            );
+        }
+
+        if (this.state.is_physical) {
+            addressTitle = "Address";
+        }
+        else {
+            addressTitle = "Virtual Link";
+        }
+
+        if (this.state.is_admin) {
+            actionsRender = (
+                <View>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("Edit Activity Screen", {id: this.state.id});}}>
+                        <View style={actions_styles.action_button_inner}>
+                            <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
+                            <Text style={actions_styles.action_button_text}>
+                                Edit Activity
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {}}>
+                        <View style={actions_styles.action_button_inner}>
+                            <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
+                            <Text style={actions_styles.action_button_text}>
+                                Send Invitation
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.viewInvitations();}}>
+                        <View style={actions_styles.action_button_inner}>
+                            <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
+                            <Text style={actions_styles.action_button_text}>
+                                View Invitations
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {}}>
+                        <View style={actions_styles.action_button_inner}>
+                            <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
+                            <Text style={actions_styles.action_button_text}>
+                                Message
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {}}>
+                        <View style={actions_styles.action_button_inner}>
+                            <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
+                            <Text style={actions_styles.action_button_text}>
+                                Leave
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            );
+        }
+        else if (this.state.is_participant) {
+            actionsRender = (
+                <View>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {}}>
+                        <View style={actions_styles.action_button_inner}>
+                            <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
+                            <Text style={actions_styles.action_button_text}>
+                                Leave
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {}}>
+                        <View style={actions_styles.action_button_inner}>
+                            <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
+                            <Text style={actions_styles.action_button_text}>
+                                Message
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            );
+        }   
+        else {
+            actionsRender = (
+                <View>
+
+                </View>
+            );
+        }
+
         const renderComponent = () => {
             if (this.state.loading == true) {
                 return (
@@ -385,28 +510,22 @@ export class ManageActivityScreen extends React.Component {
                 return (
                     <View>
                         {imagesRender}
-    
                         <View style={main_styles.name_view}>
                             <Text style={main_styles.title_text}>
-                                Car Group
+                                {this.state.title}
                             </Text>
                         </View>
                         <View style={filter_snaps_styles.profile_container}>
-                            <View style={[filter_snaps_styles.inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>
-                                <Entypo name="location-pin" size={24} color="red" style={filter_snaps_styles.icon}/>
-                                <Text style={{color: 'black', fontSize: 18}}>
-                                    {this.state.distance + " mi"}
-                                </Text>
-                            </View>
+                            {distanceRender}
                             <View style={[filter_snaps_styles.inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>
                                 <Text style={{color: 'black', fontSize: 18}}>
                                     {this.state.is_phiscal ? "Physical" : "Virtual"}
                                 </Text>
                             </View>
                             <View style={[filter_snaps_styles.inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>
-                                <AntDesign name="eyeo" size={20} color="black" style={filter_snaps_styles.icon}/>
+                                <MaterialIcons name="person" size={20} color="black" style={filter_snaps_styles.icon}/>
                                 <Text style={{color: 'black', fontSize: 18}}>
-                                    10,503 Members
+                                    {this.state.num_members}
                                 </Text>
                             </View>
                         </View>
@@ -419,7 +538,7 @@ export class ManageActivityScreen extends React.Component {
                             </Text>
                             <View style={info_styles.horizontal_bar} />
                             <Text style={info_styles.title_text}>
-                                Address
+                                {addressTitle}
                             </Text>
                             <Text style={info_styles.inner_text}>
                                 {this.state.address}
@@ -451,30 +570,7 @@ export class ManageActivityScreen extends React.Component {
                                 Actions
                             </Text>
                             <View style={actions_styles.actions_view}> 
-                                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("Edit Activity Screen", {id: this.state.id});}}>
-                                    <View style={actions_styles.action_button_inner}>
-                                        <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
-                                        <Text style={actions_styles.action_button_text}>
-                                            Edit Activity
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {}}>
-                                    <View style={actions_styles.action_button_inner}>
-                                        <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
-                                        <Text style={actions_styles.action_button_text}>
-                                            Send Invitation
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.viewInvitations();}}>
-                                    <View style={actions_styles.action_button_inner}>
-                                        <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
-                                        <Text style={actions_styles.action_button_text}>
-                                            View Invitations
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
+                                {actionsRender}
                             </View>
                         </View>
                         <View style={info_styles.body}>

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1050987509685",
+    "project_id": "purple-orange-pink-socia-dc8c2",
+    "storage_bucket": "purple-orange-pink-socia-dc8c2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1050987509685:android:a0fe92021a75296eedcbfc",
+        "android_client_info": {
+          "package_name": "purpleorangepink.POP"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1050987509685-punrmb75nfsne6nhd11g4ngbm9oddbl0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOX87k_uzSnyex-WoBsn0_lvS45aDrNxk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1050987509685-punrmb75nfsne6nhd11g4ngbm9oddbl0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

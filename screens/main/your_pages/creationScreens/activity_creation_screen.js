@@ -664,19 +664,19 @@ export class ActivityCreationScreen extends React.Component {
                     </View>
                     <View style={main_styles.horizontal_bar}/>
                     <View style={attribute_styles.body}>
-                            <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => 
-                                {
-                                    this.state.searchMapRequest = "Search";
-                                    this.props.navigation.navigate("Map Search Screen", {latitude: this.state.search_latitude, longitude: this.state.search_longitude});
-                                }}>
-                                <View style={actions_styles.action_button_inner}>
-                                    <Feather name="map-pin" size={20} color="white" style={actions_styles.action_button_icon}/>
-                                    <Text style={actions_styles.action_button_text}>
-                                        Set Search Location
-                                    </Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
+                        <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => 
+                            {
+                                this.state.searchMapRequest = "Search";
+                                this.props.navigation.navigate("Map Search Screen", {latitude: this.state.search_latitude, longitude: this.state.search_longitude});
+                            }}>
+                            <View style={actions_styles.action_button_inner}>
+                                <Feather name="map-pin" size={20} color="white" style={actions_styles.action_button_icon}/>
+                                <Text style={actions_styles.action_button_text}>
+                                    Set Search Location
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             );
 

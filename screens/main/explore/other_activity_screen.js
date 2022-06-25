@@ -3,7 +3,7 @@ import {StyleSheet, View, Text, TextInput, Image, ScrollView, FlatList, Alert, D
 import { createStackNavigator, CardStyleInterpolators} from '@react-navigation/stack';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import {TouchableHighlight, TouchableOpacity} from 'react-native-gesture-handler';
-import { AntDesign, Feather, Entypo, MaterialCommunityIcons } from '@expo/vector-icons'; 
+import { AntDesign, Feather, Entypo, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'; 
 import {SliderBox } from "react-native-image-slider-box";
 
 import { GlobalValues, GlobalProperties } from '../../../global/global_properties';
@@ -125,6 +125,7 @@ const info_styles = StyleSheet.create(
             color: 'gray',
             fontSize: 14,
             marginLeft: 5,
+            marginVertical: 4,
         },
         horizontal_gap: {
             height: 10,
@@ -218,6 +219,7 @@ export class OtherActivityScreen extends React.Component {
             description: "",
             date: "",
             invitation_type: "",
+            distance: 0,
 
             //images
             activity_images: [],
@@ -232,7 +234,7 @@ export class OtherActivityScreen extends React.Component {
             point: [],
 
             //is physical event
-            is_phiscal: true,
+            is_physical: true,
 
             //name of activity
             title: this.props.route.params.name,
@@ -312,6 +314,9 @@ export class OtherActivityScreen extends React.Component {
                 this.state.points = activity_information.points;
                 this.state.invitation_type = activity_information.invitation_type;
                 this.state.num_members = activity_information.num_members;
+                this.state.distance = activity_information.distance;
+                this.state.is_admin = activity_information.is_admin;
+                this.state.is_participant = activity_information.is_participant;
 
                 this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={this.state.title}/>});
 
@@ -357,6 +362,8 @@ export class OtherActivityScreen extends React.Component {
     }
     render() {
         var imagesRender;
+        var distanceRender;
+        var addressTitle;
 
         if (this.state.activity_images.length > 0) {
             imagesRender = (
@@ -406,6 +413,24 @@ export class OtherActivityScreen extends React.Component {
             );
         }
 
+        if (this.state.distance) {
+            distanceRender = (
+                <View style={[filter_snaps_styles.inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
+                    <Entypo name="location-pin" size={24} color="red" style={filter_snaps_styles.icon}/>
+                    <Text style={{color: 'black', fontSize: 18}}>
+                        {this.state.distance + " mi"}
+                    </Text>
+                </View>
+            );
+        }
+
+        if (this.state.is_physical) {
+            addressTitle = "Address";
+        }
+        else {
+            addressTitle = "Virtual Link";
+        }
+
         const renderComponent = () => {
             if (this.state.loading == true) {
                 return (
@@ -423,19 +448,14 @@ export class OtherActivityScreen extends React.Component {
                             </Text>
                         </View>
                         <View style={filter_snaps_styles.profile_container}>
-                            <View style={[filter_snaps_styles.inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>
-                                <Entypo name="location-pin" size={24} color="red" style={filter_snaps_styles.icon}/>
-                                <Text style={{color: 'black', fontSize: 18}}>
-                                    {this.state.distance + " mi"}
-                                </Text>
-                            </View>
+                            {distanceRender}
                             <View style={[filter_snaps_styles.inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>
                                 <Text style={{color: 'black', fontSize: 18}}>
                                     {this.state.is_phiscal ? "Physical" : "Virtual"}
                                 </Text>
                             </View>
                             <View style={[filter_snaps_styles.inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>
-                                <AntDesign name="eyeo" size={20} color="black" style={filter_snaps_styles.icon}/>
+                                <MaterialIcons name="person" size={20} color="black" style={filter_snaps_styles.icon}/>
                                 <Text style={{color: 'black', fontSize: 18}}>
                                     {this.state.num_members}
                                 </Text>
@@ -450,7 +470,7 @@ export class OtherActivityScreen extends React.Component {
                             </Text>
                             <View style={info_styles.horizontal_bar} />
                             <Text style={info_styles.title_text}>
-                                Address
+                                {addressTitle}
                             </Text>
                             <Text style={info_styles.inner_text}>
                                 {this.state.address}
