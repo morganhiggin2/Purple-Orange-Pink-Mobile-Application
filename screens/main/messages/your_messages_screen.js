@@ -52,8 +52,9 @@ const main_styles = StyleSheet.create(
             marginLeft: 5,
         },
         top_bar: {
-            flexDirection: 'row',
-            padding: "3%",
+            flexDirection: 'row-reverse',
+            padding: 4,
+            paddingHorizontal: 8,
             backgroundColor: 'white',
         },
         scroll_area: {
@@ -330,10 +331,6 @@ export class YourMessagesScreen extends React.Component {
                     </Text> ) : (
                         <SafeAreaView style={{flex: 1}}>
                             <View style={main_styles.top_bar}>
-                                <View style={main_styles.search_bar}>
-                                    <Feather name="search" size={30} color="gray" style={{alignSelf: 'center'}}/>
-                                    <TextInput style={main_styles.text_input} placeholderTextColor="black"/>
-                                </View>
                                 <TouchableHighlight style={{marginLeft: 5}} underlayColor="white" onPress={() => {this.props.navigation.navigate("Messages Filters Screen", {id: this.props.id})}}>
                                    <Feather name="list" size={36} color="gray" />
                                 </TouchableHighlight>
@@ -421,7 +418,6 @@ class FrameComponent extends React.Component {
             <View style={[blip_styles.body, {borderColor: colorCode(this.props.item)}]}>
                 <View style={blip_styles.top_bar}>
                     <View style={[blip_styles.inner_top_bar_left]}>
-                        <Image style={{width: 16, height: 16, alignSelf: 'center'}} source={require("../../../images/fakelogo.png")}/>
                         <Text style={blip_styles.top_text}>
                             {this.state.name}
                         </Text>
@@ -484,6 +480,17 @@ const deleteAlert = (frameComponent) => {
         }
     );
 }
+
+/*
+
+
+                                <View style={main_styles.search_bar}>
+                                    <Feather name="search" size={30} color="gray" style={{alignSelf: 'center'}}/>
+                                    <TextInput style={main_styles.text_input} placeholderTextColor="black"/>
+                                </View>
+
+*/
+
 //<Feather name="search" size={30} color="gray" style={{alignSelf: 'center'}}/>
 //<View style={{ borderBottomColor: '#CCCCCC', borderBottomWidth: 2, width: '97%', alignSelf: 'center'}}/> 
 //#FFC2B5 was border color for underline

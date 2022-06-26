@@ -347,13 +347,9 @@ class FrameComponent extends React.Component {
         super(props);
 
         this.state = {
-            trashColor: "black",
         };
         
         this.makeRequest = this.makeRequest.bind(this);
-        this.onTrashButtonPress = this.onTrashButtonPress.bind(this);
-        this.onTrashButtonRelease = this.onTrashButtonRelease.bind(this);
-        this.afterDeleteAlert = this.afterDeleteAlert.bind(this);
     }
 
     createBody() {
@@ -369,11 +365,6 @@ class FrameComponent extends React.Component {
                             <Text style={{color: 'black', fontSize: 16}}>
                                 {this.props.item.title}
                             </Text>
-                        </View>
-                        <View style={blip_styles.inner_top_bar}>
-                            <TouchableHighlight style={{marginLeft: 10}} underlayColor="white" onPress={() => {}} onHideUnderlay={() => {this.onTrashButtonRelease()}} onShowUnderlay={() => {this.onTrashButtonPress()}}> 
-                                <Feather name="trash-2" size={20} color={this.state.trashColor} />
-                            </TouchableHighlight>
                         </View>
                     </View>
                         {dataType(this.props.item)}
@@ -448,28 +439,6 @@ class FrameComponent extends React.Component {
             }
         }
     }
-
-    onTrashButtonPress() {
-        this.setState({trashColor: "red"});
-    }
-
-    onTrashButtonRelease() {
-        this.setState({trashColor: "black"});
-        deleteAlert(this);
-    }
-
-    deleteDataComponent(id) {
-        for (let [i, data] of DATA.entries()) {
-            if (data.id == id) {
-                DATA.splice(i, 1);
-            }
-        }
-    }
-
-    afterDeleteAlert() {
-        this.deleteDataComponent(this.props.item.id);
-        this.props.lazyUpdate();
-    }
 }  
 
 //get the color code
@@ -479,16 +448,6 @@ function colorCode(item) {
             return(GlobalValues.ACTIVITY_COLOR);
         case "group":
             return(GlobalValues.GROUP_COLOR);
-    }
-}
-
-//get the correct navigation link
-function navigationLink(item) {
-    switch(item.type) {
-        case "activity": 
-            return("Manage Activity Screen");
-        case "group":
-            return("Manage Group Screen");
     }
 }
 
@@ -529,28 +488,6 @@ function limitDescription(desc) {
         return desc;
     }
 }
-
-const deleteAlert = (frameComponent) => {
-    Alert.alert(
-        "Delete",
-        "Are you sure you want to delete this conversation?",
-        [
-            {
-                text: "Cancel",
-                onPress: () => {},
-                style: "cancel",
-            },
-            {
-                text: "Delete",
-                onPress: () => frameComponent.afterDeleteAlert(),
-            }
-        ],
-        {
-            cancelable: true,
-        }
-    );
-}
-
 const invitationSentAlert = () => {
     Alert.alert(
         "Invitation Sent",

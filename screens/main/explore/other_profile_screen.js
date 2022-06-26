@@ -87,6 +87,7 @@ const info_styles = StyleSheet.create(
             color: 'gray',
             fontSize: 14,
             marginLeft: 5,
+            marginVertical: 4,
         },
         horizontal_bar: {
             width: '100%',
@@ -152,10 +153,7 @@ const filter_snaps_styles = StyleSheet.create(
             alignSelf: 'flex-start',
             marginHorizontal: 2,
             marginVertical: 2,
-            textAlign: 'center',
             flexDirection: 'row',
-            justifyContent: 'center',
-            alignSelf: 'center'
         },
         icon: {
             alignSelf: 'center',
@@ -164,6 +162,7 @@ const filter_snaps_styles = StyleSheet.create(
         container: {
             flexDirection: 'row',
             flexWrap: 'wrap',
+            marginVertical: 4,
         }
     }
 );

@@ -635,6 +635,7 @@ export class YourProfileScreen extends React.Component {
                             </TouchableOpacity>
                         </View>
                     </View>
+                    <View style={section_styles.gap} />
                     <TouchableOpacity style={[info_styles.body, {flexDirection: "row", justifyContent: 'center'}]} onPress={() => {this.addPoint();}}>
                         <Ionicons name="add-circle-outline" size={20} color={GlobalValues.ORANGE_COLOR} style={actions_styles.action_button_icon}/>
                         <Text style={[actions_styles.action_button_text, {color: GlobalValues.ORANGE_COLOR}]}>

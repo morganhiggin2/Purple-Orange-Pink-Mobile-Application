@@ -214,6 +214,8 @@ export class ManageActivityScreen extends React.Component {
             description: "",
             date: "",
             invitation_type: "",
+            is_admin: false,
+            is_participant: false,
 
             //images
             activity_images: [],
@@ -236,11 +238,14 @@ export class ManageActivityScreen extends React.Component {
             //id of the activity
             id: this.props.route.params.id,
         }
+
+        this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={"Manage Activity"}/>});
         
         this.viewInvitations = this.viewInvitations.bind(this);
         this.viewAdmins = this.viewAdmins.bind(this);
         this.viewParticipants = this.viewParticipants.bind(this);
         this.fetchActivityInformation = this.fetchActivityInformation.bind(this);
+        this.leave = this.leave.bind(this);
 
         this.lazyUpdate = this.lazyUpdate.bind(this);
         this.cleanImages = this.cleanImages.bind(this);
@@ -258,8 +263,6 @@ export class ManageActivityScreen extends React.Component {
         //...
         //clean images
         this.cleanImages();
-
-        this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={"Manage Car Group"}/>});
 
         this.lazyUpdate();
     }
@@ -311,6 +314,8 @@ export class ManageActivityScreen extends React.Component {
                 this.state.distance = activity_information.distance;
                 this.state.is_admin = activity_information.is_admin;
                 this.state.is_participant = activity_information.is_participant;
+                this.state.is_in_activity = activity_information.is_in_activity;
+                this.state.location = activity_information.location;
 
                 this.state.loading = false;
 
@@ -435,19 +440,11 @@ export class ManageActivityScreen extends React.Component {
                             </Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {}}>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("View Map Screen", {location: this.state.location})}}>
                         <View style={actions_styles.action_button_inner}>
                             <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
                             <Text style={actions_styles.action_button_text}>
-                                Send Invitation
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.viewInvitations();}}>
-                        <View style={actions_styles.action_button_inner}>
-                            <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
-                            <Text style={actions_styles.action_button_text}>
-                                View Invitations
+                                View Location
                             </Text>
                         </View>
                     </TouchableOpacity>
@@ -459,7 +456,7 @@ export class ManageActivityScreen extends React.Component {
                             </Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {}}>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.leave();}}>
                         <View style={actions_styles.action_button_inner}>
                             <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
                             <Text style={actions_styles.action_button_text}>
@@ -478,6 +475,14 @@ export class ManageActivityScreen extends React.Component {
                             <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
                             <Text style={actions_styles.action_button_text}>
                                 Leave
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("View Map Screen", {location: this.state.location})}}>
+                        <View style={actions_styles.action_button_inner}>
+                            <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
+                            <Text style={actions_styles.action_button_text}>
+                                View Location
                             </Text>
                         </View>
                     </TouchableOpacity>
@@ -660,6 +665,76 @@ export class ManageActivityScreen extends React.Component {
 
     viewParticipants() {
         this.props.navigation.navigate("View Participants Screen", {type: "activity", id: this.state.id});
+    }
+
+    async leave() {
+        //if request was successful
+        var successful = false;
+
+        var url = "";
+
+        if (this.state.is_admin) {
+            url = "/api/User/Friends/RemoveFromCreatedActivity?id=" + this.state.id;
+        }
+        else if (this.state.is_participant) {
+            url = "/api/User/Friends/LeaveActivityAsParticipant?id=" + this.state.id;
+        }
+
+        //make request
+        var result = await GlobalEndpoints.makeGetRequest(true, url)
+            .then((result) => {
+                if (result == undefined) {
+                    successful = false;
+                }
+                else {
+                    successful = true;
+                }
+                return(result);
+            })
+            .catch((error) => {
+                successful = false;
+                return(error);
+            });
+
+        //if there is no error message, request was good
+        if (successful) {
+            //if result status is ok
+            if (result.request.status ==  200) {
+                //go back, pass id of user to delete
+                GlobalProperties.return_screen = "Manage Activity Screen"
+                GlobalProperties.screen_props = {
+                    action: "remove",
+                    id: this.state.id,
+                }
+
+                //then go back
+                this.props.navigation.pop(1);
+            }
+            else {
+                //returned bad response, fetch server generated error message
+                //and set 
+                Alert.alert(result.data);
+                return;
+            }
+        }
+        else {
+            //invalid request
+            if (result == undefined) {            
+                return;
+            }
+            else if (result.response.status == 400 && result.response.data) {
+                Alert.alert(JSON.parse(result.response.data));
+                return;
+            }
+            //handle not found case
+            else if (result.response.status == 404) {
+                GlobalEndpoints.handleNotFound(false);
+            }
+            else {
+                Alert.alert("There seems to be a network connection issue.\nCheck your internet.");
+                return;
+            }
+        }
     }
 }
 

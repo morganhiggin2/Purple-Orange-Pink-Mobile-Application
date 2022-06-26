@@ -11,6 +11,7 @@ import { InviteToScreen } from './invite_to_screen.js';
 import { OtherActivityScreen } from './other_activity_screen.js';
 import { ViewAdminsScreen } from '../your_pages/manageScreens/view_admins_screen.js';
 import { ViewParticipantsScreen } from '../your_pages/manageScreens/view_participants_screen.js';
+import { ActivityCreationScreen } from '../your_pages/creationScreens/activity_creation_screen.js';
 
 const MainStack = createStackNavigator();
 //const RootStack = createStackNavigator();
@@ -60,6 +61,8 @@ export class ExploreNavigator extends React.Component {
                 <MainStack.Screen name="View Participants Screen" component={ViewParticipantsScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"View Participants"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
 
                 <MainStack.Screen name="Invite To Screen" component={InviteToScreen} options={{ headerTitle: () => <HeaderTitle title="Invite To"/>, headerBackTitle: "back", headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}} />
+                <MainStack.Screen name="Activity Creation Screen" component={ActivityCreationScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title="Create Activity"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
+
             </MainStack.Navigator>
         );
     }

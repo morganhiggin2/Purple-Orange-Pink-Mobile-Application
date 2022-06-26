@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {StyleSheet, Text, View, SafeAreaView, FlatList, StatusBar, Image, Alert} from 'react-native';
+import {StyleSheet, Text, View, SafeAreaView, FlatList, StatusBar, Image, Alert, RefreshControl} from 'react-native';
 import { TouchableOpacity, TouchableHighlight } from 'react-native-gesture-handler';
 import { color } from 'react-native-reanimated';
 import {AntDesign, Feather, Ionicons} from '@expo/vector-icons';
@@ -60,7 +60,6 @@ const blip_styles = StyleSheet.create(
     }
 );
 
-
 const post_styles = StyleSheet.create(
     {
         body: {
@@ -72,7 +71,6 @@ const post_styles = StyleSheet.create(
             alignItems: "flex-start",
             flexDirection: "row",            
             flexWrap: 'wrap',
-            justifyContent: 'space-between',
         },
         title_text: {
             color: 'black',
@@ -179,6 +177,19 @@ export class ManageScreen extends React.Component {
             if (GlobalProperties.return_screen == "Activity Creation Screen") {
                 this.fetchList();
             }
+            else if (GlobalProperties.return_screen == "Manage Activity Screen" && GlobalProperties.screen_props != null) {
+                if (GlobalProperties.screen_props.action = "remove") {
+                    //remove activity
+
+                    for (let [i, data] of this.state.frames.entries()) {
+                        if (data.id == GlobalProperties.screen_props.id && data.type == "activity") {
+                            this.state.frames.splice(i, 1);
+                        }
+                    }
+
+                    this.fetchList();
+                }
+            }
         });
 
         this.fetchList();
@@ -196,7 +207,7 @@ export class ManageScreen extends React.Component {
         var successful = false;
 
         //make request
-        var result = await GlobalEndpoints.makeGetRequest(true, "/api/User/Friends/GetListActivitiesAndGroups")
+        var result = await GlobalEndpoints.makeGetRequest(true, "/api/User/Friends/GetManagedItems")
             .then((result) => {
                 if (result == undefined) {
                     successful = false;
@@ -271,9 +282,11 @@ export class ManageScreen extends React.Component {
                 <SafeAreaView style={[main_styles.scroll_view, {flex: 1}]}>
                     {this.createBar()}
                     <FlatList 
-                    data={DATA}
-                    renderItem={renderItem}
-                    keyExtractor={item => item.id}
+                        data={DATA}
+                        renderItem={renderItem}
+                        keyExtractor={item => item.id}
+                        refreshControl={<RefreshControl refreshing={false} 
+                        onRefresh={() => {this.state.loading = true; this.fetchList()}}/>}
                     />
                 </SafeAreaView>
             );
@@ -290,9 +303,6 @@ export class ManageScreen extends React.Component {
                         </Text>
                     </View>
                 </TouchableHighlight>
-                <TouchableHighlight style={{marginLeft: 10}} underlayColor="white" onPress={() => {this.props.navigation.navigate("Your Feed Filters Screen")}} onHideUnderlay={() => {}} onShowUnderlay={() => {}}>
-                    <Feather name="list" size={38} color="gray" />
-                </TouchableHighlight>
             </View>
         );
     }
@@ -302,15 +312,19 @@ export class ManageScreen extends React.Component {
     }
 }
 
-//<Ionicons name="person" size={16} style={title_styles.icon} color={filledIconColor(this.props.item)}/>
+//<Ionicons name="person" size={16} style={title_styles.icon} color={filledIconColor(this.state.item)}/>
 
 class FrameComponent extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
+            item: this.props.item,
+                
             trashColor: "black",
         };
+
+        console.log(this.state.item);
         
         this.onTrashButtonPress = this.onTrashButtonPress.bind(this);
         this.onTrashButtonRelease = this.onTrashButtonRelease.bind(this);
@@ -322,25 +336,52 @@ class FrameComponent extends React.Component {
     }
 
     render() { 
-        return (
-            <TouchableOpacity activeOpacity={1} onPress={() => {this.props.navigation.navigate(navigationLink(this.props.item), {id: this.props.item.id, name: this.props.item.title})}} >
-                <View style={[blip_styles.body, {borderColor: colorCode(this.props.item)}]}>
-                    <View style={blip_styles.top_bar}>
-                        <View style={title_styles.inner_text}>
-                            <Text style={{color: 'black', fontSize: 16}}>
-                                {this.props.item.title}
+        if (this.state.item.type == "activity") {
+
+            return (
+                <TouchableOpacity activeOpacity={1} onPress={() => {this.props.navigation.navigate("Manage Activity Screen", {id: this.state.item.id, name: this.state.item.title})}} >
+                    <View style={[blip_styles.body, {borderColor: GlobalValues.ACTIVITY_COLOR}]}>
+                        <View style={blip_styles.top_bar}>
+                            <View style={title_styles.inner_text}>
+                                <Text style={{color: 'black', fontSize: 16}}>
+                                    {this.state.item.title}
+                                </Text>
+                            </View>
+                            <View style={blip_styles.inner_top_bar}>
+                                <TouchableHighlight style={{marginLeft: 10}} underlayColor="white" onPress={() => {}} onHideUnderlay={() => {this.onTrashButtonRelease()}} onShowUnderlay={() => {this.onTrashButtonPress()}}> 
+                                    <Feather name="trash-2" size={20} color={this.state.trashColor} />
+                                </TouchableHighlight>
+                            </View>
+                        </View>
+                            <Text style={blip_styles.inner_text}>
+                                {this.state.item.date_time + "\n"}
+                                {limitDescription(this.state.item.description)}
                             </Text>
                         </View>
-                        <View style={blip_styles.inner_top_bar}>
-                            <TouchableHighlight style={{marginLeft: 10}} underlayColor="white" onPress={() => {}} onHideUnderlay={() => {this.onTrashButtonRelease()}} onShowUnderlay={() => {this.onTrashButtonPress()}}> 
-                                <Feather name="trash-2" size={20} color={this.state.trashColor} />
-                            </TouchableHighlight>
+                    </TouchableOpacity>
+            );
+        }
+        else if (this.state.item.type == "invitation") {
+            return (
+                <TouchableOpacity activeOpacity={1} onPress={() => {this.props.navigation.navigate("Manage Invitation Screen", {id: this.state.item.id, name: this.state.item.title})}} >
+                    <View style={[blip_styles.body, {borderColor: GlobalValues.INVITATION_COLOR}]}>
+                        <View style={blip_styles.top_bar}>
+                            <View style={title_styles.inner_text}>
+                                <Text style={{color: 'black', fontSize: 16}}>
+                                    {this.state.item.title}
+                                </Text>
+                            </View>
+                            <View style={blip_styles.inner_top_bar}>
+                                <TouchableHighlight style={{marginLeft: 10}} underlayColor="white" onPress={() => {}} onHideUnderlay={() => {this.onTrashButtonRelease()}} onShowUnderlay={() => {this.onTrashButtonPress()}}> 
+                                    <Feather name="trash-2" size={20} color={this.state.trashColor} />
+                                </TouchableHighlight>
+                            </View>
                         </View>
-                    </View>
-                        {dataType(this.props.item)}
-                    </View>
-                </TouchableOpacity>
-        );
+
+                        </View>
+                    </TouchableOpacity>
+            );
+        }
     }
 
     onTrashButtonPress() {
@@ -364,8 +405,17 @@ class FrameComponent extends React.Component {
         //if request was successful
         var successful = false;
 
+        var url = "";
+
+        if (this.type == "activity") {
+            url = "/api/User/Friends/RemoveFromCreatedActivity?id=" + this.state.item.id;
+        }
+        else if (this.type == "invitation") {
+            url = "/api/User/Generic/RejectInvitation?id=" + this.state.item.id
+        }
+
         //make request
-        var result = await GlobalEndpoints.makeGetRequest(true, "/api/User/Friends/RemoveFromCreatedActivity?id=" + this.props.item.id)
+        var result = await GlobalEndpoints.makeGetRequest(true, "/api/User/Friends/RemoveFromCreatedActivity?id=" + this.state.item.id)
             .then((result) => {
                 successful = true;
                 return(result);
@@ -382,7 +432,7 @@ class FrameComponent extends React.Component {
             if (result.request.status ==  200) {
 
                 //delete data component from list
-                this.deleteDataComponent(this.props.item.id);
+                this.deleteDataComponent(this.state.item.id);
 
                 this.props.lazyUpdate();
             }
@@ -411,46 +461,6 @@ class FrameComponent extends React.Component {
         }
     }
 }  
-
-//get the correct navigation link
-function navigationLink(item) {
-    switch(item.type) {
-        case "activity": 
-            return("Manage Activity Screen");
-        case "group":
-            return("Manage Group Screen");
-    }
-}
-
-//get the color code
-function colorCode(item) {
-    switch(item.type) {
-        case "activity":
-            return(GlobalValues.ACTIVITY_COLOR);
-        case "group":
-            return(GlobalValues.GROUP_COLOR);
-    }
-}
-
-//get the body
-function dataType(item) {
-    switch(item.type) {
-        case "activity":
-            //number of people wanting to go, number of slots open, number of slots total, time and day, etc
-            return(
-                <Text style={blip_styles.inner_text}>
-                    {item.date_time + "\n"}
-                    {limitDescription(item.description)}
-                </Text>
-            );
-        case "group":
-            return(
-                <Text style={blip_styles.inner_text}>
-                    {limitDescription(item.description)}
-                </Text>
-            );
-    }
-}
 
 function limitDescription(desc) {
     if (desc.length > 120) {

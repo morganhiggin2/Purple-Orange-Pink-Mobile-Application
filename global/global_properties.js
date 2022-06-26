@@ -17,6 +17,7 @@ export const GlobalValues = {
   PEOPLE_COLOR: "#ffb300",
   ACTIVITY_COLOR: "#ff0000",
   GROUP_COLOR: "#00eb8d",
+  INVITATION_COLOR: "#8599C7",
   DARKER_WHITE: "#f1f1f1",//"#f2f2f2",
   DARKER_OUTLINE: "#ebebeb",
   DISTINCT_GRAY: '#c9c9c9',
@@ -52,7 +53,8 @@ export const GlobalValues = {
   INVITATION_CAP_INFORMATION: "This limits the number of pending invitations at one time.",
   PARTICIPANT_CAP_INFORMATION: "This limits the number of people than can join your activity.",
   INVITATION_TYPE_INFORMATION: "Anyone: anyone can join\nInvitation Required: anyone can request to join, and you must then accept their invite for them to join.\nInvite Only: Only you can invite people to join",
-  SEARCH_LOCATION_IS_ACTIVITY_LOCATION_INFORMATION: "The location in which people can find your activity is the same as the location of your activity."
+  SEARCH_LOCATION_IS_ACTIVITY_LOCATION_INFORMATION: "The location in which people can find your activity is the same as the location of your activity.",
+  ADDRESS_INFORMATION: "Only people who join you activity are able to see this",
 }
 
 export class GlobalProperties {
@@ -93,6 +95,9 @@ export class GlobalProperties {
     //handlers for the filters going back to their modified screens
     static map_filters_updated = false;
     static search_filters_updated = false;
+
+    //for messages page
+    static messagess_filter_type = "all";
 
     //if messages should be releoaded when page is opened
     static reload_messages = true;

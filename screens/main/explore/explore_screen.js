@@ -20,8 +20,9 @@ const frame_styles = StyleSheet.create(
             marginBottom: Math.trunc(Dimensions.get('window').width * 0.029),*/
             width: Math.trunc(Dimensions.get('window').width * 0.98),
             marginTop: Math.trunc(Dimensions.get('window').width * 0.02),
-            borderRadius: 3,
-            borderColor: GlobalValues.DISTINCT_GRAY,
+            borderRadius: 4,
+            borderWidth: 5,
+            borderColor: "white",
             //alignItems: 'flex-end',
             //justifyContent: 'flex-start',
             //direction: 'inherit', 
@@ -47,9 +48,15 @@ const frame_styles = StyleSheet.create(
             marginBottom: 2,
             marginLeft: 4,
         },
+        inner_text_apart_container: {
+            marginBottom: 2,
+            marginLeft: 4,
+            justifyContent: 'space-between',
+             flexDirection: 'row'
+        },
         main_text: {
             fontSize: 14,
-            marginRight: 16,
+            marginRight: 5,
             color: 'black',
         },
         description_text: {
@@ -62,7 +69,31 @@ const frame_styles = StyleSheet.create(
             color: 'black',
         },
     }
-)
+);
+
+
+const post_styles = StyleSheet.create(
+    {
+        post_button: {
+            flexDirection: "row",
+            alignItems: 'flex-start',
+            borderRadius: 3,
+            borderWidth: 4,
+            backgroundColor: '#FE3C3C',
+            borderColor: '#FE3C3C',
+            padding: 3,
+            paddingVertical: 0,
+            alignSelf: 'center',
+            alignContent: 'center',
+            marginTop: "5%",
+        },
+        post_button_text: {
+            color: 'white',
+            fontSize: 18,
+            alignSelf: 'center',
+        }
+    }
+);
 
 const main_styles = StyleSheet.create(
     {
@@ -90,7 +121,8 @@ const main_styles = StyleSheet.create(
             marginLeft: 5,
         },
         top_bar: {
-            flexDirection: 'row-reverse',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
             padding: 4,
             paddingHorizontal: 8,
             backgroundColor: 'white',
@@ -116,14 +148,19 @@ class FrameComponent extends React.Component{
 
         if (this.props.type == "person") {
             this.state.name = this.props.firstName + " " + this.props.lastInitial;
+        
+            //deal if name if too long to fit on screen
+            if (this.state.name.length > 25) {
+                this.state.name = this.state.name.substring(0, 22) + "...";
+            }
         }
         else if (this.props.type == "activity") {
             this.state.name = this.props.name;
-        }
-        
-        //deal if name if too long to fit on screen
-        if (this.state.name.length > 30) {
-            this.state.name = this.state.name.substring(0, 8) + "...";
+            
+            //deal if name if too long to fit on screen
+            if (this.state.name.length > 40) {
+                this.state.name = this.state.name.substring(0, 37) + "...";
+            }
         }
     }
 
@@ -176,17 +213,17 @@ class FrameComponent extends React.Component{
                     }}>
                         <View style={frame_styles.inner_box}>
                             <Image style={frame_styles.background_image} source={{uri: "https://image.cnbcfm.com/api/v1/image/106926992-1628885077267-elon.jpg"}}/>
-                            <View style={frame_styles.text_container}>
+                            <View style={[frame_styles.text_container, {width: '65%'}]}>
                                 <View style={frame_styles.inner_text_container}>
                                     <Text style={frame_styles.name_text}>
                                         {this.state.name}
                                     </Text> 
                                 </View>
-                                <View style={[frame_styles.inner_text_container]}>
+                                <View style={frame_styles.inner_text_apart_container}>
                                     <Text style={frame_styles.main_text}>
                                         {this.props.distance + " miles away"}
                                     </Text> 
-                                    <Text style={[frame_styles.main_text, {marginRight: 100}]}>
+                                    <Text style={frame_styles.main_text}>
                                         {this.props.age + " years old"}
                                     </Text>
                                 </View>
@@ -208,19 +245,16 @@ class FrameComponent extends React.Component{
                         this.props.navigation.navigate("Other Activity Screen", {id: this.props.id, type: "none", viewing:""});
                     }}>
                         <View style={frame_styles.inner_box}>
-                            <Image style={frame_styles.background_image} source={{uri: "https://image.cnbcfm.com/api/v1/image/106926992-1628885077267-elon.jpg"}}/>
-                            <View style={frame_styles.text_container}>
+                            <View style={[frame_styles.text_container, {width: '100%'}]}>
                                 <View style={frame_styles.inner_text_container}>
                                     <Text style={frame_styles.name_text}>
                                         {this.state.name}
                                     </Text> 
                                 </View>
-                                <View style={[frame_styles.inner_text_container]}>
+                                <View style={[frame_styles.inner_text_apart_container]}>
                                     <Text style={frame_styles.main_text}>
                                         {this.props.distance + " miles away"}
                                     </Text> 
-                                </View>
-                                <View style={[frame_styles.inner_text_container]}>
                                     <Text style={frame_styles.main_text}>
                                         {this.props.date_time}
                                     </Text> 
@@ -358,8 +392,12 @@ export class ExploreScreen extends React.Component {
     componentDidMount() {
         this.props.navigation.addListener('focus', () => {
             if (GlobalProperties.search_filters_updated) {
-                this.updateSearch();
+                this.state.loading = true;
+                this.state.reload = false;
                 this.lazyUpdate();
+
+                this.updateSearch();
+
                 GlobalProperties.search_filters_updated = true;
             }
 
@@ -617,6 +655,13 @@ export class ExploreScreen extends React.Component {
                     ) : (
                     <View style={{flex: 1}}>
                         <View style={main_styles.top_bar}>
+                            <TouchableHighlight underlayColor="white" onPress={() => {this.props.navigation.navigate("Activity Creation Screen")}} onHideUnderlay={() => {}} onShowUnderlay={() => {}}>
+                                <View style={post_styles.post_button}>
+                                    <Text style={post_styles.post_button_text}>
+                                        Create
+                                    </Text>
+                                </View>
+                            </TouchableHighlight>
                             <TouchableHighlight style={{marginLeft: 5}} underlayColor="white" onPress={() => {this.props.navigation.navigate("Explore Filters Screen");}}>
                                 <Feather name="list" size={36} color="gray" />
                             </TouchableHighlight>

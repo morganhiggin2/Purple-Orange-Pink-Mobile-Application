@@ -306,7 +306,6 @@ export class OtherActivityScreen extends React.Component {
                 var activity_information = JSON.parse(result.request.response).activity_information;
  
                 this.state.title = activity_information.title;
-                this.state.address = activity_information.address;
                 this.state.attributes = activity_information.attributes;
                 this.state.date = activity_information.date;
                 this.state.is_physical = activity_information.is_physical;
@@ -424,13 +423,6 @@ export class OtherActivityScreen extends React.Component {
             );
         }
 
-        if (this.state.is_physical) {
-            addressTitle = "Address";
-        }
-        else {
-            addressTitle = "Virtual Link";
-        }
-
         const renderComponent = () => {
             if (this.state.loading == true) {
                 return (
@@ -467,13 +459,6 @@ export class OtherActivityScreen extends React.Component {
                             </Text>
                             <Text style={info_styles.inner_text}>
                                 {this.state.description}
-                            </Text>
-                            <View style={info_styles.horizontal_bar} />
-                            <Text style={info_styles.title_text}>
-                                {addressTitle}
-                            </Text>
-                            <Text style={info_styles.inner_text}>
-                                {this.state.address}
                             </Text>
                             <View style={info_styles.horizontal_bar} />
                             <Text style={info_styles.title_text}>

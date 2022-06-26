@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Image, ScrollView, Dimensions, TouchableOpacity, Alert} from 'react-native';
+import {StyleSheet, View, Text, TextInput, Image, ScrollView, Dimensions, TouchableHighlight, Alert} from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { SliderBox } from "react-native-image-slider-box";
 import { AntDesign, Feather, MaterialCommunityIcons } from '@expo/vector-icons'; 
@@ -9,15 +9,44 @@ import { GlobalEndpoints } from '../../global/global_endpoints';
 const main_styles = StyleSheet.create({
     page: {
         backgroundColor: "white",
+        flexDirection: 'row',
+        justifyContent: 'center',
+        height: '100%'
     },
     container: {
         alignSelf: 'center',
-        marginTop: '40%',
     },
     button: {
         backgroundColor: 'orange',
-    }
+    },
+    title_text: {
+        color: 'black',
+        fontSize: 16,
+    },
 });
+
+const post_styles = StyleSheet.create(
+    {
+        post_button: {
+            flexDirection: "row",
+            alignItems: 'flex-start',
+            borderRadius: 3,
+            borderWidth: 4,
+            backgroundColor: '#FE3C3C',
+            borderColor: '#FE3C3C',
+            padding: 3,
+            paddingVertical: 0,
+            alignSelf: 'center',
+            alignContent: 'center',
+            marginTop: 10,
+        },
+        post_button_text: {
+            color: 'white',
+            fontSize: 18,
+            alignSelf: 'center',
+        }
+    }
+);
 
 export class LoadingScreen extends React.Component {
     constructor(props) {
@@ -40,27 +69,29 @@ export class LoadingScreen extends React.Component {
                {!this.props.reload ? 
                (
                    <View style={main_styles.container}>
-                        <Text>
-                        Loading...
+                    <Text style={main_styles.title_text}>
+                            Loading...
                         </Text>
                    </View>
                ) 
                : 
                (
                    <View style={main_styles.container}>
-                       <Text>
-                        Could not load
+                       <Text style={main_styles.title_text}>
+                            Could not load
                         </Text>
-                        <TouchableOpacity style={main_styles.button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress = {() => {
+                        <TouchableHighlight underlayColor="white" onHideUnderlay={() => {}} onShowUnderlay={() => {}} onPress = {() => {
                             //could be this?
                             if (this.props.tryAgain) {
                                 this.props.tryAgain();
                             }
                         }}>
-                            <Text>
-                                Reload
-                            </Text>
-                        </TouchableOpacity>
+                            <View style={post_styles.post_button}>
+                                <Text style={post_styles.post_button_text}>
+                                    Reload
+                                </Text>
+                            </View>
+                        </TouchableHighlight>
                    </View>
                     
                )

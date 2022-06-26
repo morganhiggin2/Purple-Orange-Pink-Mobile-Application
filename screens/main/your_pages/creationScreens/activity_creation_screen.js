@@ -165,7 +165,7 @@ const inline_attribute_styles = StyleSheet.create({
         width: '100%',
         backgroundColor: '#EAEAEA',
         borderRadius: 4,
-        textAlign: 'left',
+        textAlign: 'right',
         fontSize: 18,
     },
     numeric_text_input: {
@@ -593,9 +593,14 @@ export class ActivityCreationScreen extends React.Component {
                     </View>
                     <View style={main_styles.horizontal_bar}/>
                     <View style={inline_attribute_styles.body}>
-                        <Text style={inline_attribute_styles.title_text}>
-                            Address
-                        </Text>
+                        <View style={inline_attribute_styles.title_view}>
+                            <Text style={inline_attribute_styles.title_text}>
+                                {"Address "}
+                            </Text>
+                            <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Invitation Type", GlobalValues.ADDRESS_INFORMATION);}}>
+                                <AntDesign name="infocirlceo" size={14} color="black" />
+                            </TouchableOpacity>
+                        </View>
                         <View style={inline_attribute_styles.input_text_view}>
                             <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="black" autoCorrect={false} editable={true} maxLength={160} defaultValue={this.state.target_address} onChangeText={(value) => {this.updateAddress(value);}} onEndEditing={(event) => {}}/>
                         </View>

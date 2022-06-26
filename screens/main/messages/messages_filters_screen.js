@@ -186,32 +186,12 @@ export class MessagesFiltersScreen extends React.Component {
         super(props);
 
         this.state = {
-            //for the date selector
-            date: new Date(Date.now()),
-            showDatePicker: false,
-            showTimePicker: false,
-
-            //for the list of activities
-            activities_input_handler: null,
-            activities_max_index: Object.keys(ACTIVITIES).length,
-
-            //for the activity dropdown
-            activity_dropdown_value: "hey",
-
-            //for the enable
-            enable_value: true,
-
-            //for the slider
-            slider_value: 0,
+            //for the type dropdown
+            type_dropdown_value: "all",
         }
 
-        this.updateActivityDropDownValue = this.updateActivityDropDownValue.bind(this);
-        this.updateEnableValue = this.updateEnableValue.bind(this);
-        this.updateSliderValue = this.updateSliderValue.bind(this);
+        this.updateTypeDropDownValue = this.updateTypeDropDownValue.bind(this);
     }
-
-    //add action to clear all messages
-    //add action to clear all invites
 
     render() {
         const renderComponent = ({item}) => {
@@ -219,103 +199,19 @@ export class MessagesFiltersScreen extends React.Component {
                 <View>
                     <View style={info_styles.body}>
                         <View style={inline_attribute_styles.body}>
-                            <Text style={inline_attribute_styles.title_text}>
-                                Title
-                            </Text>
-                            <View style={inline_attribute_styles.input_text_view}>
-                                <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="black" editable={true} maxLength={160}/>
-                            </View>
-                        </View>
-                        <View style={main_styles.horizontal_bar}/>
-                        <View style={attribute_styles.body}>
-                            <Text style={attribute_styles.title_text}>
-                                Description
-                            </Text>     
-                            <View style={attribute_styles.input_text_view}>
-                                <TextInput style={[attribute_styles.text_input, {fontSize: 18, textAlignVertical: "top"}]} multiline={true} editable={true} maxLength={160} numberOfLines={4} scrollEnables={true}/>
-                            </View>                   
-                        </View>
-                        <View style={main_styles.horizontal_bar}/>
-                        <View style={inline_attribute_styles.body}>
-                            <Text style={inline_attribute_styles.title_text}>
-                                Date
-                            </Text>       
-                            <View style={attribute_styles.input_text_view}>
-                                    <TouchableOpacity onPress={() => this.setState({showDatePicker: true})}>
-                                    <Text style={{color: 'blue'}}>
-                                            {this.showDate()} 
-                                            {" "}
-                                    </Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={() => this.setState({showTimePicker: true})}>
-                                    <Text style={{color: 'blue'}}>
-                                        {this.showTime()}
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>   
-                        </View>
-                    </View>
-                    <View style={section_styles.gap} />
-                    <View style={info_styles.body}>
-                        {this.showDatePicker()}
-                        {this.showTimePicker()}
-                        <View style={inline_attribute_styles.body}>
-                            <Text style={inline_attribute_styles.title_text}>
-                                Activities
-                            </Text>
-                            <View style={inline_attribute_styles.input_text_view}>
-                                <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="black" editable={true} maxLength={160} ref={(input) => {this.state.activities_input_handler = input}} onEndEditing={(event) => {this.addFilter(event.nativeEvent.text)}}/>
-                            </View>
-                        </View>
-                        <View style={filter_snaps_styles.container}> 
-                            {ACTIVITIES.map((data, key) => {
-                                return (
-                                    <FilterSnap key={key} id={data.id} innerText={data.name} parent={this} data={ACTIVITIES}/>
-                                );
-                            })}
-                        </View>                            
-                        <View style={main_styles.horizontal_bar}/>
-                        <View style={inline_attribute_styles.body}>
-                            <Text style={inline_attribute_styles.title_text}>
-                                Activities
-                            </Text>
-                            <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {width: '50%', alignSelf: 'flex-end'}]}>
-                                    <DropDown 
-                                        style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
-                                        items={[{label: 'Apple', value: 'apple'}, {label: 'Banana', value: 'banana', }, {label: "Orange", value: "orange"}, {label: "Pear", value: "pear"},   {label: "Pearr", value: "pearr"},  {label: "Pearrr", value: "pearrr"}]}
-                                        onChangeValue = {this.updateActivityDropDownValue}
-                                        />
-                            </View>
-                        </View>
-                        <View style={main_styles.horizontal_bar}/>
-                        <View style={inline_attribute_styles.body}>
-                            <Text style={inline_attribute_styles.title_text}>
-                                Enable
-                            </Text>
-                            <Switch
-                                trackColor = {{false: GlobalValues.DISTINCT_GRAY, true: GlobalValues.ORANGE_COLOR}}
-                                thumbColor = {this.state.enable_value ? 'white': 'white'}
-                                ios_backgroundColor = {GlobalValues.DISTINCT_GRAY}
-                                onValueChange = {this.updateEnableValue}
-                                value = {this.state.enable_value}
-                            />
-                        </View>
-                        <View style={main_styles.horizontal_bar}/>
-                        <View style={attribute_styles.body}>
-                            <View style={attribute_styles.title_with_value}>
-                                <Text style={attribute_styles.title_text}>
-                                    Slider
+                                <Text style={inline_attribute_styles.title_text}>
+                                    Type
                                 </Text>
-                                <Text style={attribute_styles.title_value}>
-                                    {this.state.slider_value}
-                                </Text>
-                            </View>
-                            <View style={attribute_styles.slider}>
-                                <Slider onChangeValue={this.updateSliderValue} min={0} max={10} step={1} initialValue={0} backgroundColor={'#FF7485'}/>
+                                <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {width: '50%', alignSelf: 'flex-end'}]}>
+                                        <DropDown 
+                                            style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
+                                            items={[{label: 'All', value: 'all'}, {label: 'Conversations', value: 'conversations'}, {label: 'Invitations', value: 'invitations'}, {label: 'Announcements', value: 'announcements'}]}
+                                            onChangeValue = {this.updateTypeDropDownValue}
+                                            currentValue = {this.state.type_dropdown_value}
+                                            />
+                                </View>
                             </View>
                         </View>
-                    </View>
-
                     <View style={section_styles.gap} />
                     <View style={section_styles.gap} />
                     <View style={section_styles.gap} />
@@ -334,7 +230,7 @@ export class MessagesFiltersScreen extends React.Component {
                                 <View style={{width: '50%', alignSelf: 'flex-end', marginRight: 10}}>
                                     <DropDown 
                                         items={[{label: 'Apple', value: 'apple'}, {label: 'Banana', value: 'banana', }, {label: "Orange", value: "orange"}, {label: "Pear", value: "pear"},   {label: "Pearr", value: "pearr"},  {label: "Pearrr", value: "pearrr"}]}
-                                        onChangeValue = {this.updateActivityDropDownValue}
+                                        onChangeValue = {this.updateTypeDropDownValue}
                                         />
                                 </View>
                             </View> */
@@ -343,119 +239,19 @@ export class MessagesFiltersScreen extends React.Component {
     lazyUpdate() {
         this.forceUpdate();
     }
-
-    //for the time setting
-    showDate() {
-        //when you press cancel, it gives an undefined date
-        //so check if is undefined (cancel has been pressed, or other)
-        if (this.state.date == undefined) {
-            this.state.date = Date.now();
-        }
-
-        return (this.state.date.toDateString());
-    }
-
-    showTime() {
-        //when you press cancel, it gives an undefined date
-        if (this.state.date == undefined) {
-            this.state.date = Date.now();
-        }
-
-        //calulate the format for the time
-        var hours = this.state.date.getHours();
-        var partOfDay = "AM";
-
-        if (hours - 12 > 0) {
-            partOfDay = "PM";
-        }
-
-        hours = hours % 12;
-
-        var minutes = this.state.date.getMinutes();
-
-        if (minutes < 10) {
-            minutes = "0" + minutes;
-        }
-
-        return (hours + ":" + minutes + " " + partOfDay);
-    }
-
-    //show the date picker
-    showDatePicker() {
-        if (this.state.showDatePicker) {
-            this.state.showDatePicker = false;
-
-            return(
-                <DateTimePicker mode="date" value={this.state.date} is24Hour={true} display="default" onChange={(event, newDate) => {this.state.date = newDate; this.lazyUpdate();}}/>            
-            );
-        }
-        else {
-            return (<View/>);
-        }
-    }
-
-    //show the time picker
-    showTimePicker() {
-        if (this.state.showTimePicker) {
-            this.state.showTimePicker = false;
-
-            return(
-                <DateTimePicker mode="time" value={this.state.date} is24Hour={false} display="default" onChange={(event, newDate) => {this.state.date = newDate; this.lazyUpdate();}}/>            
-            );
-        }
-        else {
-            return (<View/>);
-        }
-    }
-
-    //for the filters
-    addFilter(input) {
-        //add it
-        ACTIVITIES.push({id: this.state.activities_max_index, name: input});
-        //increment the max index
-        this.state.activities_max_index++;
-        //clear the text input
-        this.state.activities_input_handler.clear();
-        //update the screen
-        this.lazyUpdate();
-    }
-
-    //delete a data component from a json data structure with id attributes, each different
-    deleteDataComponent(id, DATA) {
-        for (let [i, data] of DATA.entries()) {
-            if (data.id == id) {
-                DATA.splice(i, 1);
-            }
-        }
-    }
-
     //update the dropdown selector for activities
-    updateActivityDropDownValue(value) {
-        this.state.activity_dropdown_value = value;
-    }
-
-    //update the enable value
-    updateEnableValue(value) {
-        this.setState({enable_value: value});
-    }
-
-    updateSliderValue(value) {
-        this.setState({slider_value: value});
-    }
-
-    //after the delete alert, and delete has been pressed
-    afterDeleteAlert(id, DATA) {
-        this.deleteDataComponent(id, DATA);
-        this.lazyUpdate();
+    updateTypeDropDownValue(value) {
+        this.state.type_dropdown_value = value;
     }
 }
+
 class DropDown extends React.Component {
     constructor(props) {
       super(props);
-      
+
       this.state = {
         open: false,
-        value: null,
+        value: props.currentValue,
         items: props.items
       };
   
@@ -559,112 +355,4 @@ class DropDown extends React.Component {
         )
       );
     }
-}
-
-class Slider extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            value: props.initialValue
-        }
-
-        this.onChangeValues = this.onChangeValues.bind(this);
-    }
-    
-    onChangeValues(values) {
-        this.state.value = values;
-        this.props.onChangeValue(values);
-    }
-
-    render() {
-        //if this is a slider with two markers
-        if (this.props.twoSlider) {
-            return(
-                <MultiSlider
-                    values = {[this.state.value[0], this.state.value[1]]}
-                    onValuesChange = {this.props.onChangeValue}
-                    min={this.props.min}
-                    max={this.props.max}
-                    step={this.props.step}
-                    sliderLength={300}
-                    isMarkersSeparated = {true}
-                    width={'100%'}
-                    snapped={true}
-                    allowOverlap={false}
-                    showSteps = {true}
-                    showStepLabels = {true}
-                    trackStyle = {{backgroundColor: GlobalValues.DISTINCT_GRAY, height: 4}}
-                    selectedStyle={{backgroundColor: GlobalValues.ORANGE_COLOR, height: 4}}
-                    markerStyle={{backgroundColor: 'white', borderColor: GlobalValues.DISTINCT_GRAY, borderWidth: 2, padding: 8}}
-                    ios_backgroundColor = {GlobalValues.ORANGE_COLOR}
-                />
-            );
-        }
-        //one slider
-        else {
-            return(
-                <MultiSlider
-                    values = {this.value}
-                    onValuesChange = {this.props.onChangeValue}
-                    min={this.props.min}
-                    max={this.props.max}
-                    step={this.props.step}
-                    sliderLength={300}
-                    isMarkersSeparated = {true}
-                    width={'100%'}
-                    snapped={true}
-                    showSteps = {true}
-                    showStepLabels = {true}
-                    trackStyle = {{backgroundColor: GlobalValues.DISTINCT_GRAY, height: 4}}
-                    selectedStyle={{backgroundColor: GlobalValues.ORANGE_COLOR, height: 4}}
-                    markerStyle={{backgroundColor: 'white', borderColor: GlobalValues.DISTINCT_GRAY, borderWidth: 2, padding: 8}}
-                    ios_backgroundColor = {GlobalValues.ORANGE_COLOR}
-                />
-            );
-        }
-    }
-}
-
-class FilterSnap extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
-    render() {
-        return( 
-            <TouchableOpacity activeOpacity={1} onPress={() => {deleteAlert(this.props.parent, this.props.data, this.props.id)}}>
-                <Text style={[filter_snaps_styles.inner_text, { backgroundColor: this.props.color, borderColor: this.props.color}]}>
-                    {this.props.innerText}
-                </Text>
-            </TouchableOpacity>
-        );
-    }
-}
-
-FilterSnap.defaultProps = {
-    color: GlobalValues.ORANGE_COLOR,
-}
-
-//create a delete alert for deleting an attribute of id=id from
-// a json data structure with id attributes, each different.
-const deleteAlert = (frameComponent, DATA, id) => {
-    Alert.alert(
-        "Delete",
-        "Are you sure you want to delete this attribute?",
-        [
-            {
-                text: "Cancel",
-                onPress: () => {},
-                style: "cancel",
-            },
-            {
-                text: "Delete",
-                onPress: () => frameComponent.afterDeleteAlert(id, DATA),
-            }
-        ],
-        {
-            cancelable: true,
-        }
-    );
 }

@@ -85,6 +85,11 @@ const attribute_styles = StyleSheet.create({
         backgroundColor: '#EAEAEA',
         borderRadius: 8,
     },
+    inner_text: {
+        color: 'gray',
+        fontSize: 14,
+        marginLeft: 5,
+    },
     slider: {
         alignSelf: 'center',
     },
@@ -143,7 +148,7 @@ const filter_snaps_styles = StyleSheet.create(
     {
         inner_text: {
             borderRadius: 5,
-            borderWidth: 2,
+            borderWidth: 1,
             paddingHorizontal: 3,
             paddingVertical: 1,
             fontSize: 16,
@@ -151,8 +156,8 @@ const filter_snaps_styles = StyleSheet.create(
             fontWeight: 'bold',
             alignSelf: 'flex-start',
             marginHorizontal: 2,
-            marginBottom: 8,
-            textAlign: 'center',
+            marginVertical: 2,
+            flexDirection: 'row',
         },
         container: {
             flexDirection: 'row',
@@ -272,12 +277,7 @@ export class ExploreFiltersScreen extends React.Component {
                                 );
                             })}
                         </View>      
-                        
-                    </View>
-
-                    <View style={section_styles.gap} />
-                    
-                    <View style={info_styles.body}>
+                        <View style={main_styles.horizontal_bar} />
                         <View style={inline_attribute_styles.body}>
                             <Text style={inline_attribute_styles.title_text}>
                                 Type
@@ -285,13 +285,18 @@ export class ExploreFiltersScreen extends React.Component {
                             <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {width: '50%', alignSelf: 'flex-end'}]}>
                                     <DropDown 
                                         style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
-                                        items={[{label: 'People', value: 'people'}, {label: 'Activities', value: 'activities', }]}
+                                        items={[{label: 'People', value: 'people'}, {label: 'Activities', value: 'activities'}]}
                                         onChangeValue = {this.updateTypeDropDownValue}
                                         currentValue = {this.state.type_dropdown_value}
                                         />
                             </View>
                         </View>
                         {typeSpecificFilters}
+                    </View>
+                    <View style={info_styles.body}>
+                        <Text style={attribute_styles.inner_text}>
+                            Use the map to set the search area. The bigger the area, the more search results.
+                        </Text>
                     </View>
 
                     <View style={section_styles.gap} />
