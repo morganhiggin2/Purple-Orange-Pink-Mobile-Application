@@ -440,14 +440,6 @@ export class ManageActivityScreen extends React.Component {
                             </Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("View Map Screen", {location: this.state.location})}}>
-                        <View style={actions_styles.action_button_inner}>
-                            <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
-                            <Text style={actions_styles.action_button_text}>
-                                View Location
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
                     <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {}}>
                         <View style={actions_styles.action_button_inner}>
                             <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
@@ -475,14 +467,6 @@ export class ManageActivityScreen extends React.Component {
                             <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
                             <Text style={actions_styles.action_button_text}>
                                 Leave
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("View Map Screen", {location: this.state.location})}}>
-                        <View style={actions_styles.action_button_inner}>
-                            <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
-                            <Text style={actions_styles.action_button_text}>
-                                View Location
                             </Text>
                         </View>
                     </TouchableOpacity>
@@ -575,6 +559,14 @@ export class ManageActivityScreen extends React.Component {
                                 Actions
                             </Text>
                             <View style={actions_styles.actions_view}> 
+                                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("View Map Screen", {location: this.state.location})}}>
+                                    <View style={actions_styles.action_button_inner}>
+                                        <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
+                                        <Text style={actions_styles.action_button_text}>
+                                            View Location
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
                                 {actionsRender}
                             </View>
                         </View>

@@ -488,6 +488,14 @@ export class OtherActivityScreen extends React.Component {
                             </Text>
                             <View style={actions_styles.actions_view}> 
                                 {joinRender}
+                                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("View Map Screen", {location: this.state.location})}}>
+                                    <View style={actions_styles.action_button_inner}>
+                                        <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
+                                        <Text style={actions_styles.action_button_text}>
+                                            View Location
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
                                 <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.block()}}>
                                     <View style={actions_styles.action_button_inner}>
                                         <MaterialCommunityIcons name="block-helper" size={20} color="white" style={actions_styles.action_button_icon}/>
