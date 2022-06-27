@@ -20,6 +20,7 @@ import { GlobalEndpoints } from './global/global_endpoints.js';
 import { Alert, LogBox } from 'react-native';
 
 import { LoadingScreen } from './screens/misc/loading_screen.js';
+import { MessageHandler } from './global/messages_handler.js';
 
 //expo
 Notifications.setNotificationHandler({
@@ -53,6 +54,10 @@ export class App extends React.Component {
   }
 
   componentDidMount() {
+    //open realm
+    GlobalProperties.messagesHandler = new MessageHandler();
+    GlobalProperties.messagesHandler.start();
+
     //get username
     GlobalProperties.get_key_value_pair("User_Username")
     .then((value) => {

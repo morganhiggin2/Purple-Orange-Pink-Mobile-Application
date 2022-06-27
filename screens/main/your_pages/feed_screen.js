@@ -224,7 +224,11 @@ export class FeedScreen extends React.Component{
     }
 
     render() {
-        return(
+        return(<View></View>
+        );
+    }
+
+    /**
         <SafeAreaView>
             {this.postBar()}
             <FlatList 
@@ -233,9 +237,7 @@ export class FeedScreen extends React.Component{
             keyExtractor={item => item.id}
             extraData={this.state.selectedItem}
             />
-        </SafeAreaView>
-        );
-    }
+        </SafeAreaView> */
 
     //backgroundColor: color, 
 

@@ -1,7 +1,7 @@
 import { GlobalProperties } from "./global_properties";
 import Realm from "realm";
 import { UIImagePickerControllerQualityType } from "expo-image-picker";
-import { fround } from "core-js/core/number";
+import 'react-native-get-random-values';
 
 const { UUID } = Realm.BSON;
 
@@ -25,10 +25,10 @@ const HeaderRecordSchema = {
     name: "Messages_Header_Record",
     embedded: true,
     properties: {
-        type: "int8", //index of type in types array
+        type: "int", //index of type in types array
         title: "string", //for direct message, person who sent it. for conversation, conversation name. 
         body: "string", //body of message to be displayed in messages feed
-        last_timestamp: { type: "int64", indexed: true},
+        last_timestamp: { type: "date", indexed: true},
         type_id: "string", //id of type, [conversation is conversation id, direct message is other user id, invitation is invitation id, none for announcemnet]
         sub_header_id: "uuid"
     },
@@ -103,7 +103,7 @@ const MessageRecord = {
     embedded: true,
     properties: {
         fromId: "string",
-        id: "", //has to be unique for the flat list to render
+        id: "int", //has to be unique for the flat list to render
         message: "string",
         showName: "bool", //wether to show name, based on if the last message is from the same person or not
     }
@@ -115,7 +115,14 @@ export class MessageHandler {
 
     constructor() {
         this.start = this.start.bind(this);
-        this.loadMasterHeader = this.loadMasterHeader.bind(this);
+        this.insertMessage = this.insertMessage.bind(this);
+        this.delete = this.delete.bind(this);
+        this.getConversationInformation = this.getConversationInformation.bind(this);
+        this.getDirectMessageInformation = this.getConversationInformation.bind(this);
+        this.getInvitationInformation = this.getInvitationInformation.bind(this);
+        this.getNextMessageBlockConverstaion = this.getNextMessageBlockConverstaion.bind(this);
+        this.getNextMessageBlockDirectMessage = this.getNextMessageBlockDirectMessage.bind(this);
+        this.insertMessages = this.insertMessages.bind(this);
     }
 
     async start() {
@@ -126,7 +133,8 @@ export class MessageHandler {
         });
 
         //if master record does not exist
-        if (masterHeaderRealm.objects("Messages_Master_Header").length == 0) {
+        if (this.masterHeaderRealm.objects("Messages_Master_Header").length == 0) {
+          this.masterHeaderRealm.write(() => {
             //generate uuid
             var id = new UUID();
 
@@ -136,16 +144,17 @@ export class MessageHandler {
                     header_records: [],
                 }
             );
+          });
         }
 
-        this.masterHeader = masterHeaderRealm.objects("Messages_Master_Header")[0];
+        this.masterHeader = this.masterHeaderRealm.objects("Messages_Master_Header");
     }
 
     //json object
     async insertMessage(message) {
 
         //make query to find it if it exists
-        const query = {"Messages_Header_Record": {}};
+        /*const query = {"Messages_Header_Record": {"type_id" : message.id, "type" : message.type}};
         const projection = {
             "type": message.type,
             "type_id": message.id,
@@ -153,7 +162,7 @@ export class MessageHandler {
 
         var found;
 
-        const headerRow = await this.masterHeader.headerRecords.findOne(query, projection)
+        const headerRow = await this.masterHeader.headerRecords.findOne(query)
             .then((result) => {
                 //found
                 found = true;
@@ -163,7 +172,12 @@ export class MessageHandler {
                 //not found
                 found = false;
                 return err;
-            });
+            });*/
+
+        var headerRow = await this.masterHeader.header_records.filtered("type_id = " + message.id + ", type = " + message.type);
+
+        console.log(headerRow);
+        return;
 
         //if it exists
         if (found) {

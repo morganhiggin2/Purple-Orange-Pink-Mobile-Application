@@ -12,6 +12,7 @@ import { YourMessagesScreen } from './messages/your_messages_screen.js';
 import {YourMessagesNavigator} from './messages/messages_navigator.js';
 import { MapNavigator } from './map/map_navigator.js';
 import { PortalNavigator } from './portal/portal_navigator.js';
+import { StatusBar } from 'expo-status-bar';
 
 import {useNavigation} from '@react-navigation/native';
 import { GlobalValues } from '../../global/global_properties.js';
@@ -42,7 +43,7 @@ export class MainNavigator extends React.Component {
     render() {
         return (
             <NavigationContainer>
-                <Tab.Navigator initialRouteName="Explore Screen" screenOptions={{headerShown: false, tabBarShowLabel: false, tabBarStyle: {backgroundColor: GlobalValues.LIGHT_ORANGE_COLOR, borderColor: GlobalValues.LIGHT_ORANGE_COLOR, display: "flex"}}}>
+                <Tab.Navigator initialRouteName="Explore Screen" screenOptions={{headerMode:"float", headerShown: false, tabBarShowLabel: false, tabBarStyle: {backgroundColor: GlobalValues.LIGHT_ORANGE_COLOR, borderColor: GlobalValues.LIGHT_ORANGE_COLOR, display: "flex"}}}>
                     <Stack.Screen name="Explore Navigator" component={ExploreNavigator} 
                     options={{
                         showLabel: false,
@@ -76,6 +77,7 @@ export class MainNavigator extends React.Component {
                     }} 
                     />
                 </Tab.Navigator>
+                <StatusBar backgroundColor={GlobalValues.HEADER_BACKGROUND_COLOR}/>
             </NavigationContainer>
         );
     }

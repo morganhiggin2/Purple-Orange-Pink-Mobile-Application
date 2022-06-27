@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Image, SafeAreaView, ScrollView, Dimensions, FlatList, Alert} from 'react-native';
+import {StyleSheet, View, Text, TextInput, Image, SafeAreaView, ScrollView, Dimensions, FlatList, Alert, RefreshControl} from 'react-native';
 import { TouchableHighlight, TouchableOpacity} from 'react-native-gesture-handler';
 import { AntDesign, Feather } from '@expo/vector-icons'; 
 import {Route} from '@react-navigation/native';
@@ -7,7 +7,9 @@ import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { render } from 'react-dom';
 import { assertThisExpression } from '@babel/types';
 import { GlobalProperties, GlobalValues } from '../../../global/global_properties';
+import { GlobalEndpoints } from '../../../global/global_endpoints';
 import * as Notifications from 'expo-notifications';
+//import { MessageHandler } from '../../../global/messages_handler';
 //import { MessageHandler } from '../../../global/messages_handler.js';
 
 const frame_styles = StyleSheet.create(
@@ -53,9 +55,13 @@ const main_styles = StyleSheet.create(
         },
         top_bar: {
             flexDirection: 'row-reverse',
-            padding: 4,
-            paddingHorizontal: 8,
-            backgroundColor: 'white',
+            backgroundColor: 'white', //#FFCDCD
+            borderRadius: 5,
+            padding: 8,
+            marginTop: "2%",
+            marginHorizontal: '2%',
+            borderLeftWidth: 5,
+            borderLeftWidth: 0,
         },
         scroll_area: {
             
@@ -215,6 +221,7 @@ export class YourMessagesScreen extends React.Component {
         };
 
         this.fetchMessages = this.fetchMessages.bind(this);
+        this.updateMessages = this.updateMessages.bind(this);
         this.lazyUpdate = this.lazyUpdate.bind(this);
 
         GlobalProperties.reloadMessages = this.fetchMessages;
@@ -223,6 +230,7 @@ export class YourMessagesScreen extends React.Component {
     componentDidMount() {
         //initiate realm database
         //MessageHandler.start();
+        this.fetchMessages();
 
         this.props.navigation.addListener('focus', () => {
             this.state.global_props = GlobalProperties.screen_props;
@@ -307,15 +315,87 @@ export class YourMessagesScreen extends React.Component {
         GlobalProperties.reload_messages = false;
     }
 
-    fetchMessages() {
-        console.log("fetching messages");
+    async fetchMessages() {
         //set global property to false first (so if multiple notifications, they dont create many overlapping requests)
         GlobalProperties.reload_messages = false;
 
         //set badge count to 0
         Notifications.setBadgeCountAsync(0);
 
-        //THEN
+        //get pending messages
+
+        //if request was successful
+        var successful = false;
+
+        //make request
+        var result = await GlobalEndpoints.makeGetRequest(true, "/api/User/Friends/Messages/GetPendingMessages?expo_token=" + GlobalProperties.expo_push_token)
+            .then((result) => {
+                if (result == undefined) {
+                    successful = false;
+                }
+                else {
+                    successful = true;
+                }
+                return(result);
+            })
+            .catch((error) => {
+                successful = false;
+                return(error);
+            });
+
+        //if there is no error message, request was good
+        if (successful) {
+
+            //if result status is ok
+            if (result.request.status ==  200) {
+                //get messages from json
+                var messages = JSON.parse(result.request.response).messages;
+
+                //add groups
+                this.state.pending_messages = messages;
+               
+                //update messages
+                this.updateMessages();
+
+                //set loading to false
+                this.state.loading = false;
+            }
+            else {
+                //returned bad response, fetch server generated error message
+                //and set 
+                this.state.reload = true;
+
+                Alert.alert(result.data);
+            }
+        }
+        else {
+
+            //invalid request
+            if (result == undefined) {
+                this.state.reload = true;
+            }
+            else if (result.response.status == 400 && result.response.data) {
+                Alert.alert(JSON.parse(result.response.data));
+                return;
+            }
+            //handle not found case
+            else if (result.response.status == 404) {
+                GlobalEndpoints.handleNotFound(false);
+                this.state.reload = true;
+            }
+            else {
+                this.state.reload = true;
+            }
+        }
+
+        //once done, lazy update
+        this.lazyUpdate();
+    }
+
+    updateMessages() {
+        console.log(this.state.pending_messages);
+
+        GlobalProperties.messagesHandler.insertMessages(this.state.pending_messages);
     }
     
     render() {
@@ -339,6 +419,8 @@ export class YourMessagesScreen extends React.Component {
                                 data={DATA}
                                 renderItem={renderItem}
                                 keyExtractor={item => item.id}
+                                refreshControl={<RefreshControl refreshing={false} 
+                                onRefresh={() => {this.state.loading = true; this.fetchMessages();}}/>}
                                 />
                         </SafeAreaView>
                     ) 

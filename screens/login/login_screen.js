@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Image} from 'react-native';
+import {StyleSheet, View, Text, TextInput, Image, Platform} from 'react-native';
 import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 import { GlobalEndpoints } from '../../global/global_endpoints';
 import { GlobalValues, GlobalProperties } from '../../global/global_properties';
@@ -131,8 +131,15 @@ export class LoginScreen extends React.Component {
                 //regex expression
                 var reg = RegExp("\=(.*?)\;");
 
+                var token = "";
+
                 //get token
-                var token = reg.exec(result["request"]["responseHeaders"]["set-cookie"])[0];
+                if (Platform.OS == 'ios') {
+                    token = reg.exec(result["request"]["responseHeaders"]["Set-Cookie"])[0];
+                }
+                else {
+                    token = reg.exec(result["request"]["responseHeaders"]["set-cookie"])[0];
+                }
 
                 //avoid delimiters
                 token = token.substring(1, token.length - 1);

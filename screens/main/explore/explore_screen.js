@@ -18,7 +18,7 @@ const frame_styles = StyleSheet.create(
             width: Math.trunc(Dimensions.get('window').width * 0.45),
             marginLeft: Math.trunc(Dimensions.get('window').width * 0.029),
             marginBottom: Math.trunc(Dimensions.get('window').width * 0.029),*/
-            width: Math.trunc(Dimensions.get('window').width * 0.98),
+            width: Math.trunc(Dimensions.get('window').width * 0.96),
             marginTop: Math.trunc(Dimensions.get('window').width * 0.02),
             borderRadius: 4,
             borderWidth: 5,
@@ -123,9 +123,13 @@ const main_styles = StyleSheet.create(
         top_bar: {
             flexDirection: 'row',
             justifyContent: 'space-between',
-            padding: 4,
-            paddingHorizontal: 8,
-            backgroundColor: 'white',
+            backgroundColor: 'white', //#FFCDCD
+            borderRadius: 5,
+            padding: 8,
+            marginTop: "2%",
+            marginHorizontal: '2%',
+            borderLeftWidth: 5,
+            borderLeftWidth: 0,
         },
         scroll_area: {
             
@@ -662,7 +666,7 @@ export class ExploreScreen extends React.Component {
                                     </Text>
                                 </View>
                             </TouchableHighlight>
-                            <TouchableHighlight style={{marginLeft: 5}} underlayColor="white" onPress={() => {this.props.navigation.navigate("Explore Filters Screen");}}>
+                            <TouchableHighlight underlayColor="white" onPress={() => {this.props.navigation.navigate("Explore Filters Screen");}}>
                                 <Feather name="list" size={36} color="gray" />
                             </TouchableHighlight>
                         </View>
@@ -690,8 +694,8 @@ export class ExploreScreen extends React.Component {
     }
 
     ScrollViewIsCloseToBottom(layoutMeasurement, contentOffset, contentSize) {
-        const paddingToBottom = 20;
-        return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
+        //const paddingToBottom = 20;
+        //return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
     }
 
     /**

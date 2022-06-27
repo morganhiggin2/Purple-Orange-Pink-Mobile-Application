@@ -98,11 +98,12 @@ export class YourPagesNavigator extends React.Component {
     //headerTitle: (<View style={{height: 0}}></View>), 
     // screenOptions={{headerStatusBarHeight:StatusBar.currentHeight, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}}
     //options={{headerStatusBarHeight:StatusBar.currentHeight, headerStyle: {backgroundColor: "white", alignSelf: 'center', headerShown: true}}}
+    //headerStatusBarHeight:StatusBar.currentHeight, 
 
     render() {
         return (
             <Stack.Navigator >
-                <Stack.Screen name="Your Feed" component={FeedNavigator} options={{headerStatusBarHeight:StatusBar.currentHeight, headerLeft: null, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, headerShown: true,  headerTitleAlign:'center'}}/>                
+                <Stack.Screen name="Your Feed" component={FeedNavigator} options={{headerLeft: null, headerTitle: () => <HeaderTitle title="Manage"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, headerShown: true,  headerTitleAlign:'center'}}/>                
                 <Stack.Screen name="Activity Creation Screen" component={ActivityCreationScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title="Create Activity"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
                 <Stack.Screen name="Group Creation Screen" component={GroupCreationScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title="Create Group"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
                 <Stack.Screen name="Image Creation Screen" component={ImageCreationScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title="Create Activity"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'vertical', cardStyleInterpolator:CardStyleInterpolators.forVerticalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>

@@ -5,6 +5,7 @@ import { AntDesign, Feather } from '@expo/vector-icons';
 import {Route} from '@react-navigation/native';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { render } from 'react-dom';
+import { MessageHandler } from '../../../global/messages_handler';
 
 const frame_styles = StyleSheet.create(
     {

@@ -102,6 +102,7 @@ export class GlobalProperties {
     //if messages should be releoaded when page is opened
     static reload_messages = true;
     static reloadMessages = () => {};
+    static messagesHandler = null;
 
     //user information
     static birthdate = new Date(Date.now());

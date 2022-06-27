@@ -85,6 +85,7 @@ export class GlobalEndpoints {
         }
     }
 
+    /*
     
     //get location
     static async getLocation(high = false) {
@@ -92,13 +93,15 @@ export class GlobalEndpoints {
         let permissionResult = await Location.getForegroundPermissionsAsync();
   
         var returnResult = {};
-  
+
         //if we don't notify user
         if (permissionResult.status != 'granted') {
             returnResult = {
                 granted: false,
                 location: null,
             }
+
+            console.log(returnResult);
   
             return (returnResult);
         }
@@ -132,6 +135,9 @@ export class GlobalEndpoints {
           //if low setting, get high setting.
           //this prevents infinite reccursion
           if (!high) {
+            console.log("low:");
+            console.log(returnResult);
+
             returnResult = await this.getLocation(true);
           }
           else {
@@ -139,7 +145,85 @@ export class GlobalEndpoints {
                 granted: true, 
                 location: null,
             };
+
+            console.log("high:");
+            console.log(returnResult);
           }
+        }
+        else {
+            returnResult = {
+                granted: true, 
+                location: result,
+            };
+
+            console.log(returnResult);
+  
+            //send location to server for friend user
+            var body = {
+              location: {
+                latitude: returnResult.location.coords.latitude,
+                longitude: returnResult.location.coords.longitude,
+              }
+            }
+  
+            GlobalEndpoints.makePostRequest(true, "/api/User/Friends/UpdateUserInformation", body);
+        }
+  
+        return (returnResult);
+    }
+
+    await Location.getLastKnownPositionAsync();
+    */
+    
+    //get location
+    static async getLocation() {
+        //see if we have permission
+        let permissionResult = await Location.getForegroundPermissionsAsync();
+  
+        var returnResult = {};
+
+        //if we don't notify user
+        if (permissionResult.status != 'granted') {
+            returnResult = {
+                granted: false,
+                location: null,
+            }
+  
+            return (returnResult);
+        }
+        
+        var timeoutPromise = new Promise((resolve, reject) => {
+            setTimeout(resolve, GlobalValues.CONNECTION_RETRY_TIME);
+        });
+        
+        var result;
+          result = 
+            await Promise.race([
+                timeoutPromise,
+                Location.getCurrentPositionAsync({
+                  accuracy: Location.Accuracy.Low
+                })
+            ]);  
+        
+            
+        if (result == null) {
+            //if low setting, get high setting.
+            //this prevents infinite reccursion
+          
+            result = await Location.getLastKnownPositionAsync();
+
+            if (result == null) {
+                returnResult = {
+                    granted: true, 
+                    location: null,
+                };
+            }
+            else {
+                returnResult = {
+                    granted: true, 
+                    location: result,
+                };
+            }          
         }
         else {
             returnResult = {
