@@ -220,6 +220,7 @@ export class OtherActivityScreen extends React.Component {
             date: "",
             invitation_type: "",
             distance: 0,
+            location: null,
 
             //images
             activity_images: [],
@@ -316,6 +317,7 @@ export class OtherActivityScreen extends React.Component {
                 this.state.distance = activity_information.distance;
                 this.state.is_admin = activity_information.is_admin;
                 this.state.is_participant = activity_information.is_participant;
+                this.state.location = activity_information.location;
 
                 this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={this.state.title}/>});
 
