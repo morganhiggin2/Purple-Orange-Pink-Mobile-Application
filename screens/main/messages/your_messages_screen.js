@@ -230,7 +230,6 @@ export class YourMessagesScreen extends React.Component {
         };
 
         this.fetchMessages = this.fetchMessages.bind(this);
-        this.updateMessages = this.updateMessages.bind(this);
         this.lazyUpdate = this.lazyUpdate.bind(this);
 
         GlobalProperties.reloadMessages = this.fetchMessages;
@@ -368,10 +367,16 @@ export class YourMessagesScreen extends React.Component {
                 await GlobalProperties.messagesHandler.openRealm();
 
                 //update messages
-                this.updateMessages();
+                await GlobalProperties.messagesHandler.insertMessages(this.state.pending_messages);
+                     
+                //put messages in array
+                this.state.messageHeaders = await GlobalProperties.messagesHandler.getMessageHeaders();
 
                 //set loading to false
                 this.state.loading = false;
+
+                //no need to laxy update as mongodb realm triggers that
+                //return;
             }
             else {
                 //returned bad response, fetch server generated error message
@@ -400,20 +405,9 @@ export class YourMessagesScreen extends React.Component {
                 this.state.reload = true;
             }
         }
-               
-        //open realm
-        await GlobalProperties.messagesHandler.openRealm();
-             
-        //put messages in array
-        this.state.messageHeaders = await GlobalProperties.messagesHandler.getMessageHeaders();
 
         //once done, lazy update
         this.lazyUpdate();
-    }
-
-    //update the messages with new pending messages
-    updateMessages() {
-        GlobalProperties.messagesHandler.insertMessages(this.state.pending_messages);
     }
     
     render() {
@@ -436,7 +430,8 @@ export class YourMessagesScreen extends React.Component {
                                 <FlatList
                                     data={this.state.messageHeaders}
                                     renderItem={renderItem}
-                                    keyExtractor={item => item._id}
+                                    keyExtractor={item => (item._id.toString() + item.last_timestamp.getSeconds().toString())}
+                                    extraData={this.lazyUpdate}
                                     refreshControl={<RefreshControl refreshing={false} 
                                     onRefresh={() => {this.state.loading = true; this.fetchMessages();}}/>}
                                     />
@@ -459,9 +454,12 @@ class FrameComponent extends React.Component {
         this.state = {
             title: this.props.item.title,
             body: this.props.item.body,
+            _id: this.props.item._id,
             sub_header_id:this.props.item.sub_header_id,
             type_id: this.props.item.type_id,
             type: this.props.item.type,
+            last_timestamp: this.props.item.last_timestamp,
+            lazyUpdate: this.props.lazyUpdate,
 
             trashColor: "black",
         };
@@ -521,7 +519,7 @@ class FrameComponent extends React.Component {
     navigate() {
         switch(this.state.type) {
             case 0: {
-                this.props.navigation.navigate("Conversation Screen", {title: this.state.title, sub_header_id: this.state.sub_header_id, type_id: this.state.type_id, type: this.state.type});
+                this.props.navigation.navigate("Conversation Screen", {title: this.state.title, last_timestamp: this.state.last_timestamp, sub_header_id: this.state.sub_header_id, type_id: this.state.type_id, type: this.state.type});
 
                 break;
             }
@@ -545,7 +543,7 @@ class FrameComponent extends React.Component {
 
     render() { 
         return (
-        <View style={[frame_styles.box, {borderColor: colorCode(this.props.item)}]}>
+        <TouchableOpacity activeOpacity={1} onPress={() => this.navigate()}style={[frame_styles.box, {borderColor: colorCode(this.props.item)}]}>
             <View style={blip_styles.top_bar}>
                 <View style={[blip_styles.inner_top_bar_left]}>
                     <Text numberOfLines={1} style={blip_styles.top_text}>
@@ -558,12 +556,10 @@ class FrameComponent extends React.Component {
                     </TouchableHighlight>
                 </View>
             </View>
-            <TouchableOpacity activeOpacity={1} onPress={() => this.navigate()}>
-                <Text numberOfLines={2} style={blip_styles.inner_text}>
-                    {this.state.body}
-                </Text>
-            </TouchableOpacity>
-        </View>
+            <Text numberOfLines={2} style={blip_styles.inner_text}>
+                {this.state.body}
+            </Text>
+        </TouchableOpacity>
         );
     }
 
@@ -576,17 +572,15 @@ class FrameComponent extends React.Component {
         deleteAlert(this);
     }
 
-    deleteDataComponent(id) {
-        for (let [i, data] of DATA.entries()) {
-            if (data.id == id) {
-                DATA.splice(i, 1);
-            }
-        }
+    async deleteDataComponent() {
+        await GlobalProperties.messagesHandler.delete(this.state._id);
     }
 
     afterDeleteAlert() {
-        this.deleteDataComponent(this.props.item.id);
-        this.props.lazyUpdate();
+        this.deleteDataComponent()
+        .then(() => {
+            this.state.lazyUpdate();
+        });
     }
 }  
 

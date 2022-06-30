@@ -21,6 +21,7 @@ import { Alert, LogBox } from 'react-native';
 
 import { LoadingScreen } from './screens/misc/loading_screen.js';
 import { MessageHandler } from './global/messages_handler.js';
+import 'react-native-get-random-values';
 
 //expo
 Notifications.setNotificationHandler({

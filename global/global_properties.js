@@ -55,6 +55,9 @@ export const GlobalValues = {
   INVITATION_TYPE_INFORMATION: "Anyone: anyone can join\nInvitation Required: anyone can request to join, and you must then accept their invite for them to join.\nInvite Only: Only you can invite people to join",
   SEARCH_LOCATION_IS_ACTIVITY_LOCATION_INFORMATION: "The location in which people can find your activity is the same as the location of your activity.",
   ADDRESS_INFORMATION: "Only people who join you activity are able to see this",
+
+  //messages
+  MESSAGES_PAGE_AMOUNT: 40,
 }
 
 export class GlobalProperties {

@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Image, SafeAreaView, ScrollView, Dimensions, FlatList, Alert} from 'react-native';
+import {StyleSheet, View, Text, TextInput, Image, SafeAreaView, ScrollView, Dimensions, FlatList, Alert, RefreshControl} from 'react-native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { AntDesign, Feather} from '@expo/vector-icons'; 
 import {Route} from '@react-navigation/native';
@@ -24,6 +24,46 @@ const frame_styles = StyleSheet.create(
     }
 );
 
+/*
+
+            backgroundColor: '#DFDFDF', //#FECAB9
+            color: 'darkgray',
+            padding: 0,
+            margin: 0,
+            borderWidth: 0,
+            fontSize: 20,
+            color: 'black',
+            width: "90%",
+            //width: Math.trunc(Dimensions.get('window').width * 0.85) - 30 - 5 - 14,
+            marginLeft: 5,
+            maxHeight: 40,*/
+
+/*
+text_input: {
+            backgroundColor: '#DFDFDF', //#FECAB9
+            color: 'darkgray',
+            padding: 0,
+            margin: 0,
+            borderWidth: 0,
+            fontSize: 20,
+            color: 'black',//Math.trunc(Dimensions.get('window').width * 0.85) - 30 - 5 - 14,
+            maxHeight: 40,
+        },
+        search_bar: {
+            paddingHorizontal: 7,
+            backgroundColor: '#DFDFDF',
+            borderRadius: 5,
+            flexDirection: 'row',
+            marginHorizontal: 4,
+            width: '100%',
+        },
+        top_bar: {
+            flexDirection: 'row',
+            padding: "3%",
+            backgroundColor: 'white',
+        },
+*/
+
 const main_styles = StyleSheet.create(
     {
         page: {
@@ -38,20 +78,18 @@ const main_styles = StyleSheet.create(
             //width: '50%',
             //alignContent: 'center',
             flexDirection: 'row',
-            width: "90%",
             //width: Math.trunc(Dimensions.get('window').width * 0.85),
         },
         text_input: {
-            backgroundColor: '#DFDFDF', //#FECAB9
             color: 'darkgray',
-            padding: 0,
-            margin: 0,
-            borderWidth: 0,
-            fontSize: 20,
-            color: 'black',
-            width: "90%",
-            //width: Math.trunc(Dimensions.get('window').width * 0.85) - 30 - 5 - 14,
-            marginLeft: 5,
+            fontSize: 16,
+        },
+        search_bar: {
+            width: "100%",
+            borderRadius: 4,
+            borderColor: '#EAEAEA',
+            backgroundColor: '#EAEAEA',
+            borderWidth: 3,
         },
         top_bar: {
             flexDirection: 'row',
@@ -218,9 +256,13 @@ export class ConversationScreen extends React.Component {
             sub_header_id: this.props.route.params.sub_header_id,
             type_id: this.props.route.params.type_id,
             type: this.props.route.params.type,
+            last_timestamp: this.props.route.params.last_timestamp,
 
             messages: [],
-            messages_count: 20,
+            messages_count: GlobalValues.MESSAGES_PAGE_AMOUNT,
+
+            message: "",
+            showSendButton: false,
 
             //name: "",
             //first_name: this.props.route.params.first_name,
@@ -247,9 +289,16 @@ export class ConversationScreen extends React.Component {
         //this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={"Mellisa"}/>});
     }
 
+    /*async refreshMessages() {
+        this.state.messages = this.state.subHeader.message_records;
+
+        this.lazyUpdate();
+    }*/
+
     async fetchMessages() {
         //get message sub header
-        var subHeader = null;
+
+        var subHeader = null
 
         if (this.state.type == 0) {
             subHeader = await GlobalProperties.messagesHandler.getDirectMessageInformation(this.state.sub_header_id);
@@ -260,6 +309,14 @@ export class ConversationScreen extends React.Component {
 
         this.state.messages = subHeader.message_records;
 
+        //add listener to messages
+        try {
+            this.state.messages.addListener(this.lazyUpdate);
+        }
+        catch (error) {
+            //well that does not work
+        }
+
         this.lazyUpdate();
     }
 
@@ -267,6 +324,21 @@ export class ConversationScreen extends React.Component {
         const renderItem = ({ item }) => (
             <FrameComponent item = {item} lazyUpdate = {this.lazyUpdate}/>
         );
+
+        var sendButton = null;
+
+        if (this.state.showSendButton) {
+            sendButton = (
+                <View>
+                    <Feather name="send" size={24} color="black" />
+                </View>
+            );
+        }
+        else {
+            sendButton = (
+                <View/>
+            );
+        }
 
         return (
             <View style={main_styles.page}>
@@ -276,25 +348,21 @@ export class ConversationScreen extends React.Component {
                     </Text> ) : (
                         <SafeAreaView style={{width: "100%", height: "100%"}}>
                             <FlatList
-                                data={this.state.messages.splice(0, this.state.messages_count)}
+                                data={this.state.messages.slice(0, this.state.messages_count)}
                                 renderItem={renderItem}
-                                keyExtractor={item => item.id}
+                                keyExtractor={item => (item.id.toString() + this.state.last_timestamp.getSeconds().toString())}
+                                extraData={this.state.subHeader}
                                 style={{width: "100%", height: "100%"}}
                                 inverted={true}
-                                onEndReached={() => {}}
+                                onEndReached={() => {this.state.messages_count += GlobalValues.MESSAGES_PAGE_AMOUNT; this.lazyUpdate();}}
+                                refreshControl={<RefreshControl refreshing={false} 
+                                onRefresh={() => {this.lazyUpdate();}}/>}
                                 />
                             <View style={main_styles.top_bar}>
                                 <View style={main_styles.search_bar}>
-                                    <TextInput style={main_styles.text_input} placeholderTextColor="black"/>
+                                    <TextInput style={main_styles.text_input} placeholderTextColor="black" maxHeight={38} multiline={true}/>
                                 </View>
-                                <View style={{flexWrap: "wrap", flexDirection: "row",}}>
-                                    <TouchableHighlight style={{marginLeft: 5}} underlayColor="white" onPress={() => {this.props.navigation.navigate("Messages Filters Screen", {id: this.props.id})}}>
-                                    <Feather name="image" size={36} color="black" />
-                                    </TouchableHighlight>
-                                    <TouchableHighlight style={{marginLeft: 5}} underlayColor="white" onPress={() => {this.props.navigation.navigate("Messages Filters Screen", {id: this.props.id})}}>
-                                    <Feather name="image" size={36} color="black" />
-                                    </TouchableHighlight>
-                                </View>
+                                {sendButton}
                             </View>
                         </SafeAreaView>
                     ) 
@@ -302,11 +370,25 @@ export class ConversationScreen extends React.Component {
             </View>
         );
     }
+
+    onChangeMessage(value) {
+
+    } 
     
     lazyUpdate() {
         this.forceUpdate();
     }
 }
+
+/*
+                                <View style={{flexWrap: "wrap", flexDirection: "row",}}>
+                                    <TouchableHighlight style={{marginLeft: 5}} underlayColor="white" onPress={() => {this.props.navigation.navigate("Messages Filters Screen", {id: this.props.id})}}>
+                                    <Feather name="image" size={36} color="black" />
+                                    </TouchableHighlight>
+                                    <TouchableHighlight style={{marginLeft: 5}} underlayColor="white" onPress={() => {this.props.navigation.navigate("Messages Filters Screen", {id: this.props.id})}}>
+                                    <Feather name="image" size={36} color="black" />
+                                    </TouchableHighlight>
+                                </View> */
 
 function getMargin (isMe) {
     if (isMe) {
@@ -371,7 +453,6 @@ class FrameComponent extends React.Component {
     }
 
     render() { 
-        console.log(this.props.item);
         var renderName = {};
 
         if (this.props.item.show_name) {

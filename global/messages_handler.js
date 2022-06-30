@@ -1,4 +1,5 @@
 import { GlobalProperties } from "./global_properties";
+import 'react-native-get-random-values';
 import Realm from "realm";
 import { UIImagePickerControllerQualityType } from "expo-image-picker";
 import 'react-native-get-random-values';
@@ -37,7 +38,7 @@ const SubHeaderDirectMessageRecord = {
         other_user_id: "string",
         other_user_name: "string",
         last_user_id: "string", //last user for message of conversation, can be current user, for show_me
-		message_size: "int", //number of rmessages in message_records
+		messages_records_size: "int", //number of rmessages in message_records
         message_records: { type: "list", objectType: "Messages_Message_Record"}
     }
 }
@@ -52,7 +53,7 @@ const SubHeaderConversationRecord = {
         conversation_id: "string",
         user_ids_to_names: "string{}", //user ids to user names (first and last initialed names)
         last_user_id: "string", //last user for message of conversation, can be current user, for show_me
-		message_size: "int", //number of messages in message_records
+		messages_records_size: "int", //number of messages in message_records
         message_records: { type: "list", objectType: "Messages_Message_Record"}
     }
 }
@@ -202,103 +203,36 @@ export class MessageHandler {
 				//get sub header
 				var subHeader = await this.masterRealm.objectForPrimaryKey("Messages_Sub_Header_Direct_Message_Record", headerRow.sub_header_id);
 
-				//modify headerrow values
-			
-				/*this.masterRealm.write(() => {
-					//modify header
-					headerRow.body = message.body,
-					headerRow.last_timestamp = message.timestamp
-
-					//add message to sub header
-
-					//get the index of the most recent message block
-					var index = subHeader.last_index - 1;
-
-					//get most recent message block
-					var messageBlock = subHeader.message_blocks[index];
-
-					//get previous message
-					var prevMessage = null;
-
-					//if we are at the limit for the number of message records in a message block
-					if (messageBlock.length == MAX_MESSAGES_PER_CHAT_RECORD) {
-						//get previous message
-						prevMessage = messageBlock[MAX_MESSAGES_PER_CHAT_RECORD - 1];
-
-						//add message block to sub header
-						subHeader.message_blocks.push(
-							{
-								messages: [],
-							});
-
-						//increment last_index
-						subHeader.last_index++;
-
-						//get the index of the most recent message block
-						index = subHeader.last_index - 1;
-
-						//get new message block
-						messageBlock = subHeader.message_blocks[index];
-					}
-					else {
-
-						//if greater than one
-						if (messageBlock.length == 1) {
-							//get prev message block
-							var prevMessageBlock = subHeader.message_blocks[index - 1];
-
-							//get last message from that message block
-							prevMessage = prevMessageBlock[MAX_MESSAGES_PER_CHAT_RECORD - 1];
-						}
-						else {
-							prevMessage = messageBlock[messageBlock.length - 1];
-						}
-					}
-
-					
-
-					//if the id's are the same
-					if (messageBlock[messageBlock.length - 1].from_id == ) {
-
-					}
-
-					//add to message_block
-					messageBlock.push({
-						from_id: message.other_user_id,
-						id: messageBlock.length, //has to be unique for the flat list to render
-						message: message.body,
-						show_name: true
-					});
-				});*/
 				this.masterRealm.write(() => {
 					//modify header
 					headerRow.body = message.body;
+
 					headerRow.last_timestamp = new Date(parseInt(message.timestamp));
 
-					subHeader.message_records.push({
+					var show_name = true;
+
+					if (subHeader.messages_records_size > 0) {
+						//get previous message's user id
+						var prevUserId = subHeader.message_records[0].from_id;
+
+						show_name = prevUserId != message.other_user_id;
+					}
+
+					subHeader.message_records.unshift({
 						from_id: message.other_user_id,
-						id: subHeader.message_size, //has to be unique for the flat list to render
+						id: subHeader.messages_records_size, //has to be unique for the flat list to render
 						message: message.body,
 						user_name: message.user_name,
-						show_name: true
+						show_name: show_name
 					});
 
-					subHeader.message_size++;
+					subHeader.messages_records_size++;
+
+					if (subHeader.messages_records_size == MAX_NUM_MESSAGES) {
+						subHeader.message_records.remove(0);
+						subHeader.messages_records_size--;
+					}
 				});
-
-				//write
-                  //change title
-                  //change body
-                  //change time stamp
-
-                //get sub header id
-                  //update other user name if it changed
-                  //get first message container in list
-                    //if full
-                      //add new one to front with new message
-                      //increment index
-                    //else
-                      //add message with properties to front of existing one
 			}
 			else {
 				var subHeaderId = new UUID();
@@ -324,7 +258,7 @@ export class MessageHandler {
 						other_user_id: message.user_id,
 						other_user_name: message.user_name,
 						last_user_id: message.user_id,
-						message_size: 0,
+						messages_records_size: 0,
 						message_records: [],   
 					});
 
@@ -352,29 +286,15 @@ export class MessageHandler {
 						show_name: true
 					});*/
 
-					var show_name = true;
-
-					if (subHeader.message_size > 1) {
-						//get previous message's user id
-						var prevUserId = subHeader.message_records[subHeader.message_size].from_id;
-
-						show_name = prevUserId != message.other_user_id;
-					}
-
 					subHeader.message_records.push({
 						from_id: message.other_user_id,
-						id: subHeader.message_size, //has to be unique for the flat list to render
+						id: subHeader.messages_records_size, //has to be unique for the flat list to render
 						message: message.body,
 						user_name: message.user_name,
-						show_name: show_name
+						show_name: true
 					});
 
-					subHeader.message_size++;
-
-					if (subHeader.message_size == MAX_NUM_MESSAGES) {
-						subHeader.message_records.remove(0);
-						subHeader.message_size--;
-					}
+					subHeader.messages_records_size++;
 				});
 			}
 		}
@@ -532,7 +452,7 @@ export class MessageHandler {
     async insertMessages(messages) {
 		try {
 			for (var i = 0; i < messages.length; i++) {
-				this.insertMessage(messages[i]);
+				await this.insertMessage(messages[i]);
 			}	
 		} catch (error) {
 			Alert.alert("Cannot add messages, are you out of memory?");
@@ -614,28 +534,50 @@ export class MessageHandler {
         //else, send back relevant information
     }
 
-    //delete a message
-    async delete(id) {
-      if (message.type == "direct message") {
-        //get sub header
-        //delete sub header
-        //delete record header
-      }
-      else if (message.type == "conversation") {
-        //get sub header
-        //delete sub header
-        //delete record header
-      }
-      else if (message.type == "announcement") {
-        //get sub header
-        //delete sub header
-        //delete record header
-      }
-      else if (message.type == "invitation") {
-        //get sub header
-        //delete sub header
-        //delete record header
-      }
+    //delete a header with it's contents
+    async delete(_id) {
+		//get header
+		var headerRow = await this.masterRealm.objectForPrimaryKey("Messages_Header_Record", _id);
+
+		//subheader
+		var subHeader = null;
+
+		//if it was found
+		if (headerRow != null) {
+			if (headerRow.type == 0) {
+				//get the subHeader
+				subHeader = await this.masterRealm.objectForPrimaryKey("Messages_Sub_Header_Direct_Message_Record", headerRow.sub_header_id);
+
+				//delete headers
+				this.masterRealm.write(() => {
+					this.masterRealm.delete(subHeader);
+					this.masterRealm.delete(headerRow);
+				});
+			}
+
+		}
+
+		/*
+		if (message.type == "direct message") {
+		//get sub header
+		//delete sub header
+		//delete record header
+		}
+		else if (message.type == "conversation") {
+		//get sub header
+		//delete sub header
+		//delete record header
+		}
+		else if (message.type == "announcement") {
+		//get sub header
+		//delete sub header
+		//delete record header
+		}
+		else if (message.type == "invitation") {
+		//get sub header
+		//delete sub header
+		//delete record header
+		}*/
     }
 }
 
