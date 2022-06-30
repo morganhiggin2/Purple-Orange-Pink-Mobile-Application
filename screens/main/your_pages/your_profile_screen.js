@@ -326,7 +326,7 @@ export class YourProfileScreen extends React.Component {
             gender_dropdown_value: "other",
             
             //for profile images
-            profile_images: ["https://cloudfront-us-east-2.images.arcpublishing.com/reuters/X5TDSC3GQRMKZAHJ4HGFJGNTJE.jpg", "https://variety.com/wp-content/uploads/2021/06/Donald-Trump.jpg"],
+            profile_images: ["https://prod-images.tcm.com/Master-Profile-Images/MorganFreeman.jpg", "https://www.biography.com/.image/t_share/MTgwNjE3NzgwMzg1NTU1NTQ0/gettyimages-56349854-copy.jpg"],
 
             //if update made
             updateMade: false,
@@ -345,7 +345,7 @@ export class YourProfileScreen extends React.Component {
             {
                 id: "5lk09s0df89v0js90",
                 caption: "this is a point, we went to a point and made a point, this is a cool point",
-                image_uri: "https://cloudfront-us-east-2.images.arcpublishing.com/reuters/X5TDSC3GQRMKZAHJ4HGFJGNTJE.jpg"
+                image_uri: "https://www.biography.com/.image/t_share/MTgwNjE3NzgwMzg1NTU1NTQ0/gettyimages-56349854-copy.jpg"
             }
         ];
 

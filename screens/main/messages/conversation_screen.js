@@ -5,7 +5,7 @@ import { AntDesign, Feather} from '@expo/vector-icons';
 import {Route} from '@react-navigation/native';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { render } from 'react-dom';
-import { GlobalValues } from '../../../global/global_properties';
+import { GlobalProperties, GlobalValues } from '../../../global/global_properties';
 
 const frame_styles = StyleSheet.create(
     {
@@ -214,26 +214,53 @@ export class ConversationScreen extends React.Component {
             selectedDeleteButton: -1,
             refreshFlatList: true,
 
-            name: "",
-            first_name: this.props.route.params.first_name,
-            last_name: this.props.route.params.last_name,
+            title: this.props.route.params.title,
+            sub_header_id: this.props.route.params.sub_header_id,
+            type_id: this.props.route.params.type_id,
+            type: this.props.route.params.type,
+
+            messages: [],
+            messages_count: 20,
+
+            //name: "",
+            //first_name: this.props.route.params.first_name,
+            //last_name: this.props.route.params.last_name,
         };
 
-        this.state.name = this.state.first_name + " " + this.state.last_name;
+        /*this.state.name = this.state.first_name + " " + this.state.last_name;
 
         if (this.state.name.length > 20) {
             this.state.name = this.state.name.substring(0, 17) + "...";
-        }
+        }*/
 
+        this.fetchMessages = this.fetchMessages.bind(this);
         this.lazyUpdate = this.lazyUpdate.bind(this);
 
         this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={this.state.name}/>});
     }
     
     componentDidMount() {
+        //fetch messages
+        this.fetchMessages();
         
         //set header
         //this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={"Mellisa"}/>});
+    }
+
+    async fetchMessages() {
+        //get message sub header
+        var subHeader = null;
+
+        if (this.state.type == 0) {
+            subHeader = await GlobalProperties.messagesHandler.getDirectMessageInformation(this.state.sub_header_id);
+        }
+        else if (this.state.type == 1) {
+            subHeader = await GlobalProperties.messagesHandler.getConversationInformation(this.state.sub_header_id);
+        }
+
+        this.state.messages = subHeader.message_records;
+
+        this.lazyUpdate();
     }
 
     render() {
@@ -249,11 +276,12 @@ export class ConversationScreen extends React.Component {
                     </Text> ) : (
                         <SafeAreaView style={{width: "100%", height: "100%"}}>
                             <FlatList
-                                data={DATA.reverse()}
+                                data={this.state.messages.splice(0, this.state.messages_count)}
                                 renderItem={renderItem}
                                 keyExtractor={item => item.id}
                                 style={{width: "100%", height: "100%"}}
                                 inverted={true}
+                                onEndReached={() => {}}
                                 />
                             <View style={main_styles.top_bar}>
                                 <View style={main_styles.search_bar}>
@@ -331,22 +359,26 @@ class FrameComponent extends React.Component {
         super(props);
 
         this.state = {
-            first_name: this.props.item.first_name,
-            last_initial: this.props.item.last_name.substring(0, 1),
+            parsed_name: this.props.item.user_name,
+            message: this.props.item.message,
+            show_name: this.props.item.show_name,
         };
+
+        //parsed name is name that is first with initial, do that conversion here (use space in name as substring etc...)
 
         this.onTrashButtonPress = this.onTrashButtonPress.bind(this);
         this.onTrashButtonRelease = this.onTrashButtonRelease.bind(this);
     }
 
     render() { 
+        console.log(this.props.item);
         var renderName = {};
 
         if (this.props.item.show_name) {
             renderName = (
                 <View style={[blip_styles.top_bar, {alignSelf: getHorizontalPositionStyle(this.props.item.me)}, getMargin(this.props.item.me)]}>
                     <Text style={[blip_styles.top_text]}>
-                        {this.state.first_name + " " + this.state.last_initial}
+                        {this.state.parsed_name}
                     </Text>
                 </View>
             );
@@ -365,7 +397,7 @@ class FrameComponent extends React.Component {
             <View style={[blip_styles.body, getBorderDirection(this.props.item.me), {borderColor: colorCode(this.props.item.me)}]}>
                 <TouchableHighlight>
                     <Text style={blip_styles.inner_text}>
-                        {this.props.item.message}
+                        {this.state.message}
                     </Text>
                 </TouchableHighlight>
             </View>

@@ -75,10 +75,14 @@ export class GlobalProperties {
 
     //for the map
     static map_search_radius = 5;
-    static map_latitude = 30.2672;
-    static map_longitude = -97.7431;
-    static map_latitude_delta = 0.1;
-    static map_longitude_delta = 0.1;
+
+    static map_params = null;
+    static default_map_params = {
+      latitude: 30.2672,
+      longitude: -97.7431,
+      latitudeDelta: 0.1,
+      longitudeDelta: 0.1
+    }
 
     //the props for the currently passed screen
     static return_screen = "";

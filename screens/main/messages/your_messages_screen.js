@@ -9,15 +9,24 @@ import { assertThisExpression } from '@babel/types';
 import { GlobalProperties, GlobalValues } from '../../../global/global_properties';
 import { GlobalEndpoints } from '../../../global/global_endpoints';
 import * as Notifications from 'expo-notifications';
+
 //import { MessageHandler } from '../../../global/messages_handler';
 //import { MessageHandler } from '../../../global/messages_handler.js';
 
 const frame_styles = StyleSheet.create(
     {
         box: {
-            width: "100%",
-            marginHorizontal: 0,
-            flexDirection: 'row',
+            //width: "100%",
+            marginHorizontal: '2%',
+            //flexDirection: 'row',
+            backgroundColor: 'white', //#FFCDCD
+            borderRadius: 5,
+            paddingVertical: 8,
+            paddingHorizontal: 4,
+            marginTop: "2%",
+            //marginHorizontal: '1%',
+            borderLeftWidth: 5,
+            //width: '98%',
         },
         main_text: {
             fontSize: 14,
@@ -60,7 +69,6 @@ const main_styles = StyleSheet.create(
             padding: 8,
             marginTop: "2%",
             marginHorizontal: '2%',
-            borderLeftWidth: 5,
             borderLeftWidth: 0,
         },
         scroll_area: {
@@ -100,7 +108,6 @@ const blip_styles = StyleSheet.create(
         top_text: {
             color: 'black',
             fontSize: 16,
-            marginLeft: 4,
         },
         inner_top_bar_left: {
             flexDirection: "row",
@@ -217,7 +224,9 @@ export class YourMessagesScreen extends React.Component {
 
                 //id to search for if searching for id (null if not searching for id)
                 search_for_id: null,
-            }
+            },
+
+            messageHeaders: [],
         };
 
         this.fetchMessages = this.fetchMessages.bind(this);
@@ -259,7 +268,8 @@ export class YourMessagesScreen extends React.Component {
                 for (var i in DATA) {
                     //if they exist
 
-                    if (DATA[i].type == "message" && DATA[i].username == this.state.global_props.username) {
+                    //need a new approac to this REALM APPROACH, TODO
+                    if (DATA[i].type == 0 && DATA[i].user_id == this.state.global_props.username) {
                         this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={"Manage Car Group"}/>});
                         this.props.navigation.navigate("Conversation Screen", {id: i, name: DATA[i].username})
                         //pull up conversation
@@ -354,6 +364,9 @@ export class YourMessagesScreen extends React.Component {
                 //add groups
                 this.state.pending_messages = messages;
                
+                //open realm
+                await GlobalProperties.messagesHandler.openRealm();
+
                 //update messages
                 this.updateMessages();
 
@@ -387,46 +400,51 @@ export class YourMessagesScreen extends React.Component {
                 this.state.reload = true;
             }
         }
+               
+        //open realm
+        await GlobalProperties.messagesHandler.openRealm();
+             
+        //put messages in array
+        this.state.messageHeaders = await GlobalProperties.messagesHandler.getMessageHeaders();
 
         //once done, lazy update
         this.lazyUpdate();
     }
 
+    //update the messages with new pending messages
     updateMessages() {
-        console.log(this.state.pending_messages);
-
         GlobalProperties.messagesHandler.insertMessages(this.state.pending_messages);
     }
     
     render() {
-        const renderItem = ({ item }) => (
-            <FrameComponent item = {item} lazyUpdate = {this.lazyUpdate} navigation = {this.props.navigation}/>
-        );
+            const renderItem = ({ item }) => (
+                <FrameComponent item = {item} lazyUpdate = {this.lazyUpdate} navigation = {this.props.navigation}/>
+            );
 
-        return (
-            <View style={main_styles.page}>
-                { this.state.isLoading ? (
-                    <Text>
-                        Loading...
-                    </Text> ) : (
-                        <SafeAreaView style={{flex: 1}}>
-                            <View style={main_styles.top_bar}>
-                                <TouchableHighlight style={{marginLeft: 5}} underlayColor="white" onPress={() => {this.props.navigation.navigate("Messages Filters Screen", {id: this.props.id})}}>
-                                   <Feather name="list" size={36} color="gray" />
-                                </TouchableHighlight>
-                            </View>
-                            <FlatList
-                                data={DATA}
-                                renderItem={renderItem}
-                                keyExtractor={item => item.id}
-                                refreshControl={<RefreshControl refreshing={false} 
-                                onRefresh={() => {this.state.loading = true; this.fetchMessages();}}/>}
-                                />
-                        </SafeAreaView>
-                    ) 
-                }
-            </View>
-        );
+            return (
+                <View style={main_styles.page}>
+                    { this.state.isLoading ? (
+                        <Text>
+                            Loading...
+                        </Text> ) : (
+                            <SafeAreaView style={{flex: 1}}>
+                                <View style={main_styles.top_bar}>
+                                    <TouchableHighlight style={{marginLeft: 5}} underlayColor="white" onPress={() => {this.props.navigation.navigate("Messages Filters Screen", {id: this.props.id})}}>
+                                    <Feather name="list" size={36} color="gray" />
+                                    </TouchableHighlight>
+                                </View>
+                                <FlatList
+                                    data={this.state.messageHeaders}
+                                    renderItem={renderItem}
+                                    keyExtractor={item => item._id}
+                                    refreshControl={<RefreshControl refreshing={false} 
+                                    onRefresh={() => {this.state.loading = true; this.fetchMessages();}}/>}
+                                    />
+                            </SafeAreaView>
+                        ) 
+                    }
+                </View>
+            );
     }
 
     lazyUpdate() {
@@ -439,38 +457,59 @@ class FrameComponent extends React.Component {
         super(props);
 
         this.state = {
-            name: "",
+            title: this.props.item.title,
+            body: this.props.item.body,
+            sub_header_id:this.props.item.sub_header_id,
+            type_id: this.props.item.type_id,
+            type: this.props.item.type,
+
             trashColor: "black",
         };
 
-        this.state.name = this.props.item.first_name + " " + this.props.item.last_name;
+        //this.state.name = this.props.item.first_name + " " + this.props.item.last_name;
 
-        if (this.state.name.length > 20) {
-            this.state.name = this.state.name.substring(0, 17) + "...";
-        }
+        /*if (this.state.title.length > 20) {
+            this.state.title = this.state.title.substring(0, 17) + "...";
+        }*/
         
         this.onTrashButtonPress = this.onTrashButtonPress.bind(this);
         this.onTrashButtonRelease = this.onTrashButtonRelease.bind(this);
     }
 
     createBody() {
-        switch(this.props.item.type) {
-            case "message": {
+        switch(this.state.type) {
+            case 0: {
                 return(
-                    <Text style={blip_styles.inner_text}>
-                        {this.props.item.message}
+                    <Text numberOfLines={2} style={blip_styles.inner_text}>
+                        {this.state.body}
                     </Text>
                 );
 
                 break;
             }
-            case "invitation": {
+            case 1: {
                 return(
-                    <Text style={blip_styles.inner_text}>
-                        {"Request invite for "} 
-                        <Text style={{color: '#ff5050', fontWeight: 'bold'}}>
-                            {this.props.item.invite_to}
-                        </Text>
+                    <Text numberOfLines={2} style={blip_styles.inner_text}>
+                    {this.state.body}
+                    </Text>
+                );
+
+                break;
+            }
+            case 2: {
+                return(
+                    <Text numberOfLines={2} style={blip_styles.inner_text}>
+                    {this.state.body}
+                    </Text>
+                );
+
+                break;
+            }
+            case 3: {
+                return(
+                    <Text numberOfLines={2} style={blip_styles.inner_text}>
+                        
+                        {this.state.body}
                     </Text>
                 );
 
@@ -480,14 +519,24 @@ class FrameComponent extends React.Component {
     }
 
     navigate() {
-        switch(this.props.item.type) {
-            case "message": {
-                this.props.navigation.navigate("Conversation Screen", {id: this.props.item.id, first_name: this.props.item.first_name, last_name: this.props.item.last_name, user_name: this.props.item.user_name});
+        switch(this.state.type) {
+            case 0: {
+                this.props.navigation.navigate("Conversation Screen", {title: this.state.title, sub_header_id: this.state.sub_header_id, type_id: this.state.type_id, type: this.state.type});
 
                 break;
             }
-            case "invitation": {
-                this.props.navigation.navigate("Invite Screen", {id: this.props.item.id, first_name: this.props.item.first_name, last_name: this.props.item.last_name, user_name: this.props.item.user_name});
+            case 1: {
+                this.props.navigation.navigate("Conversation Screen", {title: this.state.title, sub_header_id: this.state.sub_header_id, type_id: this.state.type_id, type: this.state.type});
+
+                break;
+            }
+            case 2: {
+                this.props.navigation.navigate("Invite Screen", {title: this.state.title, sub_header_id: this.state.sub_header_id, type_id: this.state.type_id, type: this.state.type});
+
+                break;
+            }
+            case 3: {
+                this.props.navigation.navigate("Announcement Screen", {title: this.state.title, sub_header_id: this.state.sub_header_id, type_id: this.state.type_id, type: this.state.type});
 
                 break;
             }
@@ -496,25 +545,24 @@ class FrameComponent extends React.Component {
 
     render() { 
         return (
-        <View style={frame_styles.box}>
-            <View style={[blip_styles.body, {borderColor: colorCode(this.props.item)}]}>
-                <View style={blip_styles.top_bar}>
-                    <View style={[blip_styles.inner_top_bar_left]}>
-                        <Text style={blip_styles.top_text}>
-                            {this.state.name}
-                        </Text>
-                    </View>
-                    <View style={blip_styles.inner_top_bar_right}>                            
-                        <TouchableHighlight style={{marginLeft: 10}} underlayColor="white" onPress={() => {}} onHideUnderlay={() => {this.onTrashButtonRelease()}} onShowUnderlay={() => {this.onTrashButtonPress()}}> 
-                            <Feather name="trash-2" size={20} color={this.state.trashColor} />
-                        </TouchableHighlight>
-                    </View>
+        <View style={[frame_styles.box, {borderColor: colorCode(this.props.item)}]}>
+            <View style={blip_styles.top_bar}>
+                <View style={[blip_styles.inner_top_bar_left]}>
+                    <Text numberOfLines={1} style={blip_styles.top_text}>
+                        {this.state.title}
+                    </Text>
                 </View>
-                <TouchableOpacity activeOpacity={1} onPress={() => this.navigate()}>
-                    {this.createBody()}
-                </TouchableOpacity>
+                <View style={blip_styles.inner_top_bar_right}>                            
+                    <TouchableHighlight style={{marginLeft: 10}} underlayColor="white" onPress={() => {}} onHideUnderlay={() => {this.onTrashButtonRelease()}} onShowUnderlay={() => {this.onTrashButtonPress()}}> 
+                        <Feather name="trash-2" size={20} color={this.state.trashColor} />
+                    </TouchableHighlight>
+                </View>
             </View>
-            
+            <TouchableOpacity activeOpacity={1} onPress={() => this.navigate()}>
+                <Text numberOfLines={2} style={blip_styles.inner_text}>
+                    {this.state.body}
+                </Text>
+            </TouchableOpacity>
         </View>
         );
     }

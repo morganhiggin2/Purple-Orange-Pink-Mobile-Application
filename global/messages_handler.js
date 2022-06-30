@@ -2,29 +2,22 @@ import { GlobalProperties } from "./global_properties";
 import Realm from "realm";
 import { UIImagePickerControllerQualityType } from "expo-image-picker";
 import 'react-native-get-random-values';
+import { Alert } from "react-native";
 
 const { UUID } = Realm.BSON;
 
-const types = ["direct_message", "conversation", "invitation", "announcement"]
+const types = ["direct", "conversation", "invitation", "announcement"]
 
 const MAX_HEADER_LOAD_PER_PAGE = 20;
 const MAX_MESSAGES_PER_CHAT_RECORD = 50
 const MAX_NUM_MESSAGE_BLOCKS = 20;
-
-//find way to make ids
-const MasterHeaderSchema = {
-    name: "Messages_Master_Header",
-    primaryKey: "_id",
-    properties: {
-        _id: "uuid",
-        header_records: { type: "list", objectType: "Messages_Header_Record"}
-    }
-}
+const MAX_NUM_MESSAGES = 100;
 
 const HeaderRecordSchema = {
     name: "Messages_Header_Record",
-    embedded: true,
+	primaryKey: "_id",
     properties: {
+		_id: "uuid",
         type: "int", //index of type in types array
         title: "string", //for direct message, person who sent it. for conversation, conversation name. 
         body: "string", //body of message to be displayed in messages feed
@@ -44,8 +37,8 @@ const SubHeaderDirectMessageRecord = {
         other_user_id: "string",
         other_user_name: "string",
         last_user_id: "string", //last user for message of conversation, can be current user, for show_me
-        last_index: "int", //for assigning unique and incremental id
-        message_blocks: { type: "list", objectType: "Messages_Message_Block"}
+		message_size: "int", //number of rmessages in message_records
+        message_records: { type: "list", objectType: "Messages_Message_Record"}
     }
 }
 
@@ -59,8 +52,8 @@ const SubHeaderConversationRecord = {
         conversation_id: "string",
         user_ids_to_names: "string{}", //user ids to user names (first and last initialed names)
         last_user_id: "string", //last user for message of conversation, can be current user, for show_me
-        last_index: "int", //for assigning unique and incremental id
-        message_blocks: { type: "list", objectType: "Messages_Message_Block"}
+		message_size: "int", //number of messages in message_records
+        message_records: { type: "list", objectType: "Messages_Message_Record"}
     }
 }
 
@@ -89,70 +82,86 @@ const SubHeaderAnnouncementRecord = {
 }
 
 //message block of MAX_MESSAGES_PER_CHAT_RECORD messages
-const MessageBlock = {
+/*const MessageBlock = {
     name: "Messages_Message_Block",
     embedded: true,
     properties: {
         messages: {type: "list", objectType: "Messages_Message_Record"}
     }
-}
+}*/
 
 //message record
 const MessageRecord = {
     name: "Messages_Message_Record",
     embedded: true,
     properties: {
-        fromId: "string",
+        from_id: "string",
+		user_name: "string",
         id: "int", //has to be unique for the flat list to render
         message: "string",
-        showName: "bool", //wether to show name, based on if the last message is from the same person or not
+        show_name: "bool", //wether to show name, based on if the last message is from the same person or not
     }
 }
 
 export class MessageHandler {
-    masterHeaderRealm = null;
-    masterHeader = null;
-
     constructor() {
+        
+        this.masterRealm = null;
+        this.masterHeader = null;
+		this.open = false;
+          
         this.start = this.start.bind(this);
         this.insertMessage = this.insertMessage.bind(this);
         this.delete = this.delete.bind(this);
         this.getConversationInformation = this.getConversationInformation.bind(this);
-        this.getDirectMessageInformation = this.getConversationInformation.bind(this);
+        this.getDirectMessageInformation = this.getDirectMessageInformation.bind(this);
         this.getInvitationInformation = this.getInvitationInformation.bind(this);
         this.getNextMessageBlockConverstaion = this.getNextMessageBlockConverstaion.bind(this);
         this.getNextMessageBlockDirectMessage = this.getNextMessageBlockDirectMessage.bind(this);
         this.insertMessages = this.insertMessages.bind(this);
     }
 
+	async openRealm() {
+		if (!this.open) {
+			this.masterRealm = await Realm.open({
+				path: "friend_messages_realm_database",
+				schemaVersion: 1.0,
+				schema: [HeaderRecordSchema, SubHeaderDirectMessageRecord, SubHeaderConversationRecord, SubHeaderInvitationRecord, SubHeaderAnnouncementRecord, MessageRecord],
+				deleteRealmIfMigrationNeeded: true
+			  });
+
+			this.open = true;
+		}
+	}
+
+	closeRealm() {
+		this.open = false;
+
+		this.masterRealm.close();
+	}
+
     async start() {
-        this.masterHeaderRealm = await Realm.open({
-            path: "friend_messages_realm_database",
-            schemaVersion: 1.0,
-            schema: [MasterHeaderSchema, HeaderRecordSchema, SubHeaderDirectMessageRecord, SubHeaderConversationRecord, SubHeaderInvitationRecord, SubHeaderAnnouncementRecord, MessageBlock, MessageRecord]
-        });
 
         //if master record does not exist
-        if (this.masterHeaderRealm.objects("Messages_Master_Header").length == 0) {
-          this.masterHeaderRealm.write(() => {
+        /*if (this.masterRealm.objects("Messages_Master_Header").length == 0) {
+          this.masterRealm.write(() => {
             //generate uuid
             var id = new UUID();
 
-            this.masterHeaderRealm.create("Messages_Master_Header", 
+            this.masterRealm.create("Messages_Master_Header", 
                 {
                     _id: id,
                     header_records: [],
                 }
             );
           });
-        }
+        }*/
 
-        this.masterHeader = this.masterHeaderRealm.objects("Messages_Master_Header");
+        //this.masterHeader = this.masterRealm.objects("Messages_Header_Record");
     }
 
     //json object
     async insertMessage(message) {
-
         //make query to find it if it exists
         /*const query = {"Messages_Header_Record": {"type_id" : message.id, "type" : message.type}};
         const projection = {
@@ -174,15 +183,110 @@ export class MessageHandler {
                 return err;
             });*/
 
-        var headerRow = await this.masterHeader.header_records.filtered("type_id = " + message.id + ", type = " + message.type);
+		var found = false;
+		var headerRow = null;
 
-        console.log(headerRow);
-        return;
+		if (message.type == "direct") { 
 
-        //if it exists
-        if (found) {
-            if (message.type == "direct message") {
-                //write
+			//findfirstasync?
+			//get other user id
+			headerRow = await this.masterRealm.objects("Messages_Header_Record").filtered("type_id = '" + message.other_user_id + "' AND type = 0");
+
+			//check if we found it
+			found = headerRow.length > 0;
+
+			if (found) {
+				//get first (and hopefully only component)
+				headerRow = headerRow[0];
+
+				//get sub header
+				var subHeader = await this.masterRealm.objectForPrimaryKey("Messages_Sub_Header_Direct_Message_Record", headerRow.sub_header_id);
+
+				//modify headerrow values
+			
+				/*this.masterRealm.write(() => {
+					//modify header
+					headerRow.body = message.body,
+					headerRow.last_timestamp = message.timestamp
+
+					//add message to sub header
+
+					//get the index of the most recent message block
+					var index = subHeader.last_index - 1;
+
+					//get most recent message block
+					var messageBlock = subHeader.message_blocks[index];
+
+					//get previous message
+					var prevMessage = null;
+
+					//if we are at the limit for the number of message records in a message block
+					if (messageBlock.length == MAX_MESSAGES_PER_CHAT_RECORD) {
+						//get previous message
+						prevMessage = messageBlock[MAX_MESSAGES_PER_CHAT_RECORD - 1];
+
+						//add message block to sub header
+						subHeader.message_blocks.push(
+							{
+								messages: [],
+							});
+
+						//increment last_index
+						subHeader.last_index++;
+
+						//get the index of the most recent message block
+						index = subHeader.last_index - 1;
+
+						//get new message block
+						messageBlock = subHeader.message_blocks[index];
+					}
+					else {
+
+						//if greater than one
+						if (messageBlock.length == 1) {
+							//get prev message block
+							var prevMessageBlock = subHeader.message_blocks[index - 1];
+
+							//get last message from that message block
+							prevMessage = prevMessageBlock[MAX_MESSAGES_PER_CHAT_RECORD - 1];
+						}
+						else {
+							prevMessage = messageBlock[messageBlock.length - 1];
+						}
+					}
+
+					
+
+					//if the id's are the same
+					if (messageBlock[messageBlock.length - 1].from_id == ) {
+
+					}
+
+					//add to message_block
+					messageBlock.push({
+						from_id: message.other_user_id,
+						id: messageBlock.length, //has to be unique for the flat list to render
+						message: message.body,
+						show_name: true
+					});
+				});*/
+				this.masterRealm.write(() => {
+					//modify header
+					headerRow.body = message.body;
+					headerRow.last_timestamp = new Date(parseInt(message.timestamp));
+
+					subHeader.message_records.push({
+						from_id: message.other_user_id,
+						id: subHeader.message_size, //has to be unique for the flat list to render
+						message: message.body,
+						user_name: message.user_name,
+						show_name: true
+					});
+
+					subHeader.message_size++;
+				});
+
+				//write
                   //change title
                   //change body
                   //change time stamp
@@ -195,6 +299,106 @@ export class MessageHandler {
                       //increment index
                     //else
                       //add message with properties to front of existing one
+			}
+			else {
+				var subHeaderId = new UUID();
+				var parentHeaderId = new UUID();
+
+				this.masterRealm.write(() => {
+					//create master header record
+					this.masterRealm.create("Messages_Header_Record", {
+						_id: parentHeaderId,
+						type_id: message.other_user_id, 
+						sub_header_id: subHeaderId,
+						type: 0,
+						title: message.user_name,  
+						body: message.body,
+						last_timestamp: new Date(parseInt(message.timestamp))
+					});
+
+					//create the sub header
+					const subHeader = this.masterRealm.create("Messages_Sub_Header_Direct_Message_Record", 
+					{
+						_id: subHeaderId,
+						parent_header_id: parentHeaderId,
+						other_user_id: message.user_id,
+						other_user_name: message.user_name,
+						last_user_id: message.user_id,
+						message_size: 0,
+						message_records: [],   
+					});
+
+					/*
+					//add message block to sub header
+					subHeader.message_blocks.push(
+						{
+							messages: [],
+						});
+
+					//increment last_index
+					subHeader.last_index++;
+
+					//get the index of the most recent message block
+					var index = subHeader.last_index - 1;
+
+					//get message block
+					var message_block = subHeader.message_blocks[index];
+
+					//add to message_block
+					message_block.push({
+						from_id: message.other_user_id,
+						id: message_block.length, //has to be unique for the flat list to render
+						message: message.body,
+						show_name: true
+					});*/
+
+					var show_name = true;
+
+					if (subHeader.message_size > 1) {
+						//get previous message's user id
+						var prevUserId = subHeader.message_records[subHeader.message_size].from_id;
+
+						show_name = prevUserId != message.other_user_id;
+					}
+
+					subHeader.message_records.push({
+						from_id: message.other_user_id,
+						id: subHeader.message_size, //has to be unique for the flat list to render
+						message: message.body,
+						user_name: message.user_name,
+						show_name: show_name
+					});
+
+					subHeader.message_size++;
+
+					if (subHeader.message_size == MAX_NUM_MESSAGES) {
+						subHeader.message_records.remove(0);
+						subHeader.message_size--;
+					}
+				});
+			}
+		}
+		else if (message.type == "conversation") {
+			//get converation id
+			headerRow = await this.masterHeader.filtered("type_id = '" + message.conversation_id + "' AND type = 1");
+		}
+		else if (message.type == "invitation") {
+			//although invitations cannot be new, they may be able to have status updates
+			//so we will this option open to find them
+			//headerRow = await this.masterHeader.filtered("type_id = '" + message.invitation_id + "' AND type = 2");
+		}
+		else if (message.type == "announcement") {
+			//all announcements are new, so no need to look for old ones
+			//headerRow = await this.masterHeader.filtered("type_id = '" + message.announcement_id + "' AND type = 3");
+		}
+		else {
+			return;
+		}
+
+        //if it exists
+        if (found) {
+            if (message.type == "direct message") {
+                
             }
             else if (message.type == "conversation") {
                 //write
@@ -314,10 +518,6 @@ export class MessageHandler {
             }
         }
 
-        this.masterHeaderRealm.write(() => {
-            
-        });
-
         //get the header component if it exists
 
         //if it does not, create it
@@ -330,17 +530,33 @@ export class MessageHandler {
 
     //json array
     async insertMessages(messages) {
-        for (var i = 0; i < messages.length; i++) {
-            this.insertMessage(messages[i]);
-        }
+		try {
+			for (var i = 0; i < messages.length; i++) {
+				this.insertMessage(messages[i]);
+			}	
+		} catch (error) {
+			Alert.alert("Cannot add messages, are you out of memory?");
+		}
     }
+
+	//query for messages for your messages screen
+	async getMessageHeaders() {
+		/*this.masterRealm.write(() => {
+			this.masterRealm.deleteAll();
+		});*/
+		var messageHeaders = await this.masterRealm.objects("Messages_Header_Record").sorted('last_timestamp', true);
+
+		return messageHeaders;
+	}
 
     //messages screen already go on masterheader, since they are always linked
     //so just call messages to be reloaded and it will auto update after insertion
 
     //get direct message sub header
     async getDirectMessageInformation(id) {
-        const type = "invitation";
+		var subHeader = this.masterRealm.objectForPrimaryKey("Messages_Sub_Header_Direct_Message_Record", id);
+
+		return subHeader;
 
         //find and get sub header
 

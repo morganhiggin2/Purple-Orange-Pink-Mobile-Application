@@ -147,12 +147,13 @@ export class MapScreen extends React.Component {
         //must do calculations before rendering
         this.state.boundary = null;
         this.state.region = null;
-        this.state.initialRegion = {
-            latitude: GlobalProperties.map_latitude,
-            longitude: GlobalProperties.map_longitude,
-            latitudeDelta: GlobalProperties.map_latitude_delta,
-            longitudeDelta: GlobalProperties.map_longitude_delta,
-        };
+
+        if (GlobalProperties.map_params == null) {
+            this.state.initialRegion = GlobalProperties.default_map_params;
+        }
+        else {
+            this.state.initialRegion = GlobalProperties.map_params;
+        }
     }
     
     componentDidMount() {
@@ -183,10 +184,8 @@ export class MapScreen extends React.Component {
             return;
         }*/
 
-        var location = null;
-
         //fetch user's location if not using map settings
-        if (!this.state.initialized) {
+        if (GlobalProperties.map_params == null) {
 
             var locationResult = await GlobalEndpoints.getLocation();
 
@@ -194,59 +193,25 @@ export class MapScreen extends React.Component {
                 Alert.alert("Permission to access location was denied.\nUsing map settings.");
 
                 //use map settings
-                GlobalProperties.use_map_settings = true;
+                GlobalProperties.map_params = GlobalProperties.default_map_params;
             }
             else if (locationResult.location == null) {
                 Alert.alert("Location could not be determined.\nUsing map settings.");
 
                 //use map settings
-                GlobalProperties.use_map_settings = true;
+                GlobalProperties.map_params = GlobalProperties.default_map_params;
             }
             else {
-                location = {
-                    latitude: locationResult.location.coords.latitude,
-                    longitude: locationResult.location.coords.longitude,
-                };
-
-                //set initial region
-                this.state.initialRegion = {
-                    latitude: locationResult.location.coords.latitude,
-                    longitude: locationResult.location.coords.longitude,
-                    latitudeDelta: GlobalProperties.map_latitude_delta,
-                    longitudeDelta: GlobalProperties.map_longitude_delta,
+                GlobalProperties.map_params = {
+                    latitude: locationResult.location.location.coords.latitude,
+                    longitude: locationResult.location.location.coords.longitude,
+                    latitudeDelta: GlobalProperties.default_map_params.latitudeDelta,
+                    longitudeDelta: GlobalProperties.default_map_paramslongitudeDelta,
                 };
             }
-
-            this.state.initialized = true;
-        }
-        else {
-            if (this.state.region != null) {
-                location = {
-                    latitude: this.state.region.latitude,
-                    longitude: this.state.region.longitude,
-                }
-            }
-            else {
-                location = {
-                    latitude: this.state.initialRegion.latitude,
-                    longitude: this.state.initialRegion.longitude,
-                }
-            }
         }
 
-        if (location == null) {
-            location = {
-                latitude: GlobalProperties.map_latitude,
-                longitude: GlobalProperties.map_longitude,
-            };
-        }
-        else {
-            location = {
-                latitude: location.latitude,
-                longitude: location.longitude,
-            };
-        }
-
+        this.state.initialRegion = GlobalProperties.map_params;
         //update search
         /*var body = {
             "radius": search_radius,
@@ -266,8 +231,8 @@ export class MapScreen extends React.Component {
                 "minimum_age": GlobalProperties.search_minAge,
                 "maximum_age": GlobalProperties.search_maxAge,
                 "location": {
-                    "latitude": location.latitude,
-                    "longitude": location.latitude,
+                    "latitude": GlobalProperties.map_params.latitude,
+                    "longitude": GlobalProperties.map_params.latitude,
                 }
             };
 
@@ -277,8 +242,8 @@ export class MapScreen extends React.Component {
             body = {
                 "radius": search_radius,
                 "location": {
-                    "latitude": location.latitude,
-                    "longitude": location.longitude,
+                    "latitude": GlobalProperties.map_params.latitude,
+                    "longitude": GlobalProperties.map_params.longitude,
                 }
             };
 
@@ -484,17 +449,17 @@ export class MapScreen extends React.Component {
     }
 
     onRegionChangeComplete(region) {
-        //update global values
 
-        GlobalProperties.map_latitude = region.latitude;
-        GlobalProperties.map_longitude = region.longitude;
+        //update global values
+        GlobalProperties.map_params = region;
         GlobalProperties.map_search_radius = GlobalProperties.get_haversine_distance(region.latitude, region.longitude, region.latitudeDelta, region.longitudeDelta);
-        GlobalProperties.map_latitude_delta = region.latitudeDelta;
-        GlobalProperties.map_longitude_delta = region.longitudeDelta;
 
         if (GlobalProperties.use_map_settings) {
             GlobalProperties.search_radius = GlobalProperties.map_search_radius;
         }
+
+        //update search as location changed
+        this.GlobalProperties.map_filters_updated = true;
 
         //call on updating markers
     }
@@ -586,18 +551,18 @@ export class MapScreen extends React.Component {
 
             //animate change
             this.state.map_ref.animateToRegion({
-                latitude: locationResult.location.coords.latitude,
-                longitude: locationResult.location.coords.longitude,
-                latitudeDelta: GlobalProperties.map_latitude_delta,
-                longitudeDelta: GlobalProperties.map_longitude_delta,
+                latitude: locationResult.location.location.coords.latitude,
+                longitude: locationResult.location.location.coords.longitude,
+                latitudeDelta: GlobalProperties.map_params.latitudeDelta,
+                longitudeDelta: GlobalProperties.map_params.longitudeDelta,
             });
 
-            //set the initial region
-            this.state.initialRegion = {
-                latitude: locationResult.location.coords.latitude,
-                longitude: locationResult.location.coords.longitude,
-                latitudeDelta: GlobalProperties.map_latitude_delta,
-                longitudeDelta: GlobalProperties.map_longitude_delta,
+            //set default region
+            GlobalProperties.default_map_params = {
+                latitude: locationResult.location.location.coords.latitude,
+                longitude: locationResult.location.location.coords.longitude,
+                latitudeDelta: GlobalProperties.map_params.latitudeDelta,
+                longitudeDelta: GlobalProperties.map_params.longitudeDelta,
             };
 
             //update map

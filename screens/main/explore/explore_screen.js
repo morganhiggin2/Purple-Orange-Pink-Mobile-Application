@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, View, Text, TextInput, Image, SafeAreaView, ScrollView, Dimensions, FlatList, ImageBackground, Alert, RefreshControl} from 'react-native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
-import { AntDesign, Feather } from '@expo/vector-icons'; 
+import { AntDesign, Feather, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons'; 
 import {Route} from '@react-navigation/native';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { render } from 'react-dom';
@@ -51,12 +51,12 @@ const frame_styles = StyleSheet.create(
         inner_text_apart_container: {
             marginBottom: 2,
             marginLeft: 4,
-            justifyContent: 'space-between',
-             flexDirection: 'row'
+            justifyContent: 'flex-start',
+            flexDirection: 'row'
         },
         main_text: {
             fontSize: 14,
-            marginRight: 5,
+            marginRight: 15,
             color: 'black',
         },
         description_text: {
@@ -154,17 +154,17 @@ class FrameComponent extends React.Component{
             this.state.name = this.props.firstName + " " + this.props.lastInitial;
         
             //deal if name if too long to fit on screen
-            if (this.state.name.length > 25) {
+            /*if (this.state.name.length > 25) {
                 this.state.name = this.state.name.substring(0, 22) + "...";
-            }
+            }*/
         }
         else if (this.props.type == "activity") {
             this.state.name = this.props.name;
             
             //deal if name if too long to fit on screen
-            if (this.state.name.length > 40) {
+            /*if (this.state.name.length > 40) {
                 this.state.name = this.state.name.substring(0, 37) + "...";
-            }
+            }*/
         }
     }
 
@@ -219,16 +219,18 @@ class FrameComponent extends React.Component{
                             <Image style={frame_styles.background_image} source={{uri: "https://image.cnbcfm.com/api/v1/image/106926992-1628885077267-elon.jpg"}}/>
                             <View style={[frame_styles.text_container, {width: '65%'}]}>
                                 <View style={frame_styles.inner_text_container}>
-                                    <Text style={frame_styles.name_text}>
+                                    <Text numberOfLines={1} style={frame_styles.name_text}>
                                         {this.state.name}
                                     </Text> 
                                 </View>
                                 <View style={frame_styles.inner_text_apart_container}>
                                     <Text style={frame_styles.main_text}>
-                                        {this.props.distance + " miles away"}
+                                        <FontAwesome style={{marginRight: 0}} name="road" size={12} color="gray"/>
+                                        {" " + this.props.distance + " miles"}
                                     </Text> 
                                     <Text style={frame_styles.main_text}>
-                                        {this.props.age + " years old"}
+                                        <MaterialCommunityIcons name="baby" size={12} color="lightskyblue" />
+                                        {" " + this.props.age + " y.o."}
                                     </Text>
                                 </View>
                                 <View style={[frame_styles.inner_text_container, {maxHight: 50}]}>
@@ -257,10 +259,12 @@ class FrameComponent extends React.Component{
                                 </View>
                                 <View style={[frame_styles.inner_text_apart_container]}>
                                     <Text style={frame_styles.main_text}>
-                                        {this.props.distance + " miles away"}
+                                        <FontAwesome style={{marginRight: 0}} name="road" size={12} color="gray"/>
+                                        {" " + this.props.distance + " miles"}
                                     </Text> 
                                     <Text style={frame_styles.main_text}>
-                                        {this.props.date_time}
+                                        <FontAwesome name="calendar" size={12} color="red" />
+                                        {" " + this.props.date_time}
                                     </Text> 
                                 </View>
                                 <View style={[frame_styles.inner_text_container, {maxHight: 50}]}>
@@ -398,11 +402,12 @@ export class ExploreScreen extends React.Component {
             if (GlobalProperties.search_filters_updated) {
                 this.state.loading = true;
                 this.state.reload = false;
+
                 this.lazyUpdate();
 
                 this.updateSearch();
 
-                GlobalProperties.search_filters_updated = true;
+                GlobalProperties.search_filters_updated = false;
             }
 
             if (GlobalProperties.return_screen == "Other Profile Screen" && GlobalProperties.screen_props != null) {
@@ -474,15 +479,12 @@ export class ExploreScreen extends React.Component {
         };*/
 
     async updateSearch() {
-        let search_radius = GlobalProperties.map_search_radius;
-
         //make sure the attriutes are good
         /*if (!this.validateAttributes()) {
             return;
         }*/
 
-        var location = null;
-
+        /*
         //fetch user's location if not using map settings
         if (!GlobalProperties.use_map_settings) {
 
@@ -516,6 +518,34 @@ export class ExploreScreen extends React.Component {
                 latitude: location.coords.latitude,
                 longitude: location.coords.longitude,
             };
+        }*/
+
+        //if map has not been set
+        if (GlobalProperties.map_params == null) {
+            //use user's location
+            var location = await GlobalEndpoints.getLocation();
+
+            if (!location.granted) {
+                Alert.alert("Permission to access location was denied.\nEnable location access or use map.");
+
+                //use map settings
+                GlobalProperties.use_map_settings = true;
+            }
+            else if (location.location == null) {
+                Alert.alert("Location could not be determined.\nUsing map settings.");
+
+                //use map settings
+                GlobalProperties.use_map_settings = true;
+            }
+            else {
+                //if can get, set it to map_params
+                GlobalProperties.map_params = {
+                    latitude: location.location.coords.latitude,
+                    longitude: location.location.coords.longitude,
+                    latitudeDelta: GlobalProperties.default_map_params.latitudeDelta,
+                    longitudeDelta: GlobalProperties.default_map_params.longitudeDelta
+                }
+            }
         }
 
         //update search
@@ -525,12 +555,12 @@ export class ExploreScreen extends React.Component {
         //get body
         if (GlobalProperties.search_type == "people") {
             body = {
-                "radius": search_radius,
+                "radius": GlobalProperties.search_radius,
                 "minimum_age": GlobalProperties.search_minAge,
                 "maximum_age": GlobalProperties.search_maxAge,
                 "location": {
-                    "latitude": location.latitude,
-                    "longitude": location.longitude,
+                    "latitude": GlobalProperties.map_params.latitude,
+                    "longitude": GlobalProperties.map_params.longitude,
                 },
                 "page_number": 1,
                 "page_size": 20,
@@ -544,10 +574,10 @@ export class ExploreScreen extends React.Component {
         }
         else if (GlobalProperties.search_type == "activities") {
             body = {
-                "radius": search_radius,
+                "radius": GlobalProperties.search_radius,
                 "location": {
-                    "latitude": location.latitude,
-                    "longitude": location.longitude,
+                    "latitude": GlobalProperties.map_params.latitude,
+                    "longitude": GlobalProperties.map_params.longitude,
                 },
                 "page_number": 1,
                 "page_size": 20,
