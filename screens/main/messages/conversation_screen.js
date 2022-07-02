@@ -1,11 +1,12 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Image, SafeAreaView, ScrollView, Dimensions, FlatList, Alert, RefreshControl} from 'react-native';
+import {StyleSheet, View, Text, TextInput, Image, SafeAreaView, ScrollView, Dimensions, FlatList, Alert, RefreshControl, TouchableOpacity} from 'react-native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { AntDesign, Feather} from '@expo/vector-icons'; 
 import {Route} from '@react-navigation/native';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { render } from 'react-dom';
 import { GlobalProperties, GlobalValues } from '../../../global/global_properties';
+import { GlobalEndpoints } from '../../../global/global_endpoints.js';
 
 const frame_styles = StyleSheet.create(
     {
@@ -85,16 +86,20 @@ const main_styles = StyleSheet.create(
             fontSize: 16,
         },
         search_bar: {
-            width: "100%",
             borderRadius: 4,
             borderColor: '#EAEAEA',
             backgroundColor: '#EAEAEA',
             borderWidth: 3,
+            width: Math.trunc(Dimensions.get('window').width - 52)
         },
         top_bar: {
             flexDirection: 'row',
             padding: "3%",
             backgroundColor: 'white',
+        },
+        send_button: {
+            marginLeft: 4,
+            alignSelf: 'center'
         },
         scroll_area: {
             
@@ -125,6 +130,7 @@ const blip_styles = StyleSheet.create(
             flexDirection: "row",
             justifyContent: 'space-between',
             alignItems: 'flex-start',
+            maxWidth: '100%',
             //flexWrap: 'wrap',
             //alignItems: 'flex-end'
         },
@@ -254,6 +260,7 @@ export class ConversationScreen extends React.Component {
 
             title: this.props.route.params.title,
             sub_header_id: this.props.route.params.sub_header_id,
+            subHeader: null,
             type_id: this.props.route.params.type_id,
             type: this.props.route.params.type,
             last_timestamp: this.props.route.params.last_timestamp,
@@ -261,6 +268,7 @@ export class ConversationScreen extends React.Component {
             messages: [],
             messages_count: GlobalValues.MESSAGES_PAGE_AMOUNT,
 
+            messages_input_handler: null,
             message: "",
             showSendButton: false,
 
@@ -276,6 +284,8 @@ export class ConversationScreen extends React.Component {
         }*/
 
         this.fetchMessages = this.fetchMessages.bind(this);
+        this.onChangeMessage = this.onChangeMessage.bind(this);
+        this.sendMessage = this.sendMessage.bind(this);
         this.lazyUpdate = this.lazyUpdate.bind(this);
 
         this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={this.state.name}/>});
@@ -298,16 +308,14 @@ export class ConversationScreen extends React.Component {
     async fetchMessages() {
         //get message sub header
 
-        var subHeader = null
-
         if (this.state.type == 0) {
-            subHeader = await GlobalProperties.messagesHandler.getDirectMessageInformation(this.state.sub_header_id);
+            this.state.subHeader = await GlobalProperties.messagesHandler.getDirectMessageInformation(this.state.sub_header_id);
         }
         else if (this.state.type == 1) {
-            subHeader = await GlobalProperties.messagesHandler.getConversationInformation(this.state.sub_header_id);
+            this.state.subHeader = await GlobalProperties.messagesHandler.getConversationInformation(this.state.sub_header_id);
         }
 
-        this.state.messages = subHeader.message_records;
+        this.state.messages = this.state.subHeader.message_records;
 
         //add listener to messages
         try {
@@ -329,9 +337,7 @@ export class ConversationScreen extends React.Component {
 
         if (this.state.showSendButton) {
             sendButton = (
-                <View>
-                    <Feather name="send" size={24} color="black" />
-                </View>
+                <Feather name="send" style={main_styles.send_button} size={24} color="black" />
             );
         }
         else {
@@ -360,9 +366,11 @@ export class ConversationScreen extends React.Component {
                                 />
                             <View style={main_styles.top_bar}>
                                 <View style={main_styles.search_bar}>
-                                    <TextInput style={main_styles.text_input} placeholderTextColor="black" maxHeight={38} multiline={true}/>
+                                    <TextInput style={main_styles.text_input} ref={(input) => {this.state.messages_input_handler = input}}  onChangeText={(text) => {this.onChangeMessage(text);}} placeholderTextColor="black" maxHeight={38} multiline={true}/>
                                 </View>
-                                {sendButton}
+                                <TouchableOpacity style={main_styles.send_button} onPress={() => {this.sendMessage();}}>
+                                    <Feather name="send" size={28} color={this.state.showSendButton ? GlobalValues.ORANGE_COLOR : GlobalValues.DARKER_OUTLINE}/>
+                                </TouchableOpacity>
                             </View>
                         </SafeAreaView>
                     ) 
@@ -372,8 +380,114 @@ export class ConversationScreen extends React.Component {
     }
 
     onChangeMessage(value) {
+        this.state.message = value;
 
+        if (!this.state.showSendButton & this.state.message.length > 0) {
+            this.state.showSendButton = true;
+            this.lazyUpdate();
+        }
+        else if (this.state.showSendButton & this.state.message.length == 0){
+            this.state.showSendButton = false;
+            this.lazyUpdate();
+        }
     } 
+
+    async sendMessage() {
+        var url = "";
+        var body = "";
+
+        if (this.state.type == 0) {
+            //send direct message
+
+            url = "/api/User/Friends/Messages/SendDirectMessage";
+            body = {
+                other_id: this.state.subHeader.other_user_id,
+                body: this.state.message,
+                expo_token: GlobalProperties.expo_push_token
+            };
+        }
+        else if (this.state.type == 1) {
+            //send conversation message
+        }
+
+        //set global property to false first (so if multiple notifications, they dont create many overlapping requests)
+        GlobalProperties.reload_messages = false;
+
+        //get pending messages
+
+        //if request was successful
+        var successful = false;
+
+        //make request
+        var result = await GlobalEndpoints.makePostRequest(true, url, body)
+            .then((result) => {
+                if (result == undefined) {
+                    successful = false;
+                }
+                else {
+                    successful = true;
+                }
+                return(result);
+            })
+            .catch((error) => {
+                successful = false;
+                return(error);
+            });
+
+        //if there is no error message, request was good
+        if (successful) {
+
+            //if result status is ok
+            if (result.request.status ==  200) {
+                
+                //clear messages field
+                this.state.messages_input_handler.clear();
+
+                this.state.showSendButton = false;
+
+                //get timestamp
+                var timestamp = JSON.parse(result.request.response).timestamp;
+
+                //add message to local storage
+                GlobalProperties.messagesHandler.insertMessages([
+                    {
+                        type: "direct",
+                        timestamp: timestamp,
+                        body: this.state.message,
+                        user_id: GlobalProperties.user_id,
+                        user_name: "Me",
+                        is_you: true,
+                    }
+                ]);
+
+                //no need to laxy update as mongodb realm triggers that
+                //return;
+            }
+            else {
+                //returned bad response, fetch server generated error message
+
+                Alert.alert(result.data);
+            }
+        }
+        else {
+
+            //invalid request
+            if (result == undefined) {
+
+            }
+            else if (result.response.status == 400 && result.response.data) {
+                Alert.alert(JSON.parse(result.response.data));
+                return;
+            }
+            //handle not found case
+            else if (result.response.status == 404) {
+                GlobalEndpoints.handleNotFound(false);
+            }
+        }
+
+        //once done, lazy update
+        this.lazyUpdate();
+    }
     
     lazyUpdate() {
         this.forceUpdate();

@@ -152,6 +152,7 @@ export class LoginScreen extends React.Component {
                     //add username and password to memory to memory
                     GlobalProperties.put_key_value_pair("User_Username", JSON.stringify(this.state.username));
                     GlobalProperties.put_key_value_pair("User_PurpleOrangePink_Api_Token", GlobalProperties.auth_token);
+                    GlobalProperties.user_id = JSON.parse(result.request.response).user_id;
 
                     //set logged in to true
                     GlobalProperties.is_logged_in = true;

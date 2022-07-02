@@ -65,6 +65,7 @@ export class GlobalProperties {
     static auth_token = "";
     static expo_push_token = "";
     static user_name = "";
+    static user_id = "";
 
     //global search filters for maps and explore
     static search_attributes = [];

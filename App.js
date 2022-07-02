@@ -370,6 +370,7 @@ export class App extends React.Component {
         //if result status is ok
         if (result.request.status ==  200) {
           GlobalProperties.is_logged_in = true;
+          GlobalProperties.user_id = JSON.parse(result.request.response).user_id;
 
           return true;
         }
