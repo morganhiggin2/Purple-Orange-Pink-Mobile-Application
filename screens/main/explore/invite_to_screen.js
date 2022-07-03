@@ -5,6 +5,7 @@ import { color } from 'react-native-reanimated';
 import {AntDesign, Feather, Ionicons} from '@expo/vector-icons';
 import { GlobalProperties, GlobalValues } from '../../../global/global_properties';
 import { GlobalEndpoints } from '../../../global/global_endpoints';
+import { LoadingScreen } from '../../misc/loading_screen';
 
 const main_styles = StyleSheet.create({
     logo: {
@@ -256,7 +257,7 @@ export class InviteToScreen extends React.Component {
         var successful = false;
 
         //make request
-        var result = await GlobalEndpoints.makeGetRequest(true, "/api/User/Friends/GetListActivitiesAndGroups")
+        var result = await GlobalEndpoints.makeGetRequest(true, "/api/User/Friends/GetCreatedItems")
             .then((result) => {
                 successful = true;
                 return(result);
@@ -287,7 +288,7 @@ export class InviteToScreen extends React.Component {
 
             //invalid request
             if (result.response.status == 400 && result.response.data) {
-                Alert.alert(JSON.parse(result.response.data));
+                Alert.alert(result.response.data);
                 return;
             }
             //handle not found case
@@ -307,11 +308,7 @@ export class InviteToScreen extends React.Component {
     render() {
         if (this.state.loading == true || this.state.loading == null) {
             return (
-            <View style={main_styles.page}>
-                <Text>
-                    Loading...
-                </Text>
-            </View>
+                <LoadingScreen/>
             );
         }
         else {
@@ -426,7 +423,7 @@ class FrameComponent extends React.Component {
                 return;
             }
             else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(JSON.parse(result.response.data));
+                Alert.alert(result.response.data);
                 return;
             }
             //handle not found case

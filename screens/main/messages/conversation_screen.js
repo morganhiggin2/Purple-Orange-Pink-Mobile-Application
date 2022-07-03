@@ -323,6 +323,8 @@ export class ConversationScreen extends React.Component {
         this.state.messages = this.state.subHeader.message_records;
 
         this.state.messages.addListener(() => {
+            GlobalProperties.reload_messages = true;
+            
             this.lazyUpdate();
         })
 
@@ -420,7 +422,7 @@ export class ConversationScreen extends React.Component {
         }
 
         //set global property to false first (so if multiple notifications, they dont create many overlapping requests)
-        GlobalProperties.reload_messages = false;
+        //GlobalProperties.reload_messages = false;
 
         //get pending messages
 
@@ -486,6 +488,8 @@ export class ConversationScreen extends React.Component {
                     ]);
                 }
 
+                GlobalProperties.reload_messages = true;
+
                 //no need to laxy update as mongodb realm triggers that
                 //return;
             }
@@ -502,7 +506,7 @@ export class ConversationScreen extends React.Component {
 
             }
             else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(JSON.parse(result.response.data));
+                Alert.alert(result.response.data);
                 return;
             }
             //handle not found case

@@ -219,7 +219,7 @@ FilterSnap.defaultProps = {
     color: GlobalValues.ORANGE_COLOR,
 }
 
-export class InviteScreen extends React.Component {
+export class InviteeScreen extends React.Component {
     constructor(props) {
         super(props);
 
@@ -232,23 +232,20 @@ export class InviteScreen extends React.Component {
 
             //for loading screen
             loading: true,
-            reload: false, };
+            reload: false, 
+        };
 
-        if (this.state.type == "person") {
-            this.state.activity_id = this.props.route.params.other_id;
-        }
-        else if (this.state.type == "activity") {
-            this.state.activity_id = this.props.route.params.other_id;
-        }
-        else if (this.state.type == "group") {
-            this.state.group_id = this.props.route.params.other_id;
-        }
+        
+        this.state.other_id = this.props.route.params.other_id;
+
         this.fetchInvitationData = this.fetchInvitationData.bind(this);
         this.acceptInvitation = this.acceptInvitation.bind(this);
         this.removeInvitation = this.removeInvitation.bind(this);
 
         //once done, lazy update
         this.lazyUpdate = this.lazyUpdate.bind(this);
+
+        //this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={"Invite Screen"}/>});
     }
 
     async log_in() {
@@ -275,81 +272,9 @@ export class InviteScreen extends React.Component {
         this.state.subHeader = await GlobalProperties.messagesHandler.getInvitationInformation(this.state.sub_header_id);
 
         this.state.invitation_id = this.state.subHeader.invitation_id;
-
-        var successful = false;
-
-        //make request
-        var result = await GlobalEndpoints.makeGetRequest(true, ("/api/User/Generic/ViewInvitation?id=" + this.state.invitation_id))
-            .then((result) => {
-                if (result == undefined) {
-                    successful = false;
-                }
-                else {
-                    successful = true;
-                }
-                return(result);
-            })
-            .catch((error) => {
-                successful = false;
-                return(error);
-            });
-
-        //if there is no error message, request was good
-        if (successful) {
-
-            //if result status is ok
-            if (result.request.status ==  200) {
-                //get request body
-                var invitation_information = JSON.parse(result.request.response).invitation_information;
-
-                //add user information
-                this.state.view_type = invitation_information.type;
-
-                if (this.state.view_type == "person") {
-                    this.state.name = invitation_information.first_name + " " + invitation_information.last_name;
-                }
-                else if (this.state.view_type == "activity") {
-                    this.state.name = invitation_information.name;
-                }
-
-                this.state.invitation_message = invitation_information.invitation_type_message;
-                this.state.view_id = invitation_information.id;
-                this.state.view_type = invitation_information.type;
-                this.state.is_invitee = invitation_information.is_invitee;
-
-                this.state.loading = false;
-            }
-            else {
-                //returned bad response, fetch server generated error message
-                //and set 
-                Alert.alert(result.data);
-                return;
-            }
-        }
-        else {
-            //invalid request
-            if (result == undefined) {
-                this.state.reload = true;
-                this.lazyUpdate();
-            
-                return;
-            }
-            else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(JSON.parse(result.response.data));
-                return;
-            }
-            //handle not found case
-            else if (result.response.status == 404) {
-                this.state.reload = true;
-                this.lazyUpdate();
-                GlobalEndpoints.handleNotFound(false);
-            }
-            else {
-                this.state.reload = true;
-                this.lazyUpdate();
-                return;
-            }
-        }
+        this.state.other_id = this.state.subHeader.other_id;
+        this.state.other_type = this.state.subHeader.other_type;
+        this.state.loading = false;
 
         //once done, lazy update
         this.lazyUpdate();
@@ -358,53 +283,14 @@ export class InviteScreen extends React.Component {
     }
 
     render() {
-        var renderActions = {};
-        
-        if (this.state.is_invitee) {
-            renderActions = (
-                <View>
-                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {acceptInvitationAlert(this.acceptInvitation);}}>
-                        <View style={actions_styles.action_button_inner}>
-                            <AntDesign name="message1" size={20} color="white" style={actions_styles.action_button_icon}/>
-                            <Text style={actions_styles.action_button_text}>
-                                Accept
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {declineInvitationAlert(this.removeInvitation);}}>
-                        <View style={actions_styles.action_button_inner}>
-                            <AntDesign name="message1" size={20} color="white" style={actions_styles.action_button_icon}/>
-                            <Text style={actions_styles.action_button_text}>
-                                Decline
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-            );
-        }
-        else {
-            renderActions = (
-                <View>
-                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {recindInvitationAlert(this.removeInvitation);}}>
-                        <View style={actions_styles.action_button_inner}>
-                            <AntDesign name="message1" size={20} color="white" style={actions_styles.action_button_icon}/>
-                            <Text style={actions_styles.action_button_text}>
-                                Recind Invitation
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-            );
-        }
         var renderViewOther = {};
 
-        if (this.state.type == "person")
+        if (this.state.other_type == "person")
         {
             renderViewOther = (
                 <View>
-                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("Other Profile Screen", {id: this.state.person_id, type: "none", viewing:""});}}>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("Other Profile Screen", {id: this.state.other_id, type: "none", viewing:""});}}>
                         <View style={actions_styles.action_button_inner}>
-                            <AntDesign name="message1" size={20} color="white" style={actions_styles.action_button_icon}/>
                             <Text style={actions_styles.action_button_text}>
                                 View Profile
                             </Text>
@@ -413,12 +299,11 @@ export class InviteScreen extends React.Component {
                 </View>
             );
         }
-        else {
+        else if (this.state.other_type == "activity"){
             renderViewOther = (
                 <View>
-                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("Other Activity Screen", {id: this.state.activity_id, type: "none", viewing:""});}}>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("Other Activity Screen", {id: this.state.other_id, type: "none", viewing:""});}}>
                         <View style={actions_styles.action_button_inner}>
-                            <AntDesign name="message1" size={20} color="white" style={actions_styles.action_button_icon}/>
                             <Text style={actions_styles.action_button_text}>
                                 View Activity
                             </Text>
@@ -447,7 +332,22 @@ export class InviteScreen extends React.Component {
                                 Actions
                             </Text>
                             <View style={actions_styles.actions_view}> 
-                                {renderActions}
+                                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {acceptInvitationAlert(this.acceptInvitation);}}>
+                                    <View style={actions_styles.action_button_inner}>
+                                        <AntDesign name="message1" size={20} color="white" style={actions_styles.action_button_icon}/>
+                                        <Text style={actions_styles.action_button_text}>
+                                            Accept
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {declineInvitationAlert(this.removeInvitation);}}>
+                                    <View style={actions_styles.action_button_inner}>
+                                        <AntDesign name="message1" size={20} color="white" style={actions_styles.action_button_icon}/>
+                                        <Text style={actions_styles.action_button_text}>
+                                            Decline
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
                                 {renderViewOther}
                             </View>
                         </View>
@@ -469,7 +369,7 @@ export class InviteScreen extends React.Component {
         var successful = false;
 
         //make request
-        var result = await GlobalEndpoints.makeGetRequest(true, "/api/User/Friends/Generic/AcceptInvitation?id=" + this.state.invitation_id)
+        var result = await GlobalEndpoints.makeGetRequest(true, "/api/User/Generic/AcceptInvitation?id=" + this.state.invitation_id)
             .then((result) => {
                 if (result == undefined) {
                     successful = false;
@@ -488,9 +388,11 @@ export class InviteScreen extends React.Component {
         if (successful) {
             //if result status is ok
             if (result.request.status ==  200) {
+                //remove invitation from local realm
+                GlobalProperties.messagesHandler.delete(this.state._id);
 
-                //update invitations on main page, get rid of
-                //pass id or something
+                //reload messages in your message screen upon return
+                GlobalProperties.reload_messages = true;
 
                 //then go back
                 this.props.navigation.pop(1);
@@ -508,7 +410,7 @@ export class InviteScreen extends React.Component {
                 return;
             }
             else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(JSON.parse(result.response.data));
+                Alert.alert(result.response.data);
                 return;
             }
             //handle not found case
@@ -527,7 +429,7 @@ export class InviteScreen extends React.Component {
         var successful = false;
 
         //make request
-        var result = await GlobalEndpoints.makeGetRequest(true, "/api/User/Generic/RejectInvitation?id=" + this.state.id)
+        var result = await GlobalEndpoints.makeGetRequest(true, "/api/User/Generic/RejectInvitation?id=" + this.state.invitation_id)
             .then((result) => {
                 if (result == undefined) {
                     successful = false;
@@ -546,9 +448,11 @@ export class InviteScreen extends React.Component {
         if (successful) {
             //if result status is ok
             if (result.request.status ==  200) {
+                //remove invitation from local realm
+                GlobalProperties.messagesHandler.delete(this.state._id);
 
-                //update invitations on main page, get rid of
-                //pass id or something
+                //reload messages in your message screen upon return
+                GlobalProperties.reload_messages = true;
 
                 //then go back
                 this.props.navigation.pop(1);
@@ -566,7 +470,7 @@ export class InviteScreen extends React.Component {
                 return;
             }
             else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(JSON.parse(result.response.data));
+                Alert.alert(result.response.data);
                 return;
             }
             //handle not found case
@@ -619,27 +523,6 @@ const declineInvitationAlert = (declineInvitation) => {
             {
                 text: "Decline",
                 onPress: () => declineInvitation(),
-            }
-        ],
-        {
-            cancelable: true,
-        }
-    );
-};
-
-const recindInvitationAlert = (recindInvitation) => {
-    Alert.alert(
-        "Recind Invitation",
-        "Are you sure you want to recind this invitation?",
-        [
-            {
-                text: "Cancel",
-                onPress: () => {},
-                style: "cancel",
-            },
-            {
-                text: "Recind",
-                onPress: () => recindInvitation(),
             }
         ],
         {

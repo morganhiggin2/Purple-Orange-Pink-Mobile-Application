@@ -651,7 +651,7 @@ export class ExploreScreen extends React.Component {
                 this.state.reload = true;
             }
             else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(JSON.parse(result.response.data));
+                Alert.alert(result.response.data);
                 return;
             }
             //handle not found case

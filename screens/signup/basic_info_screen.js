@@ -188,7 +188,7 @@ export class BasicInfoScreen extends React.Component {
             }
             //invalid request
             if (result.response.status == 400 && result.response.data) {
-                Alert.alert(JSON.parse(result.response.data));
+                Alert.alert(result.response.data);
             }
             //handle not found case
             else if (result.response.status == 404) {

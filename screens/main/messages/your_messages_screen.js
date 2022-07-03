@@ -210,7 +210,7 @@ export class YourMessagesScreen extends React.Component {
         this.props.navigation.addListener('focus', () => {
             this.state.global_props = GlobalProperties.screen_props;
             //we returned from the search screen with getting new activity/target location
-            if (GlobalProperties.return_screen == "Manage Activity Screen" && GlobalProperties.screen_props != null) {
+            /*if (GlobalProperties.return_screen == "Manage Activity Screen" && GlobalProperties.screen_props != null) {
 
                 this.state.filters.type = GlobalProperties.screen_props.filters.type;
                 this.state.filters.invitation_type = GlobalProperties.screen_props.filters.invitation_type;
@@ -260,7 +260,7 @@ export class YourMessagesScreen extends React.Component {
                         this.props.navigation.navigate("Conversation Screen", {id: i, first_name: DATA[i].first_name, last_name: DATA[i].last_name, username: DATA[i].username});
 
                         this.lazyUpdate();
-                }*/
+                }*
 
                 //new conversation
 
@@ -272,26 +272,31 @@ export class YourMessagesScreen extends React.Component {
                 //this.state.filters.search_for_id = GlobalProperties.screen_props.filters.id;
 
                 //clear other fields of filter
-            }
-            else if (GlobalProperties.return_screen == "Conversation Screen" && GlobalProperties.screen_props != null) {
+            }*/
+
+            if (GlobalProperties.return_screen == "Conversation Screen" && GlobalProperties.screen_props != null) {
                 GlobalProperties.messagesHandler.readMessage(GlobalProperties.screen_props._id);
-                     
-                //put messages in array
-                GlobalProperties.messagesHandler.getMessageHeaders().then((ret) => {
-                    this.state.messageHeaders = ret;
-                    
-                    this.lazyUpdate();
-                });
             }
-            else {
-                //set local filters to global property ones (these are the ones from the filters screen)
+            else if (GlobalProperties.return_screen == "Other Profile Screen" && GlobalProperties.screen_props != null) {
+                if (GlobalProperties.screen_props.sendMessage) {
+                    //get header and navigate to conversation screen
+                    GlobalProperties.messagesHandler.getDirectMessageHeaderRow(GlobalProperties.screen_props._id).then((header) => {
+                        this.props.navigation.navigate("Conversation Screen", {title: header.name, _id: header._id, last_timestamp: header.last_timestamp, sub_header_id: header.sub_header_id, type_id: header.type_id, type: header.type});
+                    });             
+                }
             }
 
             //reload messages if need be
             if (GlobalProperties.reload_messages) {
-                //this.fetchPendingMessages
+                console.log("reloading messages");
+                GlobalProperties.reload_messages = false;//put messages in array
 
-                GlobalProperties.reload_messages = false;
+                GlobalProperties.messagesHandler.getMessageHeaders().then((ret) => {
+                    console.log("reloaded messages");
+                    this.state.messageHeaders = ret;
+                    
+                    this.lazyUpdate();
+                });
             }
 
             GlobalProperties.screenActivated();
@@ -374,7 +379,7 @@ export class YourMessagesScreen extends React.Component {
                 this.state.reload = true;
             }
             else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(JSON.parse(result.response.data));
+                Alert.alert(result.response.data);
                 return;
             }
             //handle not found case
@@ -512,7 +517,7 @@ class FrameComponent extends React.Component {
                 break;
             }
             case 2: {
-                this.props.navigation.navigate("Invite Screen", {title: this.state.title, _id: this.state._id, sub_header_id: this.state.sub_header_id, type_id: this.state.type_id, type: this.state.type, body: this.state.body});
+                this.props.navigation.navigate("Invitee Screen", {title: this.state.title, _id: this.state._id, sub_header_id: this.state.sub_header_id, type_id: this.state.type_id, type: this.state.type, body: this.state.body});
 
                 break;
             }

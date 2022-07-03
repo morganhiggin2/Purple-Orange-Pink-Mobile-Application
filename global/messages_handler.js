@@ -66,6 +66,8 @@ const SubHeaderInvitationRecord = {
         _id: "uuid",
         parent_header_id: "uuid", //id of parent header
         invitation_id: "string",
+		other_id: "string", 
+		other_type: "string"
     }
 }
 
@@ -375,6 +377,8 @@ export class MessageHandler {
 					_id: subHeaderId,
 					parent_header_id: parentHeaderId,
 					invitation_id: message.invitation_id,
+					other_type: message.other_type,
+					other_id: message.other_id
 				});
 			});
 			
@@ -445,11 +449,53 @@ export class MessageHandler {
     //messages screen already go on masterheader, since they are always linked
     //so just call messages to be reloaded and it will auto update after insertion
 
+	//create direct message conversation
+	//return parent header id
+	async createDirectMessage(type_id, name) {
+		var subHeaderId = new UUID();
+		var parentHeaderId = new UUID();
+
+		this.masterRealm.write(() => {
+			//create master header record
+			this.masterRealm.create("Messages_Header_Record", {
+				_id: parentHeaderId,
+				type_id: type_id, 
+				sub_header_id: subHeaderId,
+				type: 0,
+				title: name,  
+				body: "",
+				last_timestamp: "",
+				read: true,
+			});
+
+			//create the sub header
+			this.masterRealm.create("Messages_Sub_Header_Direct_Message_Record", 
+			{
+				_id: subHeaderId,
+				parent_header_id: parentHeaderId,
+				other_user_id: type_id,
+				other_user_name: name,
+				last_user_id: "",
+				messages_records_size: 0,
+				message_records: [],   
+			});
+		});
+
+		return parentHeaderId;
+	}
+
     //get direct message sub header
     async getDirectMessageInformation(id, read) {
 		var subHeader = this.masterRealm.objectForPrimaryKey("Messages_Sub_Header_Direct_Message_Record", id);
 
 		return subHeader;
+    }
+
+	//get direct message header row
+	async getDirectMessageInformation(id, read) {
+		var header = this.masterRealm.objectForPrimaryKey("Messages_Header_Record", id);
+
+		return header;
     }
 
     //get conversation sub header

@@ -273,6 +273,7 @@ export class OtherProfileScreen extends React.Component {
     
     componentDidMount() {
         //init
+        GlobalProperties.return_screen = "Other Profile Screen";
 
         //fetch data
         this.fetchUserData();
@@ -350,7 +351,7 @@ export class OtherProfileScreen extends React.Component {
                 return;
             }
             else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(JSON.parse(result.response.data));
+                Alert.alert(result.response.data);
                 return;
             }
             //handle not found case
@@ -522,8 +523,9 @@ export class OtherProfileScreen extends React.Component {
                         <View style={filter_snaps_styles.profile_container}>
                             {genderRender}
                             <View style={[filter_snaps_styles.inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>
+                                <MaterialCommunityIcons name="baby" size={18} color="lightskyblue" style={filter_snaps_styles.icon}/>
                                 <Text style={{color: 'black', fontSize: 18}}>
-                                    {"age " + this.state.age}
+                                    {this.state.age}
                                 </Text>
                             </View>
                             <View style={[filter_snaps_styles.inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>
@@ -617,17 +619,20 @@ export class OtherProfileScreen extends React.Component {
     }
 
     sendMessage() {
-        GlobalProperties.return_screen = "Other Profile Screen";
-
         GlobalProperties.screen_props = {
-            action: "message",
-            username: this.state.username,
-            first_name: this.state.first_name,
-            last_name: this.state.last_name,
-            age: this.state.age,
+            sendMessage: true,
+            _id: "",
         };
 
-        this.props.navigation.navigate("Your Messages Navigator", {screen: "Your Messages Screen"});
+        GlobalProperties.reload_messages = true;
+
+        //create message
+        GlobalProperties.messagesHandler.createDirectMessage(this.state.id, this.state.name)    
+        .then((_id) => 
+        {
+            GlobalProperties.screen_props._id = _id;
+            this.props.navigation.navigate("Your Messages Navigator", {screen: "Your Messages Screen"});
+        });
     }
 
     inviteTo() {
@@ -677,7 +682,7 @@ export class OtherProfileScreen extends React.Component {
                 return;
             }
             else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(JSON.parse(result.response.data));
+                Alert.alert(result.response.data);
                 return;
             }
             //handle not found case
@@ -747,7 +752,7 @@ export class OtherProfileScreen extends React.Component {
                 return;
             }
             else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(JSON.parse(result.response.data));
+                Alert.alert(result.response.data);
                 return;
             }
             //handle not found case
@@ -808,7 +813,7 @@ export class OtherProfileScreen extends React.Component {
                 return;
             }
             else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(JSON.parse(result.response.data));
+                Alert.alert(result.response.data);
                 return;
             }
             //handle not found case
