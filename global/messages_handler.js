@@ -313,7 +313,6 @@ export class MessageHandler {
 						_id: subHeaderId,
 						parent_header_id: parentHeaderId,
 						conversation_id: message.conversation_id,
-						other_user_name: message.user_name,
 						last_user_id: message.user_id,
 						messages_records_size: 0,
 						message_records: [],   
@@ -433,7 +432,24 @@ export class MessageHandler {
 		/*this.masterRealm.write(() => {
 			this.masterRealm.deleteAll();
 		});*/
-		var messageHeaders = await this.masterRealm.objects("Messages_Header_Record").sorted('last_timestamp', true);
+
+		var messageHeaders = null;
+
+		if (GlobalProperties.messages_filter_type == "all") {
+			messageHeaders = await this.masterRealm.objects("Messages_Header_Record").sorted('last_timestamp', true);
+		}
+		else if (GlobalProperties.messages_filter_type == "direct messages") {
+			messageHeaders = await this.masterRealm.objects("Messages_Header_Record").filtered("type = 0").sorted('last_timestamp', true);
+		}
+		else if (GlobalProperties.messages_filter_type == "conversations") {
+			messageHeaders = await this.masterRealm.objects("Messages_Header_Record").filtered("type = 1").sorted('last_timestamp', true);
+		}
+		else if (GlobalProperties.messages_filter_type == "invitations") {
+			messageHeaders = await this.masterRealm.objects("Messages_Header_Record").filtered("type = 2").sorted('last_timestamp', true);
+		}
+		else if (GlobalProperties.messages_filter_type == "announcements") {
+			messageHeaders = await this.masterRealm.objects("Messages_Header_Record").filtered("type = 3").sorted('last_timestamp', true);
+		}
 
 		return messageHeaders;
 	}
@@ -464,7 +480,7 @@ export class MessageHandler {
 				type: 0,
 				title: name,  
 				body: "",
-				last_timestamp: "",
+				last_timestamp: new Date(0),
 				read: true,
 			});
 
@@ -492,11 +508,45 @@ export class MessageHandler {
     }
 
 	//get direct message header row
-	async getDirectMessageInformation(id, read) {
+	async getHeaderRow(id) {
 		var header = this.masterRealm.objectForPrimaryKey("Messages_Header_Record", id);
 
 		return header;
     }
+
+	//create conversation
+	//return parent header id
+	async createConversation(type_id, name) {
+		var subHeaderId = new UUID();
+		var parentHeaderId = new UUID();
+
+		this.masterRealm.write(() => {
+			//create master header record
+			this.masterRealm.create("Messages_Header_Record", {
+				_id: parentHeaderId,
+				type_id: type_id, 
+				sub_header_id: subHeaderId,
+				type: 1,
+				title: name,  
+				body: "",
+				last_timestamp: new Date(0),
+				read: true,
+			});
+
+			//create the sub header
+			this.masterRealm.create("Messages_Sub_Header_Conversation_Record", 
+			{
+				_id: subHeaderId,
+				parent_header_id: parentHeaderId,
+				conversation_id: type_id,
+				last_user_id: "",
+				messages_records_size: 0,
+				message_records: [],   
+			});
+		});
+
+		return parentHeaderId;
+	}
 
     //get conversation sub header
     async getConversationInformation(id) {
@@ -504,6 +554,7 @@ export class MessageHandler {
 
 		return subHeader;
     }
+
     //get invitation sub header
     async getInvitationInformation(id) {
 		var subHeader = this.masterRealm.objectForPrimaryKey("Messages_Sub_Header_Invitation_Record", id);

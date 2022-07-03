@@ -32,9 +32,9 @@ const frame_styles = StyleSheet.create(
             alignContent: 'flex-start',
         },
         background_image: {
-            height: Math.trunc(Dimensions.get('window').width * 0.33),
-            width: Math.trunc(Dimensions.get('window').width * 0.33),
-            marginLeft: 2,
+            height: 115,
+            width: 115,
+            marginHorizontal: 2,
             marginVertical: 2,
         },
         text_container: {
@@ -212,7 +212,7 @@ class FrameComponent extends React.Component{
         if (this.props.type == "person") {
             return (
                 <View style={frame_styles.box} >
-                    <TouchableHighlight onPress={() => {
+                    <TouchableHighlight underlayColor={"white"} onPress={() => {
                         this.props.navigation.navigate("Other Profile Screen", {id: this.props.id, type: "none", viewing:""});
                     }}>
                         <View style={frame_styles.inner_box}>
@@ -247,7 +247,7 @@ class FrameComponent extends React.Component{
         else if (this.props.type == "activity") {
             return (
                 <View style={frame_styles.box} >
-                    <TouchableHighlight onPress={() => {
+                    <TouchableHighlight underlayColor={"white"} onPress={() => {
                         this.props.navigation.navigate("Other Activity Screen", {id: this.props.id, type: "none", viewing:""});
                     }}>
                         <View style={frame_styles.inner_box}>
@@ -651,7 +651,7 @@ export class ExploreScreen extends React.Component {
                 this.state.reload = true;
             }
             else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(result.response.data);
+                Alert.alert(JSON.stringify(result.response.data));
                 return;
             }
             //handle not found case

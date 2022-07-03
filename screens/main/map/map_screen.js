@@ -312,7 +312,7 @@ export class MapScreen extends React.Component {
                 this.state.reload = true;
             }
             else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(result.response.data);
+                Alert.alert(JSON.stringify(result.response.data));
             }
             //handle not found case
             else if (result.response.status == 404) {

@@ -280,7 +280,15 @@ export class YourMessagesScreen extends React.Component {
             else if (GlobalProperties.return_screen == "Other Profile Screen" && GlobalProperties.screen_props != null) {
                 if (GlobalProperties.screen_props.sendMessage) {
                     //get header and navigate to conversation screen
-                    GlobalProperties.messagesHandler.getDirectMessageHeaderRow(GlobalProperties.screen_props._id).then((header) => {
+                    GlobalProperties.messagesHandler.getHeaderRow(GlobalProperties.screen_props._id).then((header) => {
+                        this.props.navigation.navigate("Conversation Screen", {title: header.name, _id: header._id, last_timestamp: header.last_timestamp, sub_header_id: header.sub_header_id, type_id: header.type_id, type: header.type});
+                    });             
+                }
+            }
+            else if (GlobalProperties.return_screen == "Manage Activity Screen" && GlobalProperties.screen_props != null) {
+                if (GlobalProperties.screen_props.sendMessage) {
+                    //get header and navigate to conversation screen
+                    GlobalProperties.messagesHandler.getHeaderRow(GlobalProperties.screen_props._id).then((header) => {
                         this.props.navigation.navigate("Conversation Screen", {title: header.name, _id: header._id, last_timestamp: header.last_timestamp, sub_header_id: header.sub_header_id, type_id: header.type_id, type: header.type});
                     });             
                 }
@@ -288,11 +296,9 @@ export class YourMessagesScreen extends React.Component {
 
             //reload messages if need be
             if (GlobalProperties.reload_messages) {
-                console.log("reloading messages");
                 GlobalProperties.reload_messages = false;//put messages in array
 
                 GlobalProperties.messagesHandler.getMessageHeaders().then((ret) => {
-                    console.log("reloaded messages");
                     this.state.messageHeaders = ret;
                     
                     this.lazyUpdate();
@@ -344,8 +350,6 @@ export class YourMessagesScreen extends React.Component {
                 //get messages from json
                 var messages = JSON.parse(result.request.response).messages;
 
-                console.log(messages);
-
                 //add groups
                 this.state.pending_messages = messages;
                
@@ -379,7 +383,7 @@ export class YourMessagesScreen extends React.Component {
                 this.state.reload = true;
             }
             else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(result.response.data);
+                Alert.alert(JSON.stringify(result.response.data));
                 return;
             }
             //handle not found case

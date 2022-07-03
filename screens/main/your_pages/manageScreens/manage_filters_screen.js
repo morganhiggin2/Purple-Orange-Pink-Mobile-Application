@@ -7,7 +7,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { PickerIOS } from '@react-native-picker/picker';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 
-import {GlobalProperties, GlobalValues} from '../../../global/global_properties.js';
+import {GlobalProperties, GlobalValues} from '../../../../global/global_properties.js';
 
 const main_styles = StyleSheet.create(
     {
@@ -162,7 +162,7 @@ const filter_snaps_styles = StyleSheet.create(
     }
 );
 
-export class MessagesFiltersScreen extends React.Component {
+export class ManageFiltersScreen extends React.Component {
     constructor(props) {
         super(props);
 
@@ -185,9 +185,9 @@ export class MessagesFiltersScreen extends React.Component {
                                 <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {width: '50%', alignSelf: 'flex-end'}]}>
                                         <DropDown 
                                             style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
-                                            items={[{label: 'All', value: 'all'}, {label: 'Direct Messages', value: 'direct messages'}, {label: 'Conversations', value: 'conversations'}, {label: 'Invitations', value: 'invitations'}, {label: 'Announcements', value: 'announcements'}]}
+                                            items={[{label: 'Activities', value: 'activities'}, {label: 'Invitations', value: 'invitations'}]}
                                             onChangeValue = {this.updateTypeDropDownValue}
-                                            currentValue = {GlobalProperties.messages_filter_type}
+                                            currentValue = {GlobalProperties.manage_filters_type}
                                             />
                                 </View>
                             </View>
@@ -221,8 +221,7 @@ export class MessagesFiltersScreen extends React.Component {
     }
     //update the dropdown selector for activities
     updateTypeDropDownValue(value) {
-        GlobalProperties.messages_filter_type = value;
-        GlobalProperties.reload_messages = true;
+        GlobalProperties.manage_filter_type = value;
     }
 }
 

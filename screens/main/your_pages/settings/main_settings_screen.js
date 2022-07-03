@@ -261,7 +261,7 @@ export class MainSettingsScreen extends React.Component {
                 return;
             }
             else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(result.response.data);
+                Alert.alert(JSON.stringify(result.response.data));
                 return;
             }
             //handle not found case

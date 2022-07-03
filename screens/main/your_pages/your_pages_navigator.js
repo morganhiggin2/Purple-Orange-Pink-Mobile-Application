@@ -32,6 +32,7 @@ import { ContactSupportScreen } from './settings/contact_support.js';
 import { AboutScreen } from './settings/about.js';
 import { ManageInvitationScreen } from './manageScreens/manage_invitation_screen.js';
 import { ViewMapScreen } from './view_map_screen.js';
+import { ManageFiltersScreen } from './manageScreens/manage_filters_screen.js';
 
 const Stack = createStackNavigator();
 const FeedStack = createMaterialTopTabNavigator();
@@ -111,7 +112,8 @@ export class YourPagesNavigator extends React.Component {
 
                 <Stack.Screen name="Manage Activity Screen"  component={ManageActivityScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"Manage Activity"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
                 <Stack.Screen name="Manage Group Screen"  component={ManageGroupScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"Manage Activity"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
-                <Stack.Screen name="Manage Invitation Screen"  component={ManageInvitationScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"Manage Activity"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
+                <Stack.Screen name="Manage Invitation Screen"  component={ManageInvitationScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"Manage Invitation"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
+                <Stack.Screen name="Manage Filters Screen" component={ManageFiltersScreen} options={{headerTitle: () => <HeaderTitle title="Filters"/>, headerBackTitle: "back", headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'vertical', cardStyleInterpolator:CardStyleInterpolators.forVerticalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}} />
 
                 <Stack.Screen name="Edit Activity Screen" component={EditActivityScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"Edit Activity"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
 

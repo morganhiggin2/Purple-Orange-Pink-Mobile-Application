@@ -247,6 +247,8 @@ export class ManageActivityScreen extends React.Component {
         this.fetchActivityInformation = this.fetchActivityInformation.bind(this);
         this.leave = this.leave.bind(this);
         this.leaveAlert = this.leaveAlert.bind(this);
+        this.createAllConversation = this.createAllConversation.bind(this);
+        this.createAdminConversation = this.createAdminConversation.bind(this);
 
         this.lazyUpdate = this.lazyUpdate.bind(this);
         this.cleanImages = this.cleanImages.bind(this);
@@ -264,6 +266,8 @@ export class ManageActivityScreen extends React.Component {
         //...
         //clean images
         this.cleanImages();
+
+        GlobalProperties.return_screen = "Manage Activity Screen";
 
         this.lazyUpdate();
     }
@@ -338,7 +342,7 @@ export class ManageActivityScreen extends React.Component {
                 return;
             }
             else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(result.response.data);
+                Alert.alert(JSON.stringify(result.response.data));
                 return;
             }
             //handle not found case
@@ -390,7 +394,6 @@ export class ManageActivityScreen extends React.Component {
             joinRender = (
                 <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {}}>
                     <View style={actions_styles.action_button_inner}>
-                        <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
                         <Text style={actions_styles.action_button_text}>
                             Join
                         </Text>
@@ -402,7 +405,6 @@ export class ManageActivityScreen extends React.Component {
             joinRender = (
                 <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {}}>
                     <View style={actions_styles.action_button_inner}>
-                        <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
                         <Text style={actions_styles.action_button_text}>
                             Request to Join
                         </Text>
@@ -434,23 +436,27 @@ export class ManageActivityScreen extends React.Component {
                 <View>
                     <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("Edit Activity Screen", {id: this.state.id});}}>
                         <View style={actions_styles.action_button_inner}>
-                            <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
                             <Text style={actions_styles.action_button_text}>
                                 Edit Activity
                             </Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {}}>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.createAllConversation()}}>
                         <View style={actions_styles.action_button_inner}>
-                            <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
                             <Text style={actions_styles.action_button_text}>
-                                Message
+                                Message Everyone
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.createAllConversation()}}>
+                        <View style={actions_styles.action_button_inner}>
+                            <Text style={actions_styles.action_button_text}>
+                                Message Admins
                             </Text>
                         </View>
                     </TouchableOpacity>
                     <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.leaveAlert();}}>
                         <View style={actions_styles.action_button_inner}>
-                            <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
                             <Text style={actions_styles.action_button_text}>
                                 Leave
                             </Text>
@@ -464,17 +470,15 @@ export class ManageActivityScreen extends React.Component {
                 <View>
                     <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.leaveAlert()}}>
                         <View style={actions_styles.action_button_inner}>
-                            <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
                             <Text style={actions_styles.action_button_text}>
                                 Leave
                             </Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {}}>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.createAllConversation()}}>
                         <View style={actions_styles.action_button_inner}>
-                            <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
                             <Text style={actions_styles.action_button_text}>
-                                Message
+                                Message Everyone
                             </Text>
                         </View>
                     </TouchableOpacity>
@@ -492,7 +496,9 @@ export class ManageActivityScreen extends React.Component {
         const renderComponent = () => {
             if (this.state.loading == true) {
                 return (
-                    <LoadingScreen tryAgain={this.fetchActivityInformation} reload={this.state.reload}/>
+                    <View>
+                        <LoadingScreen tryAgain={this.fetchActivityInformation} reload={this.state.reload}/>
+                    </View>
                 );
             }
             else {
@@ -659,6 +665,85 @@ export class ManageActivityScreen extends React.Component {
         this.props.navigation.navigate("View Participants Screen", {type: "activity", id: this.state.id});
     }
 
+    async createAllConversation() {
+
+        //if request was successful
+        var successful = false;
+
+        //make request
+        var result = await GlobalEndpoints.makeGetRequest(true, "/api/User/Friends/Messages/FriendActivityCreateConversation?activity_id=" + this.state.id + "&includes=all")
+            .then((result) => {
+                if (result == undefined) {
+                    successful = false;
+                }
+                else {
+                    successful = true;
+                }
+                return(result);
+            })
+            .catch((error) => {
+                successful = false;
+                return(error);
+            });
+
+        //if there is no error message, request was good
+        if (successful) {
+
+            //if result status is ok
+            if (result.request.status ==  200) {
+                //get name and conversation id
+                var conversation_information = JSON.parse(result.request.response).conversation_information;
+                GlobalProperties.screen_props = {
+                    sendMessage: true,
+                    _id: "",
+                };
+        
+                GlobalProperties.return_screen = "Manage Activity Screen";
+                GlobalProperties.reload_messages = true;
+        
+                //open the realm
+                await GlobalProperties.messagesHandler.openRealm();
+        
+                //create message
+                var header_id = await GlobalProperties.messagesHandler.createConversation(conversation_information.id, conversation_information.title);
+        
+                GlobalProperties.screen_props._id = header_id;
+        
+                this.props.navigation.navigate("Your Messages Navigator", {screen: "Your Messages Screen"});
+
+                //no need to laxy update as mongodb realm triggers that
+                //return;
+            }
+            else {
+                //returned bad response, fetch server generated error message
+
+                Alert.alert(result.data);
+            }
+        }
+        else {
+
+            //invalid request
+            if (result == undefined) {
+
+            }
+            else if (result.response.status == 400 && result.response.data) {
+                Alert.alert(JSON.stringify(result.response.data));
+                return;
+            }
+            //handle not found case
+            else if (result.response.status == 404) {
+                GlobalEndpoints.handleNotFound(false);
+            }
+        }
+
+        //once done, lazy update
+        this.lazyUpdate();
+    }
+
+    createAdminConversation() {
+
+    }
+
     leaveAlert() {
         Alert.alert(
             "Delete",
@@ -736,7 +821,7 @@ export class ManageActivityScreen extends React.Component {
                 return;
             }
             else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(result.response.data);
+                Alert.alert(JSON.stringify(result.response.data));
                 return;
             }
             //handle not found case

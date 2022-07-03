@@ -16,7 +16,18 @@ const main_styles = StyleSheet.create({
     },
     scroll_view: {
         backgroundColor: GlobalValues.DARKER_WHITE,
-    }
+    },
+    top_bar: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        backgroundColor: 'white', //#FFCDCD
+        borderRadius: 5,
+        padding: 8,
+        marginTop: "2%",
+        marginHorizontal: '2%',
+        borderLeftWidth: 5,
+        borderLeftWidth: 0,
+    },
 });
 
 
@@ -166,7 +177,6 @@ export class ManageScreen extends React.Component {
             trashColor: "black",
         }
 
-        this.createBar = this.createBar.bind(this);
         this.fetchList = this.fetchList.bind(this);
         this.lazyUpdate = this.lazyUpdate.bind(this);
     }
@@ -249,7 +259,7 @@ export class ManageScreen extends React.Component {
                 return;
             }
             else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(result.response.data);
+                Alert.alert(JSON.stringify(result.response.data));
                 return;
             }
             //handle not found case
@@ -280,7 +290,18 @@ export class ManageScreen extends React.Component {
 
             return(
                 <SafeAreaView style={[main_styles.scroll_view, {flex: 1}]}>
-                    {this.createBar()}
+                    <View style={main_styles.top_bar}>
+                        <TouchableHighlight underlayColor="white" onPress={() => {this.props.navigation.navigate("Activity Creation Screen")}} onHideUnderlay={() => {}} onShowUnderlay={() => {}}>
+                            <View style={post_styles.post_button}>
+                                <Text style={post_styles.post_button_text}>
+                                    Create
+                                </Text>
+                            </View>
+                        </TouchableHighlight>
+                        <TouchableHighlight underlayColor="white" onPress={() => {this.props.navigation.navigate("Manage Filters Screen");}}>
+                            <Feather name="list" size={36} color="gray" />
+                        </TouchableHighlight>
+                    </View>
                     <FlatList 
                         data={DATA}
                         renderItem={renderItem}
@@ -291,20 +312,6 @@ export class ManageScreen extends React.Component {
                 </SafeAreaView>
             );
         }
-    }
-
-    createBar() {
-        return (
-            <View style={post_styles.body}>
-                <TouchableHighlight underlayColor="white" onPress={() => {this.props.navigation.navigate("Activity Creation Screen")}} onHideUnderlay={() => {}} onShowUnderlay={() => {}}>
-                    <View style={post_styles.post_button}>
-                        <Text style={post_styles.post_button_text}>
-                            Create
-                        </Text>
-                    </View>
-                </TouchableHighlight>
-            </View>
-        );
     }
 
     lazyUpdate() {
@@ -445,7 +452,7 @@ class FrameComponent extends React.Component {
 
             //invalid request
             if (result.response.status == 400 && result.response.data) {
-                Alert.alert(result.response.data);
+                Alert.alert(JSON.stringify(result.response.data));
                 return;
             }
             //handle not found case

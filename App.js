@@ -463,7 +463,6 @@ export class App extends React.Component {
       Notifications.setBadgeCountAsync(badgeCount + 1);
     })
     .catch();
-
   }
 
   //when a notification in the background or killed is handled with

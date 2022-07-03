@@ -351,7 +351,7 @@ export class OtherProfileScreen extends React.Component {
                 return;
             }
             else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(result.response.data);
+                Alert.alert(JSON.stringify(result.response.data));
                 return;
             }
             //handle not found case
@@ -424,7 +424,6 @@ export class OtherProfileScreen extends React.Component {
                 inviteActions = (
                     <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.inviteTo()}}>
                         <View style={actions_styles.action_button_inner}>
-                            <AntDesign name="mail" size={20} color="white" style={actions_styles.action_button_icon}/>
                             <Text style={actions_styles.action_button_text}>
                                 Invite
                             </Text>
@@ -437,7 +436,6 @@ export class OtherProfileScreen extends React.Component {
                     <View>
                         <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.promoteToAdmin()}}>
                             <View style={actions_styles.action_button_inner}>
-                                <AntDesign name="mail" size={20} color="white" style={actions_styles.action_button_icon}/>
                                 <Text style={actions_styles.action_button_text}>
                                     Promote to Admin
                                 </Text>
@@ -445,7 +443,6 @@ export class OtherProfileScreen extends React.Component {
                         </TouchableOpacity>
                         <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.inviteTo()}}>
                             <View style={actions_styles.action_button_inner}>
-                                <AntDesign name="mail" size={20} color="white" style={actions_styles.action_button_icon}/>
                                 <Text style={actions_styles.action_button_text}>
                                     Invite
                                 </Text>
@@ -458,7 +455,6 @@ export class OtherProfileScreen extends React.Component {
                 inviteActions = (
                     <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.inviteTo()}}>
                         <View style={actions_styles.action_button_inner}>
-                            <AntDesign name="mail" size={20} color="white" style={actions_styles.action_button_icon}/>
                             <Text style={actions_styles.action_button_text}>
                                 Invite
                             </Text>
@@ -618,21 +614,25 @@ export class OtherProfileScreen extends React.Component {
         }
     }
 
-    sendMessage() {
+    async sendMessage() {
         GlobalProperties.screen_props = {
             sendMessage: true,
             _id: "",
         };
 
+        GlobalProperties.return_screen = "Manage Activity Screen";
         GlobalProperties.reload_messages = true;
 
+        //open the realm
+        await GlobalProperties.messagesHandler.openRealm();
+
         //create message
-        GlobalProperties.messagesHandler.createDirectMessage(this.state.id, this.state.name)    
-        .then((_id) => 
-        {
-            GlobalProperties.screen_props._id = _id;
-            this.props.navigation.navigate("Your Messages Navigator", {screen: "Your Messages Screen"});
-        });
+        var header_id = await GlobalProperties.messagesHandler.createDirectMessage(this.state.id, this.state.name);
+
+        GlobalProperties.screen_props._id = header_id;
+
+        this.props.navigation.navigate("Your Messages Navigator", {screen: "Your Messages Screen"});
+        
     }
 
     inviteTo() {
@@ -682,7 +682,7 @@ export class OtherProfileScreen extends React.Component {
                 return;
             }
             else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(result.response.data);
+                Alert.alert(JSON.stringify(result.response.data));
                 return;
             }
             //handle not found case
@@ -752,7 +752,7 @@ export class OtherProfileScreen extends React.Component {
                 return;
             }
             else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(result.response.data);
+                Alert.alert(JSON.stringify(result.response.data));
                 return;
             }
             //handle not found case
@@ -813,7 +813,7 @@ export class OtherProfileScreen extends React.Component {
                 return;
             }
             else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(result.response.data);
+                Alert.alert(JSON.stringify(result.response.data));
                 return;
             }
             //handle not found case

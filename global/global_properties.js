@@ -109,12 +109,15 @@ export class GlobalProperties {
     static search_filters_updated = false;
 
     //for messages page
-    static messagess_filter_type = "all";
+    static messages_filter_type = "all";
 
     //if messages should be releoaded when page is opened
     static reload_messages = true;
     static reloadMessages = () => {};
     static messagesHandler = null;
+
+    //for manage items
+    static manage_filters_type = "activities";
 
     //user information
     static birthdate = new Date(Date.now());
