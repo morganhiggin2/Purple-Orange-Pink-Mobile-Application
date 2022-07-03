@@ -123,39 +123,6 @@ const blip_styles = StyleSheet.create(
         }
     }
 );
-       
-//have the unread color be the theme color (purple, pink, orange)
-function colorCode(item) {
-    /*switch(item.type) {
-        case "message": {
-            if (item.read){
-                return '#b8b8b8';
-            }
-            else {
-                return 'orange';
-            }
-
-            break;
-        }
-        case "invitation": {
-            if (item.read){
-                return '#b8b8b8';
-            }
-            else {
-                return '#ff5050';
-            }
-
-            break;
-        }
-    }*/
-
-    if (item.read) {
-        return GlobalValues.ORANGE_COLOR;
-    }
-    else {
-        return GlobalValues.DISTINCT_GRAY;
-    }
-}
 
 const inner_blip_styles = StyleSheet.create(
     {
@@ -261,7 +228,7 @@ export class YourMessagesScreen extends React.Component {
             }
             else if (GlobalProperties.return_screen == "Other Profile Screen" && GlobalProperties.screen_props != null) {
 
-                var found = false;
+                /*var found = false;
 
                 //check to see if conversation with that person doesn't already exist
                 for (var i in DATA) {
@@ -293,7 +260,9 @@ export class YourMessagesScreen extends React.Component {
                         this.props.navigation.navigate("Conversation Screen", {id: i, first_name: DATA[i].first_name, last_name: DATA[i].last_name, username: DATA[i].username});
 
                         this.lazyUpdate();
-                }
+                }*/
+
+                //new conversation
 
                 //if it does, pull it up
 
@@ -303,6 +272,16 @@ export class YourMessagesScreen extends React.Component {
                 //this.state.filters.search_for_id = GlobalProperties.screen_props.filters.id;
 
                 //clear other fields of filter
+            }
+            else if (GlobalProperties.return_screen == "Conversation Screen" && GlobalProperties.screen_props != null) {
+                GlobalProperties.messagesHandler.readMessage(GlobalProperties.screen_props._id);
+                     
+                //put messages in array
+                GlobalProperties.messagesHandler.getMessageHeaders().then((ret) => {
+                    this.state.messageHeaders = ret;
+                    
+                    this.lazyUpdate();
+                });
             }
             else {
                 //set local filters to global property ones (these are the ones from the filters screen)
@@ -359,6 +338,8 @@ export class YourMessagesScreen extends React.Component {
             if (result.request.status ==  200) {
                 //get messages from json
                 var messages = JSON.parse(result.request.response).messages;
+
+                console.log(messages);
 
                 //add groups
                 this.state.pending_messages = messages;
@@ -430,7 +411,7 @@ export class YourMessagesScreen extends React.Component {
                                 <FlatList
                                     data={this.state.messageHeaders}
                                     renderItem={renderItem}
-                                    keyExtractor={item => (item._id.toString() + item.last_timestamp.getSeconds().toString())}
+                                    keyExtractor={item => (item._id.toString() + item.last_timestamp.getSeconds().toString() + item.read.toString())}
                                     extraData={this.lazyUpdate}
                                     refreshControl={<RefreshControl refreshing={false} 
                                     onRefresh={() => {this.state.loading = true; this.fetchMessages();}}/>}
@@ -460,6 +441,7 @@ class FrameComponent extends React.Component {
             type: this.props.item.type,
             last_timestamp: this.props.item.last_timestamp,
             lazyUpdate: this.props.lazyUpdate,
+            read: this.props.item.read,
 
             trashColor: "black",
         };
@@ -470,6 +452,7 @@ class FrameComponent extends React.Component {
             this.state.title = this.state.title.substring(0, 17) + "...";
         }*/
         
+        this.colorCode = this.colorCode.bind(this);
         this.onTrashButtonPress = this.onTrashButtonPress.bind(this);
         this.onTrashButtonRelease = this.onTrashButtonRelease.bind(this);
     }
@@ -519,22 +502,22 @@ class FrameComponent extends React.Component {
     navigate() {
         switch(this.state.type) {
             case 0: {
-                this.props.navigation.navigate("Conversation Screen", {title: this.state.title, last_timestamp: this.state.last_timestamp, sub_header_id: this.state.sub_header_id, type_id: this.state.type_id, type: this.state.type});
+                this.props.navigation.navigate("Conversation Screen", {title: this.state.title, _id: this.state._id, last_timestamp: this.state.last_timestamp, sub_header_id: this.state.sub_header_id, type_id: this.state.type_id, type: this.state.type});
 
                 break;
             }
             case 1: {
-                this.props.navigation.navigate("Conversation Screen", {title: this.state.title, sub_header_id: this.state.sub_header_id, type_id: this.state.type_id, type: this.state.type});
+                this.props.navigation.navigate("Conversation Screen", {title: this.state.title, _id: this.state._id, last_timestamp: this.state.last_timestamp, sub_header_id: this.state.sub_header_id, type_id: this.state.type_id, type: this.state.type});
 
                 break;
             }
             case 2: {
-                this.props.navigation.navigate("Invite Screen", {title: this.state.title, sub_header_id: this.state.sub_header_id, type_id: this.state.type_id, type: this.state.type});
+                this.props.navigation.navigate("Invite Screen", {title: this.state.title, _id: this.state._id, sub_header_id: this.state.sub_header_id, type_id: this.state.type_id, type: this.state.type, body: this.state.body});
 
                 break;
             }
             case 3: {
-                this.props.navigation.navigate("Announcement Screen", {title: this.state.title, sub_header_id: this.state.sub_header_id, type_id: this.state.type_id, type: this.state.type});
+                this.props.navigation.navigate("Announcement Screen", {title: this.state.title, _id: this.state._id, sub_header_id: this.state.sub_header_id, type_id: this.state.type_id, type: this.state.type, body: this.state.body});
 
                 break;
             }
@@ -543,7 +526,7 @@ class FrameComponent extends React.Component {
 
     render() { 
         return (
-        <TouchableOpacity activeOpacity={1} onPress={() => this.navigate()}style={[frame_styles.box, {borderColor: colorCode(this.props.item)}]}>
+        <TouchableOpacity activeOpacity={1} onPress={() => this.navigate()}style={[frame_styles.box, {borderColor: this.colorCode()}]}>
             <View style={blip_styles.top_bar}>
                 <View style={[blip_styles.inner_top_bar_left]}>
                     <Text numberOfLines={1} style={blip_styles.top_text}>
@@ -582,12 +565,35 @@ class FrameComponent extends React.Component {
             this.state.lazyUpdate();
         });
     }
+
+    
+       
+    //have the unread color be the theme color (purple, pink, orange)
+    colorCode() {
+        if (this.state.read) {
+            return GlobalValues.DISTINCT_GRAY;
+        }
+        else {
+            if (this.state.type == 0) {
+                return GlobalValues.DIRECT_MESSAGE_COLOR;
+            }
+            else if (this.state.type == 1) {
+                return GlobalValues.CONVERSATION_COLOR;
+            }
+            else if (this.state.type == 2) {
+                return GlobalValues.INVITATION_COLOR;
+            }
+            else if (this.state.type == 3) {
+                return GlobalValues.ANNOUNCEMENT_COLOR;
+            }
+        }
+    }
 }  
 
 const deleteAlert = (frameComponent) => {
     Alert.alert(
         "Delete",
-        "Are you sure you want to delete this conversation?",
+        "Are you sure you want to delete this?",
         [
             {
                 text: "Cancel",

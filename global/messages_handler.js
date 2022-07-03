@@ -24,7 +24,8 @@ const HeaderRecordSchema = {
         body: "string", //body of message to be displayed in messages feed
         last_timestamp: { type: "date", indexed: true},
         type_id: "string", //id of type, [conversation is conversation id, direct message is other user id, invitation is invitation id, none for announcemnet]
-        sub_header_id: "uuid"
+        sub_header_id: "uuid",
+		read: "bool",
     },
 }
 
@@ -51,7 +52,6 @@ const SubHeaderConversationRecord = {
         _id: "uuid",
         parent_header_id: "uuid", //id of parent header
         conversation_id: "string",
-        user_ids_to_names: "string{}", //user ids to user names (first and last initialed names)
         last_user_id: "string", //last user for message of conversation, can be current user, for show_me
 		messages_records_size: "int", //number of messages in message_records
         message_records: { type: "list", objectType: "Messages_Message_Record"}
@@ -66,19 +66,18 @@ const SubHeaderInvitationRecord = {
         _id: "uuid",
         parent_header_id: "uuid", //id of parent header
         invitation_id: "string",
-        invitation_from_name: "string",
-        invitation_message: "string",
     }
 }
 
 //type announcement
 const SubHeaderAnnouncementRecord = {
-    name: "Messages_Sub_Header_Announcements_Record",
+    name: "Messages_Sub_Header_Announcement_Record",
     primaryKey: "_id",
     properties: {
         _id: "uuid",
         parent_header_id: "uuid",
-        activity_id: "string",
+        other_id: "string", //the id of the other type
+		other_type: "string" //e.g. Activity, Group
     }
 }
 
@@ -117,8 +116,6 @@ export class MessageHandler {
         this.getConversationInformation = this.getConversationInformation.bind(this);
         this.getDirectMessageInformation = this.getDirectMessageInformation.bind(this);
         this.getInvitationInformation = this.getInvitationInformation.bind(this);
-        this.getNextMessageBlockConverstaion = this.getNextMessageBlockConverstaion.bind(this);
-        this.getNextMessageBlockDirectMessage = this.getNextMessageBlockDirectMessage.bind(this);
         this.insertMessages = this.insertMessages.bind(this);
     }
 
@@ -163,34 +160,12 @@ export class MessageHandler {
 
     //json object
     async insertMessage(message) {
-        //make query to find it if it exists
-        /*const query = {"Messages_Header_Record": {"type_id" : message.id, "type" : message.type}};
-        const projection = {
-            "type": message.type,
-            "type_id": message.id,
-        };
-
-        var found;
-
-        const headerRow = await this.masterHeader.headerRecords.findOne(query)
-            .then((result) => {
-                //found
-                found = true;
-                return result;
-            })
-            .catch((err) => {
-                //not found
-                found = false;
-                return err;
-            });*/
 
 		var found = false;
 		var headerRow = null;
 
 		if (message.type == "direct") { 
-
-			//findfirstasync?
-			//get other user id
+			//get header row
 			headerRow = await this.masterRealm.objects("Messages_Header_Record").filtered("type_id = '" + message.other_user_id + "' AND type = 0");
 
 			//check if we found it
@@ -206,20 +181,17 @@ export class MessageHandler {
 				this.masterRealm.write(() => {
 					//modify header
 					headerRow.body = message.body;
+					headerRow.read = false,
 
 					headerRow.last_timestamp = new Date(parseInt(message.timestamp));
 
-					var show_name = true;
+					var show_name = subHeader.last_user_id != message.user_id;
 
-					if (subHeader.messages_records_size > 0) {
-						//get previous message's user id
-						var prevUserId = subHeader.message_records[0].from_id;
-
-						show_name = prevUserId != message.other_user_id;
-					}
+					//modify subheader
+					subHeader.last_user_id = message.user_id;
 
 					subHeader.message_records.unshift({
-						from_id: message.other_user_id,
+						from_id: message.user_id,
 						id: subHeader.messages_records_size, //has to be unique for the flat list to render
 						message: message.body,
 						user_name: message.user_name,
@@ -247,7 +219,8 @@ export class MessageHandler {
 						type: 0,
 						title: message.user_name,  
 						body: message.body,
-						last_timestamp: new Date(parseInt(message.timestamp))
+						last_timestamp: new Date(parseInt(message.timestamp)),
+						read: false,
 					});
 
 					//create the sub header
@@ -262,32 +235,8 @@ export class MessageHandler {
 						message_records: [],   
 					});
 
-					/*
-					//add message block to sub header
-					subHeader.message_blocks.push(
-						{
-							messages: [],
-						});
-
-					//increment last_index
-					subHeader.last_index++;
-
-					//get the index of the most recent message block
-					var index = subHeader.last_index - 1;
-
-					//get message block
-					var message_block = subHeader.message_blocks[index];
-
-					//add to message_block
-					message_block.push({
-						from_id: message.other_user_id,
-						id: message_block.length, //has to be unique for the flat list to render
-						message: message.body,
-						show_name: true
-					});*/
-
 					subHeader.message_records.push({
-						from_id: message.other_user_id,
+						from_id: message.user_id,
 						id: subHeader.messages_records_size, //has to be unique for the flat list to render
 						message: message.body,
 						user_name: message.user_name,
@@ -299,153 +248,168 @@ export class MessageHandler {
 			}
 		}
 		else if (message.type == "conversation") {
-			//get converation id
-			headerRow = await this.masterHeader.filtered("type_id = '" + message.conversation_id + "' AND type = 1");
+			//get header row
+			headerRow = await this.masterRealm.objects("Messages_Header_Record").filtered("type_id = '" + message.conversation_id + "' AND type = 1");
+
+			//check if we found it
+			found = headerRow.length > 0;
+
+			if (found) {
+				//get first (and hopefully only component)
+				headerRow = headerRow[0];
+
+				//get sub header
+				var subHeader = await this.masterRealm.objectForPrimaryKey("Messages_Sub_Header_Conversation_Record", headerRow.sub_header_id);
+				this.masterRealm.write(() => {
+					//modify header
+					headerRow.body = message.body;
+					headerRow.read = false,
+
+					headerRow.last_timestamp = new Date(parseInt(message.timestamp));
+
+					var show_name = subHeader.last_user_id != message.user_id;
+
+					//modify subheader
+					subHeader.last_user_id = message.user_id;
+
+					subHeader.message_records.unshift({
+						from_id: message.user_id,
+						id: subHeader.messages_records_size, //has to be unique for the flat list to render
+						message: message.body,
+						user_name: message.user_name,
+						show_name: show_name
+					});
+
+					subHeader.messages_records_size++;
+
+					if (subHeader.messages_records_size == MAX_NUM_MESSAGES) {
+						subHeader.message_records.remove(0);
+						subHeader.messages_records_size--;
+					}
+				});
+			}
+			else {
+				var subHeaderId = new UUID();
+				var parentHeaderId = new UUID();
+
+				this.masterRealm.write(() => {
+					//create master header record
+					this.masterRealm.create("Messages_Header_Record", {
+						_id: parentHeaderId,
+						type_id: message.conversation_id, 
+						sub_header_id: subHeaderId,
+						type: 1,
+						title: message.conversation_name,  
+						body: message.body,
+						last_timestamp: new Date(parseInt(message.timestamp)),
+						read: false,
+					});
+
+					//create the sub header
+					const subHeader = this.masterRealm.create("Messages_Sub_Header_Conversation_Record", 
+					{
+						_id: subHeaderId,
+						parent_header_id: parentHeaderId,
+						conversation_id: message.conversation_id,
+						other_user_name: message.user_name,
+						last_user_id: message.user_id,
+						messages_records_size: 0,
+						message_records: [],   
+					});
+
+					subHeader.message_records.push({
+						from_id: message.user_id,
+						id: subHeader.messages_records_size, //has to be unique for the flat list to render
+						message: message.body,
+						user_name: message.user_name,
+						show_name: true
+					});
+
+					subHeader.messages_records_size++;
+				});
+			}
 		}
 		else if (message.type == "invitation") {
-			//although invitations cannot be new, they may be able to have status updates
-			//so we will this option open to find them
-			//headerRow = await this.masterHeader.filtered("type_id = '" + message.invitation_id + "' AND type = 2");
+			//get header row
+			headerRow = await this.masterRealm.objects("Messages_Header_Record").filtered("type_id = '" + message.other_user_id + "' AND type = 2");
+
+			//check if we found it
+			found = headerRow.length > 0;
+
+			if (found) {
+				//get first (and hopefully only component)
+				headerRow = headerRow[0];
+
+				//delete header row and sub header
+
+				//get the subHeader
+				subHeader = await this.masterRealm.objectForPrimaryKey("Messages_Sub_Header_Invitation_Record", headerRow.sub_header_id);
+
+				//delete headers
+				this.masterRealm.write(() => {
+					this.masterRealm.delete(subHeader);
+					this.masterRealm.delete(headerRow);
+				});
+			}
+
+			//create invitation
+			var subHeaderId = new UUID();
+			var parentHeaderId = new UUID();
+
+			this.masterRealm.write(() => {
+				//create master header record
+				this.masterRealm.create("Messages_Header_Record", {
+					_id: parentHeaderId,
+					type_id: message.invitation_id, 
+					sub_header_id: subHeaderId,
+					type: 2,
+					title: message.name,  
+					body: message.body,
+					last_timestamp: new Date(parseInt(message.timestamp)),
+					read: false,
+				});
+
+				//create the sub header
+				const subHeader = this.masterRealm.create("Messages_Sub_Header_Invitation_Record", 
+				{
+					_id: subHeaderId,
+					parent_header_id: parentHeaderId,
+					invitation_id: message.invitation_id,
+				});
+			});
+			
 		}
 		else if (message.type == "announcement") {
-			//all announcements are new, so no need to look for old ones
-			//headerRow = await this.masterHeader.filtered("type_id = '" + message.announcement_id + "' AND type = 3");
+			//create accounement
+			var subHeaderId = new UUID();
+			var parentHeaderId = new UUID();
+
+			this.masterRealm.write(() => {
+				//create master header record
+				this.masterRealm.create("Messages_Header_Record", {
+					_id: parentHeaderId,
+					type_id: "", 
+					sub_header_id: subHeaderId,
+					type: 3,
+					title: message.name,  
+					body: message.body,
+					last_timestamp: new Date(parseInt(message.timestamp)),
+					read: false,
+				});
+
+				//create the sub header
+				const subHeader = this.masterRealm.create("Messages_Sub_Header_Announcement_Record", 
+				{
+					_id: subHeaderId,
+					parent_header_id: parentHeaderId,
+					other_id: message.announcement_id,
+					other_type: message.announcement_type
+				});
+			});
 		}
 		else {
 			return;
 		}
-
-        //if it exists
-        if (found) {
-            if (message.type == "direct message") {
-                
-            }
-            else if (message.type == "conversation") {
-                //write
-                  //change title
-                  //change body
-                  //change time stamp
-
-                //get sub header id
-                  //update other users names if they changed
-                  //get first message container in list
-                    //if full
-                      //add new one to front with new message
-                    //else
-                      //add message with properties to front of existing one
-            }
-            else if (message.type == "announcement") {
-                //delete current announcement
-
-                //create new one
-            }
-            else if (message.type == "invitation") {
-                //delete current invitation
-
-                //create new one
-            }
-        }
-        else {
-            if (message.type == "direct message") {
-                //create header record
-                  //set title
-                  //set body
-                  //set last timestamp
-              
-                //create sub header
-                  //set parent header id
-                  //set other user's id
-                  //set other user's name
-                  //set last user id to 0
-                  //set last index to 0
-                  //initialize empty message blocks
-
-                //create sub header record
-
-                //set sub header id in header record
-                
-                //create first message block
-
-                //add message block to sub header
-                
-                //create message record
-                  //add message
-                  //set show me
-                  //set last index
-
-                //in sub header, set last user id
-                //in sub header, incremenet last index by 1
-
-                //add message to front of message block
-            }
-            else if (message.type == "conversation") {
-              //ask server for all conversation person's ids and names  
-              
-              //create header record
-                //set title
-                //set body
-                //set last timestamp
-
-              //create sub header
-                //set parent header id
-                //set other users ids and names to dictionary
-                //set last user id to 0
-                //set last index to 0
-                //initialize empty message blocks
-
-              //create sub header record
-
-              //set sub header id in header record
-              
-              //create first message block
-
-              //add message block to sub header
-              
-              //create message record
-                //add message
-
-              //in sub header, set last user id
-              //in sub header, incremenet last index by 1
-
-              //add message to front of message block
-            }
-            else if (message.type == "announcement") {
-              //create sub header
-                //set parent header id
-                //set announcement from name
-                //set announcement message 
-
-              //create header record
-                //set title
-                //set body
-                //set last timestamp
-
-              //set sub header id in header record
-            }
-            else if (message.type == "invitation") {
-              //create sub header
-                //set parent header id
-                //set invitation id
-                //set invitation from name
-                //set invitation message
-
-              //create header record
-                //set title
-                //set body
-                //set last timestamp
-
-              //set sub header id in header record
-            }
-        }
-
-        //get the header component if it exists
-
-        //if it does not, create it
-          //and it's sub components
-        
-        //else
-          //change header component
-          //change sub components as needed
     }
 
     //json array
@@ -456,6 +420,7 @@ export class MessageHandler {
 			}	
 		} catch (error) {
 			Alert.alert("Cannot add messages, are you out of memory?");
+			console.log(error);
 		}
     }
 
@@ -469,70 +434,42 @@ export class MessageHandler {
 		return messageHeaders;
 	}
 
+	async readMessage(_id) {
+		var messageHeader = await this.masterRealm.objectForPrimaryKey("Messages_Header_Record", _id);
+
+		this.masterRealm.write(() => {
+			messageHeader.read = true
+		});
+	}
+
     //messages screen already go on masterheader, since they are always linked
     //so just call messages to be reloaded and it will auto update after insertion
 
     //get direct message sub header
-    async getDirectMessageInformation(id) {
+    async getDirectMessageInformation(id, read) {
 		var subHeader = this.masterRealm.objectForPrimaryKey("Messages_Sub_Header_Direct_Message_Record", id);
 
 		return subHeader;
-
-        //find and get sub header
-
-        //if does not exist
-          //delete corresponding record header
-          //queue messages screen to releod to refresh deletion
-          //send bad request to signal messages page to abandon and go back
-        
-        //query for first message block in sub header
-
-        //else
-          //get first message block of information
-          //and other information
-          //return sub header
-    }
-
-    async getNextMessageBlockDirectMessage(id, num, subHeader) {
-        //get next message block from subHeader
     }
 
     //get conversation sub header
     async getConversationInformation(id) {
-        const type = "invitation";
+		var subHeader = this.masterRealm.objectForPrimaryKey("Messages_Sub_Header_Conversation_Record", id);
 
-        //find and get sub header
-
-        //if does not exist
-          //delete corresponding record header
-          //queue messages screen to releod to refresh deletion
-          //send bad request to signal messages page to abandon and go back
-        
-        //query for first message block in sub header
-
-        //else
-          //get first message block of information
-          //and other information
-          //return sub header
+		return subHeader;
     }
-
-    async getNextMessageBlockConverstaion(id, num, subHeader) {
-        //get next message block from subHeader
-    }
-
     //get invitation sub header
     async getInvitationInformation(id) {
-        const type = "invitation";
+		var subHeader = this.masterRealm.objectForPrimaryKey("Messages_Sub_Header_Invitation_Record", id);
 
-        //query for first one
-        
-        //if does not exist
-          //delete header record
-          //queue messages screen to releod to refresh deletion
-          //send bad request to signal messages page to abandon and go back
-
-        //else, send back relevant information
+		return subHeader;
     }
+
+	async getAnnouncementInformation(id) {
+		var subHeader = this.masterRealm.objectForPrimaryKey("Messages_Sub_Header_Announcement_Record", id);
+
+		return subHeader;
+	}
 
     //delete a header with it's contents
     async delete(_id) {
@@ -547,6 +484,36 @@ export class MessageHandler {
 			if (headerRow.type == 0) {
 				//get the subHeader
 				subHeader = await this.masterRealm.objectForPrimaryKey("Messages_Sub_Header_Direct_Message_Record", headerRow.sub_header_id);
+
+				//delete headers
+				this.masterRealm.write(() => {
+					this.masterRealm.delete(subHeader);
+					this.masterRealm.delete(headerRow);
+				});
+			}
+			else if (headerRow.type == 1) {
+				//get the subHeader
+				subHeader = await this.masterRealm.objectForPrimaryKey("Messages_Sub_Header_Conversation_Record", headerRow.sub_header_id);
+
+				//delete headers
+				this.masterRealm.write(() => {
+					this.masterRealm.delete(subHeader);
+					this.masterRealm.delete(headerRow);
+				});
+			}
+			else if (headerRow.type == 2) {
+				//get the subHeader
+				subHeader = await this.masterRealm.objectForPrimaryKey("Messages_Sub_Header_Invitation_Record", headerRow.sub_header_id);
+
+				//delete headers
+				this.masterRealm.write(() => {
+					this.masterRealm.delete(subHeader);
+					this.masterRealm.delete(headerRow);
+				});
+			}
+			else if (headerRow.type == 3) {
+				//get the subHeader
+				subHeader = await this.masterRealm.objectForPrimaryKey("Messages_Sub_Header_Announcement_Record", headerRow.sub_header_id);
 
 				//delete headers
 				this.masterRealm.write(() => {

@@ -181,11 +181,11 @@ export class ManageScreen extends React.Component {
                 if (GlobalProperties.screen_props.action = "remove") {
                     //remove activity
 
-                    for (let [i, data] of this.state.frames.entries()) {
+                    /*for (let [i, data] of this.state.frames.entries()) {
                         if (data.id == GlobalProperties.screen_props.id && data.type == "activity") {
                             this.state.frames.splice(i, 1);
                         }
-                    }
+                    }*/
 
                     this.fetchList();
                 }
@@ -323,8 +323,6 @@ class FrameComponent extends React.Component {
                 
             trashColor: "black",
         };
-
-        console.log(this.state.item);
         
         this.onTrashButtonPress = this.onTrashButtonPress.bind(this);
         this.onTrashButtonRelease = this.onTrashButtonRelease.bind(this);

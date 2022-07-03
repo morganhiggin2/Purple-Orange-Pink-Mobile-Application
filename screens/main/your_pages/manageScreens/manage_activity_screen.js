@@ -246,6 +246,7 @@ export class ManageActivityScreen extends React.Component {
         this.viewParticipants = this.viewParticipants.bind(this);
         this.fetchActivityInformation = this.fetchActivityInformation.bind(this);
         this.leave = this.leave.bind(this);
+        this.leaveAlert = this.leaveAlert.bind(this);
 
         this.lazyUpdate = this.lazyUpdate.bind(this);
         this.cleanImages = this.cleanImages.bind(this);
@@ -318,7 +319,6 @@ export class ManageActivityScreen extends React.Component {
                 this.state.location = activity_information.location;
 
                 this.state.loading = false;
-
                 this.lazyUpdate();
             }
             else {
@@ -448,7 +448,7 @@ export class ManageActivityScreen extends React.Component {
                             </Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.leave();}}>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.leaveAlert();}}>
                         <View style={actions_styles.action_button_inner}>
                             <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
                             <Text style={actions_styles.action_button_text}>
@@ -462,7 +462,7 @@ export class ManageActivityScreen extends React.Component {
         else if (this.state.is_participant) {
             actionsRender = (
                 <View>
-                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {}}>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.leaveAlert()}}>
                         <View style={actions_styles.action_button_inner}>
                             <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
                             <Text style={actions_styles.action_button_text}>
@@ -657,6 +657,27 @@ export class ManageActivityScreen extends React.Component {
 
     viewParticipants() {
         this.props.navigation.navigate("View Participants Screen", {type: "activity", id: this.state.id});
+    }
+
+    leaveAlert() {
+        Alert.alert(
+            "Delete",
+            "Are you sure you want to leave this activity?",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => {},
+                    style: "cancel",
+                },
+                {
+                    text: "Leaeve",
+                    onPress: () => this.leave(),
+                }
+            ],
+            {
+                cancelable: true,
+            }
+        );
     }
 
     async leave() {

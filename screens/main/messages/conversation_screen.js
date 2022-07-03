@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Image, SafeAreaView, ScrollView, Dimensions, FlatList, Alert, RefreshControl, TouchableOpacity} from 'react-native';
+import {StyleSheet, View, Text, TextInput, Image, SafeAreaView, ScrollView, Dimensions, FlatList, Alert, RefreshControl, TouchableOpacity, TouchableOpacityBase} from 'react-native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { AntDesign, Feather} from '@expo/vector-icons'; 
 import {Route} from '@react-navigation/native';
@@ -259,6 +259,7 @@ export class ConversationScreen extends React.Component {
             refreshFlatList: true,
 
             title: this.props.route.params.title,
+            _id: this.props.route.params._id,
             sub_header_id: this.props.route.params.sub_header_id,
             subHeader: null,
             type_id: this.props.route.params.type_id,
@@ -288,10 +289,16 @@ export class ConversationScreen extends React.Component {
         this.sendMessage = this.sendMessage.bind(this);
         this.lazyUpdate = this.lazyUpdate.bind(this);
 
-        this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={this.state.name}/>});
+        this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={this.state.title}/>});
     }
     
     componentDidMount() {
+        GlobalProperties.return_screen = "Conversation Screen";
+        GlobalProperties.screen_props = {
+            sent_message: false,
+            _id: this.state._id,
+        };
+
         //fetch messages
         this.fetchMessages();
         
@@ -299,11 +306,9 @@ export class ConversationScreen extends React.Component {
         //this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={"Mellisa"}/>});
     }
 
-    /*async refreshMessages() {
-        this.state.messages = this.state.subHeader.message_records;
-
-        this.lazyUpdate();
-    }*/
+    componentWillUnmount() {
+        this.state.messages.removeAllListeners();
+    }
 
     async fetchMessages() {
         //get message sub header
@@ -317,20 +322,16 @@ export class ConversationScreen extends React.Component {
 
         this.state.messages = this.state.subHeader.message_records;
 
-        //add listener to messages
-        try {
-            this.state.messages.addListener(this.lazyUpdate);
-        }
-        catch (error) {
-            //well that does not work
-        }
+        this.state.messages.addListener(() => {
+            this.lazyUpdate();
+        })
 
         this.lazyUpdate();
     }
 
     render() {
         const renderItem = ({ item }) => (
-            <FrameComponent item = {item} lazyUpdate = {this.lazyUpdate}/>
+            <FrameComponent item = {item} lazyUpdate = {this.lazyUpdate} type = {this.state.type}/>
         );
 
         var sendButton = null;
@@ -357,7 +358,6 @@ export class ConversationScreen extends React.Component {
                                 data={this.state.messages.slice(0, this.state.messages_count)}
                                 renderItem={renderItem}
                                 keyExtractor={item => (item.id.toString() + this.state.last_timestamp.getSeconds().toString())}
-                                extraData={this.state.subHeader}
                                 style={{width: "100%", height: "100%"}}
                                 inverted={true}
                                 onEndReached={() => {this.state.messages_count += GlobalValues.MESSAGES_PAGE_AMOUNT; this.lazyUpdate();}}
@@ -393,6 +393,8 @@ export class ConversationScreen extends React.Component {
     } 
 
     async sendMessage() {
+        GlobalProperties.screen_props.sent_message = true;
+
         var url = "";
         var body = "";
 
@@ -408,6 +410,13 @@ export class ConversationScreen extends React.Component {
         }
         else if (this.state.type == 1) {
             //send conversation message
+
+            url = "/api/User/Friends/Messages/SendConversationMessage";
+            body = {
+                conversation_id: this.state.subHeader.conversation_id,
+                body: this.state.message,
+                expo_token: GlobalProperties.expo_push_token
+            };
         }
 
         //set global property to false first (so if multiple notifications, they dont create many overlapping requests)
@@ -448,17 +457,34 @@ export class ConversationScreen extends React.Component {
                 //get timestamp
                 var timestamp = JSON.parse(result.request.response).timestamp;
 
-                //add message to local storage
-                GlobalProperties.messagesHandler.insertMessages([
-                    {
-                        type: "direct",
-                        timestamp: timestamp,
-                        body: this.state.message,
-                        user_id: GlobalProperties.user_id,
-                        user_name: "Me",
-                        is_you: true,
-                    }
-                ]);
+                if (this.state.type == 0) {
+                    //add message to local storage
+                    GlobalProperties.messagesHandler.insertMessages([
+                        {
+                            type: "direct",
+                            timestamp: timestamp,
+                            body: this.state.message,
+                            user_id: GlobalProperties.user_id,
+                            other_user_id: this.state.subHeader.other_user_id,
+                            user_name: "Me",
+                            is_you: true,
+                        }
+                    ]);
+                }
+                else if (this.state.type == 1) {
+                    //add message to local storage
+                    GlobalProperties.messagesHandler.insertMessages([
+                        {
+                            type: "conversation",
+                            timestamp: timestamp,
+                            body: this.state.message,
+                            user_id: GlobalProperties.user_id,
+                            conversation_id: this.state.subHeader.conversation_id,
+                            user_name: "Me",
+                            is_you: true,
+                        }
+                    ]);
+                }
 
                 //no need to laxy update as mongodb realm triggers that
                 //return;
@@ -558,10 +584,13 @@ class FrameComponent extends React.Component {
             parsed_name: this.props.item.user_name,
             message: this.props.item.message,
             show_name: this.props.item.show_name,
+            is_you: this.props.item.from_id == GlobalProperties.user_id,
+            type: this.props.type,
         };
 
         //parsed name is name that is first with initial, do that conversion here (use space in name as substring etc...)
 
+        this.borderColor = this.borderColor.bind(this);
         this.onTrashButtonPress = this.onTrashButtonPress.bind(this);
         this.onTrashButtonRelease = this.onTrashButtonRelease.bind(this);
     }
@@ -569,9 +598,9 @@ class FrameComponent extends React.Component {
     render() { 
         var renderName = {};
 
-        if (this.props.item.show_name) {
+        if (this.state.show_name) {
             renderName = (
-                <View style={[blip_styles.top_bar, {alignSelf: getHorizontalPositionStyle(this.props.item.me)}, getMargin(this.props.item.me)]}>
+                <View style={[blip_styles.top_bar, {alignSelf: getHorizontalPositionStyle(this.state.is_you)}, getMargin(this.state.is_you)]}>
                     <Text style={[blip_styles.top_text]}>
                         {this.state.parsed_name}
                     </Text>
@@ -587,9 +616,9 @@ class FrameComponent extends React.Component {
         }
 
         return (
-        <View style={[frame_styles.box, {alignSelf: getHorizontalPositionStyle(this.props.item.me)}]}>
+        <View style={[frame_styles.box, {alignSelf: getHorizontalPositionStyle(this.state.is_you)}]}>
             {renderName}
-            <View style={[blip_styles.body, getBorderDirection(this.props.item.me), {borderColor: colorCode(this.props.item.me)}]}>
+            <View style={[blip_styles.body, getBorderDirection(this.state.is_you), {borderColor: this.borderColor()}]}>
                 <TouchableHighlight>
                     <Text style={blip_styles.inner_text}>
                         {this.state.message}
@@ -598,6 +627,20 @@ class FrameComponent extends React.Component {
             </View>
         </View>
         );
+    }
+
+    borderColor() {
+        if (this.state.is_you) {
+            return GlobalValues.DISTINCT_GRAY;
+        }
+        else {
+            if (this.state.type == 0) {
+                return GlobalValues.DIRECT_MESSAGE_COLOR;
+            }
+            else if (this.state.type == 1) {
+                return GlobalValues.CONVERSATION_COLOR;
+            }
+        }
     }
 
     onTrashButtonPress() {

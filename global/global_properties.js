@@ -17,7 +17,6 @@ export const GlobalValues = {
   PEOPLE_COLOR: "#ffb300",
   ACTIVITY_COLOR: "#ff0000",
   GROUP_COLOR: "#00eb8d",
-  INVITATION_COLOR: "#8599C7",
   DARKER_WHITE: "#f1f1f1",//"#f2f2f2",
   DARKER_OUTLINE: "#ebebeb",
   DISTINCT_GRAY: '#c9c9c9',
@@ -30,6 +29,11 @@ export const GlobalValues = {
   AGE_COLOR: "#facc00",
   DISTANCE_COLOR: "#ff7b29",
 
+  //message colors
+  CONVERSATION_COLOR: "#6aa5f7",
+  DIRECT_MESSAGE_COLOR: "#ff5b24",
+  ANNOUNCEMENT_COLOR: "#ff0000",
+  INVITATION_COLOR: "#8599C7",
 
   //buttons
   ACTIVE_OPACITY: 0.7,

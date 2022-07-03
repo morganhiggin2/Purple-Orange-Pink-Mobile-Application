@@ -244,7 +244,7 @@ export class OtherActivityScreen extends React.Component {
             id: this.props.route.params.id,
         }
         
-        this.sendInvitation = this.sendInvitation.bind(this);
+        this.joinOtherActivity = this.joinOtherActivity.bind(this);
         this.viewAdmins = this.viewAdmins.bind(this);
         this.viewParticipants = this.viewParticipants.bind(this);
         this.fetchActivityInformation = this.fetchActivityInformation.bind(this);
@@ -391,7 +391,7 @@ export class OtherActivityScreen extends React.Component {
 
         if (this.state.invitation_type == "anyone") {
             joinRender = (
-                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {}}>
+                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.joinOtherActivity();}}>
                     <View style={actions_styles.action_button_inner}>
                         <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
                         <Text style={actions_styles.action_button_text}>
@@ -403,7 +403,7 @@ export class OtherActivityScreen extends React.Component {
         }
         else if (this.state.invitation_type == "invite_required") {
             joinRender = (
-                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {}}>
+                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.joinOtherActivity();}}>
                     <View style={actions_styles.action_button_inner}>
                         <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
                         <Text style={actions_styles.action_button_text}>
@@ -637,8 +637,8 @@ export class OtherActivityScreen extends React.Component {
         this.state.activity_images = cleaned_images;
     }
 
-    async sendInvitation() {
-        var requestUrl = "/api/User/Friends/RequestToJoinParticipantAsActivity?activity_id=" + this.props.item.id + "&participant_id=" + this.props.getParticipantId();
+    async joinOtherActivity() {
+        var requestUrl = "/api/User/Friends/RequestToJoinActivityAsParticipant?id=" + this.state.id;
         
 
         //if request was successful

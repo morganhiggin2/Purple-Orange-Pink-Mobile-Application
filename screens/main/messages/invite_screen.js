@@ -224,17 +224,15 @@ export class InviteScreen extends React.Component {
         super(props);
 
         this.state = {
-            id: this.props.route.params.id,
+            _id: this.props.route.params._id,
+            sub_header_id: this.props.route.params.sub_header_id,
+            invitation_id: this.props.route.params.invitation_id,
             type: "",
-            name: "",
-            message: "",
+            body: this.props.route.params.body,
 
             //for loading screen
-            loading: false,
-            reload: false,
-
-            profile_images: ["https://ichef.bbci.co.uk/news/976/cpsprodpb/EAB5/production/_121158006_gettyimages-1328227222.jpg", "https://ichef.bbci.co.uk/news/976/cpsprodpb/EAB5/production/_121158006_gettyimages-1328227222.jpg"],
-        };
+            loading: true,
+            reload: false, };
 
         if (this.state.type == "person") {
             this.state.activity_id = this.props.route.params.other_id;
@@ -245,15 +243,12 @@ export class InviteScreen extends React.Component {
         else if (this.state.type == "group") {
             this.state.group_id = this.props.route.params.other_id;
         }
-
         this.fetchInvitationData = this.fetchInvitationData.bind(this);
         this.acceptInvitation = this.acceptInvitation.bind(this);
         this.removeInvitation = this.removeInvitation.bind(this);
 
         //once done, lazy update
         this.lazyUpdate = this.lazyUpdate.bind(this);
-        this.cleanImages = this.cleanImages.bind(this);
-        this.handleImageURI = this.handleImageURI.bind(this);
     }
 
     async log_in() {
@@ -264,10 +259,11 @@ export class InviteScreen extends React.Component {
         //init
 
         //fetch data
-        //this.fetchInvitationData();
+        this.fetchInvitationData();
     }
 
     async fetchInvitationData() {
+
         if (this.state.reload) {
             this.state.reload = false;
     
@@ -275,10 +271,15 @@ export class InviteScreen extends React.Component {
             this.lazyUpdate();
         }
 
+        //fetch subheader data
+        this.state.subHeader = await GlobalProperties.messagesHandler.getInvitationInformation(this.state.sub_header_id);
+
+        this.state.invitation_id = this.state.subHeader.invitation_id;
+
         var successful = false;
 
         //make request
-        var result = await GlobalEndpoints.makeGetRequest(true, ("/api/User/Generic/ViewInvitation?id=" + this.state.id))
+        var result = await GlobalEndpoints.makeGetRequest(true, ("/api/User/Generic/ViewInvitation?id=" + this.state.invitation_id))
             .then((result) => {
                 if (result == undefined) {
                     successful = false;
@@ -312,15 +313,9 @@ export class InviteScreen extends React.Component {
                 }
 
                 this.state.invitation_message = invitation_information.invitation_type_message;
-                this.state.invitation_id = invitation_information.invitation_id;
                 this.state.view_id = invitation_information.id;
                 this.state.view_type = invitation_information.type;
                 this.state.is_invitee = invitation_information.is_invitee;
-
-                //get images
-                if (this.state.profile_images.length == 0) {
-                    this.state.profile_images = [require("../../../images/default_image.png")];
-                }
 
                 this.state.loading = false;
             }
@@ -356,16 +351,10 @@ export class InviteScreen extends React.Component {
             }
         }
 
-        //TODO this goes in fetch code for valid case
-        //gets the images from the response
-        //...
-        //clean images
-        this.cleanImages();
-
         //once done, lazy update
         this.lazyUpdate();
 
-        this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={this.state.name}/>});
+        //this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={this.state.name}/>});
     }
 
     render() {
@@ -448,25 +437,9 @@ export class InviteScreen extends React.Component {
             return (
                 <View style={main_styles.page}>
                     <ScrollView style={main_styles.scroll_view}>
-                        <View style={image_styles.container}>
-                            <SliderBox
-                            images={this.state.profile_images.map(uri => {
-                                return(this.handleImageURI(uri));
-                            })}
-                            parentWidth={image_styles.image.width}
-                            sliderBoxHeight={image_styles.image.height}
-                            dotColor={GlobalValues.ORANGE_COLOR}
-                            inactiveDotColor={GlobalValues.DISTINCT_GRAY}
-                        />
-                        </View>
-                        <View style={main_styles.name_view}>
-                            <Text style={main_styles.title_text}>
-                                {this.state.name}
-                            </Text>
-                        </View>
                         <View style={info_styles.body}>
                             <Text style={info_styles.title_text}>
-                                {this.state.message}
+                                {this.state.body}
                             </Text>
                         </View>
                         <View style={info_styles.body}>
@@ -484,27 +457,12 @@ export class InviteScreen extends React.Component {
         }
     }
     
-    //get rid of any null entries
-    cleanImages() {
-        var cleaned_images = [];
-
-        for (var i = 0; i <= this.state.profile_images.length; i++) {
-            if (this.state.profile_images[i] != null && this.state.profile_images[i] != "") {
-                cleaned_images.push(this.state.profile_images[i]);
-            }
-        }
-
-        this.state.profile_images = cleaned_images;
-    }
-
-    handleImageURI(uri) {
-        if (uri == undefined) {
-            return(require("../../../images/default_image.png"));
-        }
-        else {
-            return(uri);
-        }
-    }
+    /*
+                        <View style={main_styles.name_view}>
+                            <Text style={main_styles.title_text}>
+                                Invitation
+                            </Text>
+                        </View> */
 
     async acceptInvitation() {
         //if request was successful
