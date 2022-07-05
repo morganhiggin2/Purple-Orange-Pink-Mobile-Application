@@ -35,8 +35,8 @@ const main_styles = StyleSheet.create(
         horizontal_bar: {
             width: '94%',
             alignSelf: 'center',
-            borderBottomWidth: 1.5,
-            borderColor: '#b8b8b8'
+            borderBottomWidth: 1,
+            borderColor: GlobalValues.DARKER_OUTLINE,
         }
     }
 );
@@ -156,13 +156,14 @@ const inline_attribute_styles = StyleSheet.create({
     },
     text_input: {
         textAlignVertical: "center",
-        paddingVertical: 4,
+        paddingVertical: 2,
         paddingHorizontal: 4,
         width: '100%',
-        backgroundColor: '#EAEAEA',
+        
+        textAlign: 'right',
+        backgroundColor: GlobalValues.DARKER_OUTLINE,
         borderRadius: 4,
-        textAlign: 'left',
-        fontSize: 18,
+        fontSize: 16, 
     },
     numeric_text_input: {
         textAlignVertical: "center",
@@ -249,7 +250,7 @@ export class ContactSupportScreen extends React.Component {
                                 Description
                             </Text>     
                             <View style={attribute_styles.input_text_view}>
-                                <TextInput style={[attribute_styles.text_input, {fontSize: 18, textAlignVertical: "top"}]} multiline={true} editable={true} maxLength={160} numberOfLines={4} scrollEnables={true} defaultValue={this.state.description} onChangeText={(value) => {this.updateDescription(value);}} onEndEditing={(value) => {this.updateUpdateMade(false)}}/>
+                                <TextInput style={attribute_styles.text_input} multiline={true} editable={true} maxLength={160} numberOfLines={4} scrollEnables={true} defaultValue={this.state.description} onChangeText={(value) => {this.updateDescription(value);}} onEndEditing={(value) => {this.updateUpdateMade(false)}}/>
                             </View>                   
                         </View> 
                     </View>

@@ -3,7 +3,7 @@ import {StyleSheet, View, Text, ScrollView, Dimensions, ImageBackground, Alert} 
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { render } from 'react-dom';
-import { GlobalProperties } from '../../../../global/global_properties.js';
+import { GlobalProperties, GlobalValues } from '../../../../global/global_properties.js';
 import { GlobalEndpoints } from '../../../../global/global_endpoints.js';
 import { LoadingScreen } from '../../../misc/loading_screen.js';
 

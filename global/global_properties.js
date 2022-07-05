@@ -55,7 +55,7 @@ export const GlobalValues = {
   //for information icons
   ATTRIBUTES_INFORMATION: "These are interests you both will have in common. Use words ending in \'ing\'.\n\nExamples: Swimming, Biking, Jogging, Coding.",
   INVITATION_CAP_INFORMATION: "This limits the number of pending invitations at one time.",
-  PARTICIPANT_CAP_INFORMATION: "This limits the number of people than can join your activity.",
+  PARTICIPANT_CAP_INFORMATION: "This limits the number of people that can join your activity.",
   INVITATION_TYPE_INFORMATION: "Anyone: anyone can join\nInvitation Required: anyone can request to join, and you must then accept their invite for them to join.\nInvite Only: Only you can invite people to join",
   SEARCH_LOCATION_IS_ACTIVITY_LOCATION_INFORMATION: "The location in which people can find your activity is the same as the location of your activity.",
   ADDRESS_INFORMATION: "Only people who join you activity are able to see this",

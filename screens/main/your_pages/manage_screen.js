@@ -217,7 +217,7 @@ export class ManageScreen extends React.Component {
         var successful = false;
 
         //make request
-        var result = await GlobalEndpoints.makeGetRequest(true, "/api/User/Friends/GetManagedItems")
+        var result = await GlobalEndpoints.makeGetRequest(true, "/api/User/Friends/GetManagedItems")//?filter=" + GlobalProperties.manage_filters_type)
             .then((result) => {
                 if (result == undefined) {
                     successful = false;
@@ -297,9 +297,6 @@ export class ManageScreen extends React.Component {
                                     Create
                                 </Text>
                             </View>
-                        </TouchableHighlight>
-                        <TouchableHighlight underlayColor="white" onPress={() => {this.props.navigation.navigate("Manage Filters Screen");}}>
-                            <Feather name="list" size={36} color="gray" />
                         </TouchableHighlight>
                     </View>
                     <FlatList 

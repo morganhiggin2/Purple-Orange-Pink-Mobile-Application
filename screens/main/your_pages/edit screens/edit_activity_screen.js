@@ -306,12 +306,6 @@ export class EditActivityScreen extends React.Component {
             //attributes
             attributes: [],
 
-            //points
-            points: [],
-            
-            //new points
-            new_points: [],
-
             //ids of points who's images have changed
             new_point_images: [],
 
@@ -465,11 +459,6 @@ export class EditActivityScreen extends React.Component {
                 //update for change in search radius
                 this.updateUpdateMade(true);
             }
-            else if (GlobalProperties.return_screen == "Edit Activity Images Screen") {
-                this.state.group_images = GlobalProperties.screen_props.group_images;
-
-                GlobalProperties.screenActivated();
-            }
         });
 
         //this.requestLocation();
@@ -525,7 +514,6 @@ export class EditActivityScreen extends React.Component {
                 this.state.target_longitude = activity_information.target_location.longitude;
                 this.state.search_latitude = activity_information.search_location.latitude;
                 this.state.search_longitude = activity_information.search_location.longitude;
-                this.state.points = activity_information.points;
 
                 if (!this.state.is_physical_event) {
                     this.state.virtual_link = this.state.address;
@@ -870,15 +858,6 @@ export class EditActivityScreen extends React.Component {
 
             physicalEventLocation = (
                 <View>
-                    <View style={inline_attribute_styles.body}>
-                        <Text style={inline_attribute_styles.title_text}>
-                            Virtual Link
-                        </Text>
-                        <View style={inline_attribute_styles.input_text_view}>
-                            <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="black" autoCorrect={false} editable={true} maxLength={160} defaultValue={this.state.virtual_link} onChangeText={(value) => {this.updateVirtualLink;}} onEndEditing={() => {this.updateUpdateMade(false);}}/>
-                        </View>
-                    </View>
-                    <View style={main_styles.horizontal_bar}/>
                     <View style={attribute_styles.body}>
                         <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => 
                             {
@@ -896,6 +875,15 @@ export class EditActivityScreen extends React.Component {
                                 </Text>
                             </View>
                         </TouchableOpacity>
+                    </View>
+                    <View style={main_styles.horizontal_bar}/>
+                    <View style={inline_attribute_styles.body}>
+                        <Text style={inline_attribute_styles.title_text}>
+                            Virtual Link
+                        </Text>
+                        <View style={inline_attribute_styles.input_text_view}>
+                            <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="black" autoCorrect={false} editable={true} maxLength={160} defaultValue={this.state.virtual_link} onChangeText={(value) => {this.updateVirtualLink;}} onEndEditing={() => {this.updateUpdateMade(false);}}/>
+                        </View>
                     </View>
                 </View>
             );
@@ -931,6 +919,46 @@ export class EditActivityScreen extends React.Component {
         if (this.state.advanced_settings_enabled) {
             advancedSettings = (
                 <View>
+                    <View style={info_styles.body}>
+                        <View style={attribute_styles.body}>
+                            <Text style={attribute_styles.title_text}>
+                                Description
+                            </Text>     
+                            <View style={attribute_styles.input_text_view}>
+                                <TextInput style={attribute_styles.text_input} multiline={true} editable={true} maxLength={160} numberOfLines={4} scrollEnables={true} defaultValue={this.state.description} onChangeText={(value) => {this.updateDescription(value);}} onEndEditing={() => {this.updateUpdateMade(false);}}/>
+                            </View>                   
+                        </View>     
+                        <View style={main_styles.horizontal_bar}/>     
+                        <View style={inline_attribute_styles.body}>
+                            <Text style={inline_attribute_styles.title_text}>
+                                Participant gender
+                            </Text>
+                            <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {width: '50%', alignSelf: 'flex-end'}]}>
+                                    <DropDown 
+                                        style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
+                                        items={[{label: 'All', value: 'all'}, {label: 'Male', value: 'male'}, {label: 'Female', value: 'female', }, {label: "Other", value: "other"}]}
+                                        onChangeValue = {this.updateGenderDropDownValue}
+                                        currentValue = {this.state.gender_dropdown_value}
+                                        />
+                            </View>
+                        </View>
+                        <View style={main_styles.horizontal_bar}/>
+                        <View style={attribute_styles.body}>
+                            <View style={attribute_styles.title_with_value}>
+                                <Text style={attribute_styles.title_text}>
+                                   Participant age range
+                                </Text>
+                                <Text style={attribute_styles.title_value}>
+                                    {this.state.age_range_values[0] + " to " + this.state.age_range_values[1]}
+                                </Text>
+
+                            </View>
+                            <View style={attribute_styles.slider}>
+                                <Slider twoSlider={true} onChangeValue={this.updateAgeRangeValues} min={18} max={100} step={2} initialValue={this.state.age_range_values} backgroundColor={GlobalValues.ORANGE_COLOR}/> 
+                            </View>
+                        </View>
+                    </View>
+                    <View style={section_styles.gap} />
                     <View style={info_styles.body}>
                         <View style={inline_attribute_styles.body}>
                             <View style={inline_attribute_styles.title_view}>
@@ -992,37 +1020,6 @@ export class EditActivityScreen extends React.Component {
                     <View style={section_styles.gap} />
                     {advancedPhysicalEventLocation}
                     <View style={section_styles.gap} />
-                    <View style={section_styles.gap} />
-                    <View style={info_styles.body}>
-                        <View style={inline_attribute_styles.body}>
-                            <Text style={inline_attribute_styles.title_text}>
-                                Participant gender
-                            </Text>
-                            <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {width: '50%', alignSelf: 'flex-end'}]}>
-                                    <DropDown 
-                                        style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
-                                        items={[{label: 'All', value: 'all'}, {label: 'Male', value: 'male'}, {label: 'Female', value: 'female', }, {label: "Other", value: "other"}]}
-                                        onChangeValue = {this.updateGenderDropDownValue}
-                                        currentValue = {this.state.gender_dropdown_value}
-                                        />
-                            </View>
-                        </View>
-                        <View style={main_styles.horizontal_bar}/>
-                        <View style={attribute_styles.body}>
-                            <View style={attribute_styles.title_with_value}>
-                                <Text style={attribute_styles.title_text}>
-                                   Participant age range
-                                </Text>
-                                <Text style={attribute_styles.title_value}>
-                                    {this.state.age_range_values[0] + " to " + this.state.age_range_values[1]}
-                                </Text>
-
-                            </View>
-                            <View style={attribute_styles.slider}>
-                                <Slider twoSlider={true} onChangeValue={this.updateAgeRangeValues} min={18} max={100} step={2} initialValue={this.state.age_range_values} backgroundColor={GlobalValues.ORANGE_COLOR}/> 
-                            </View>
-                        </View>
-                    </View>
                 </View>
             );
         }
@@ -1048,13 +1045,13 @@ export class EditActivityScreen extends React.Component {
                             </Text>       
                             <View style={attribute_styles.input_text_view}>
                                     <TouchableOpacity onPress={() => this.setState({showDatePicker: true})}>
-                                    <Text style={{color: 'blue'}}>
+                                    <Text style={{color: GlobalValues.ORANGE_COLOR}}>
                                             {this.showDate()} 
                                             {" "}
                                     </Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => this.setState({showTimePicker: true})}>
-                                    <Text style={{color: 'blue'}}>
+                                    <Text style={{color: GlobalValues.ORANGE_COLOR}}>
                                         {this.showTime()}
                                     </Text>
                                 </TouchableOpacity>
@@ -1082,33 +1079,9 @@ export class EditActivityScreen extends React.Component {
                                     <FilterSnap key={key} parent={this} innerText={data} data={this.state.attributes} id={key}/>
                                 );
                             })}
-                        </View>  
-                        <View style={main_styles.horizontal_bar}/>
-                        <View style={attribute_styles.body}>
-                            <Text style={attribute_styles.title_text}>
-                                Description
-                            </Text>     
-                            <View style={attribute_styles.input_text_view}>
-                                <TextInput style={[attribute_styles.text_input, {fontSize: 18, textAlignVertical: "top"}]} multiline={true} editable={true} maxLength={160} numberOfLines={4} scrollEnables={true} defaultValue={this.state.description} onChangeText={(value) => {this.updateDescription(value);}} onEndEditing={() => {this.updateUpdateMade(false);}}/>
-                            </View>                   
-                        </View>                          
+                        </View>                  
                     </View>
                     <View style={section_styles.gap} />
-                    <View style={info_styles.body}>
-                        <View style={actions_styles.body}>
-                            <Text style={info_styles.title_text}>
-                                Images
-                            </Text>
-                            <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.updateUpdateMade(false); this.props.navigation.navigate("Edit Activity Images Screen", {activity_images: this.state.activity_images})}}>
-                                <View style={actions_styles.action_button_inner}>
-                                    <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
-                                    <Text style={actions_styles.action_button_text}>
-                                        Edit Images
-                                    </Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
                     <View style={section_styles.gap} />
                     <View style={info_styles.body}>
                         <View style={inline_attribute_styles.body}>
@@ -1136,17 +1109,6 @@ export class EditActivityScreen extends React.Component {
                         </TouchableOpacity>
                     </View>
                     {advancedSettings}
-                    <TouchableOpacity style={[info_styles.body, {flexDirection: "row", justifyContent: 'center'}]} onPress={() => {this.addPoint();}}>
-                        <Ionicons name="add-circle-outline" size={20} color={GlobalValues.ORANGE_COLOR} style={actions_styles.action_button_icon}/>
-                        <Text style={[actions_styles.action_button_text, {color: GlobalValues.ORANGE_COLOR}]}>
-                            {"Add Point "}
-                        </Text>
-                    </TouchableOpacity>
-                    {this.state.points.map((data, key) => {
-                        return (
-                            <Point key={data.id} data={data} parentLazyUpdate={() => {this.lazyUpdate();}} deleteAlert={this.deletePointAlert} pointsUpdatedImage={this.pointsUpdatedImage} pointsUpdatedCaption={this.pointsUpdatedCaption}/>
-                        );
-                    })}
                     <View style={section_styles.gap} />
                     <View style={section_styles.gap} />
                     <View style={section_styles.gap} />
@@ -1185,92 +1147,6 @@ export class EditActivityScreen extends React.Component {
     lazyUpdate() {
         this.forceUpdate();
     }
-
-    addPoint() {
-        //we have to set the id of the new points as it is the key of the point.
-        this.state.points.push(
-            {
-                id: "new_point_" + this.state.max_point_index,
-                caption: "",
-                image_uri: ""
-            }
-        );
-
-        this.state.max_point_index++;
-
-        this.state.addNewPointsToUpdateBody = true;
-
-        this.updateUpdateMade(true);
-    }
-
-    pointsUpdatedCaption(id, value) {
-        for (let [i, data] of this.state.points.entries()) {
-            if (data.id == id) {
-                if (!data.id.startsWith("new_point")) {
-                    this.state.addPointsToUpdateBody = true;
-                }
-
-                this.state.points[i].caption = value;
-
-                this.updateUpdateMade(false);
-                return;
-            }
-        }
-    }
-
-    pointsUpdatedImage(id, value) {
-        for (let [i, data] of this.state.points.entries()) {
-            if (data.id == id) {
-                if (!data.id.startsWith("new_point")) {
-                    this.state.addPointsToUpdateBody = true;
-
-                    this.state.new_point_images.push(data.id);
-                }
-
-                this.state.points[i].image_uri = value;
-
-                this.updateUpdateMade(false);
-                return;
-            }
-        }
-    }
-
-    deletePoint(id) {
-        for (let [i, data] of this.state.points.entries()) {
-            if (data.id == id) {
-                if (!data.id.startsWith("new_point")) {
-                    this.state.addPointsToUpdateBody = true;
-                }
-
-                this.state.points.splice(i, 1);
-
-                this.updateUpdateMade(true);
-                return;
-            }
-        }
-    }
-    
-    deletePointAlert(id) {
-        Alert.alert(
-            "Delete",
-            "Are you sure you want to delete this point?",
-            [
-                {
-                    text: "Cancel",
-                    onPress: () => {},
-                    style: "cancel",
-                },
-                {
-                    text: "Delete",
-                    onPress: () => {this.deletePoint(id);}
-                }
-            ],
-            {
-                cancelable: true,
-            }
-        );
-    }
-
 
     //for the time setting
     showDate() {
@@ -1635,12 +1511,6 @@ export class EditActivityScreen extends React.Component {
             return false;
         }
 
-        //validate description
-        if (this.state.description.length == 0) {
-            this.showError("description field must not be empty");
-            return false;
-        }
-
         if (this.state.description.length > 2048) {
             this.showError("description field is too long");
             return false;
@@ -1790,8 +1660,8 @@ class DropDown extends React.Component {
                     setValue={this.setValue}
                     setItems={this.setItems}
                     listMode={"SCROLLVIEW"}
-                    style={{borderWidth: 0, borderRadius: 4, height: 40}}
-                    dropDownContainerStyle={{borderWidth: 0, borderRadius: 4}}
+                    style={{borderWidth: 0, borderRadius: 4, height: 50, backgroundColor: GlobalValues.DARKER_OUTLINE}}
+                    dropDownContainerStyle={{borderWidth: 0, borderRadius: 4, backgroundColor: GlobalValues.DARKER_OUTLINE}}
                     maxHeight={120}
                     placeholder={"Select"}
                     />
@@ -1904,165 +1774,6 @@ class FilterSnap extends React.Component {
 
 FilterSnap.defaultProps = {
     color: GlobalValues.ORANGE_COLOR,
-}
-
-//TODO fix react native buttons (all, even in manage screen files for ones with onHideUnderlay and onShowUnderlay) click twice
-//work around: onPress is only called once, so put main stuff in there that is triggered with the button besides the color state variables
-
-class Point extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            image_uri: this.props.data.image_uri,
-            caption: this.props.data.caption,
-            trashColor: 'black',
-            editCaptionColor: 'black',
-            editImageColor: 'black',
-            show_edit_caption_dialog: false,
-        }
-
-        this.onEditCaptionButtonPress = this.onEditCaptionButtonPress.bind(this);
-        this.onEditCaptionButtonRelease = this.onEditCaptionButtonRelease.bind(this);
-        this.onEditImageButtonPress = this.onEditImageButtonPress.bind(this);
-        this.onEditImageButtonRelease = this.onEditImageButtonRelease.bind(this);
-        this.onTrashButtonPress = this.onTrashButtonPress.bind(this);
-        this.onTrashButtonRelease = this.onTrashButtonRelease.bind(this);
-        this.showEditCaptionDialog = this.showEditCaptionDialog.bind(this);
-
-        this.onEditedCaption = this.onEditedCaption.bind(this);
-        this.chooseImage = this.chooseImage.bind(this);
-        this.lazyUpdate = this.lazyUpdate.bind(this);
-    }
-
-    render() {
-        var renderImageOrSelector = {};
-
-        if (this.state.image_uri == "") {
-            renderImageOrSelector = (
-                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.chooseImage();}}>
-                    <View style={actions_styles.action_button_inner}>
-                        <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
-                        <Text style={actions_styles.action_button_text}>
-                            Choose Image
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-            );
-        }
-        else {
-            renderImageOrSelector = (
-                <Image style={[point_styles.image, {alignSelf: 'center'}]} source={handleImageURI(this.state.image_uri)}/>
-            );
-        }
-        return(
-            <View style={[info_styles.body, point_styles.body]}>
-                <View style={[actions_styles.body, point_styles.container]}> 
-                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                    <View style={{flexDirection: 'row'}}>
-                        <TouchableHighlight style={point_styles.trash_icon} underlayColor="white" onPressIn={() => {this.setState({show_edit_caption_dialog: true});}} onHideUnderlay={() => {this.onEditCaptionButtonRelease()}} onShowUnderlay={() => {this.onEditCaptionButtonPress()}}> 
-                            <Feather name="edit" size={20} color={this.state.editCaptionColor} style={actions_styles.action_button_icon}/>
-                        </TouchableHighlight>
-                        <TouchableHighlight style={point_styles.trash_icon} underlayColor="white" onPressIn={() => {this.chooseImage();}} onHideUnderlay={() => {this.onEditImageButtonRelease()}} onShowUnderlay={() => {this.onEditImageButtonPress()}}> 
-                            <Feather name="image" size={20} color={this.state.editImageColor} style={actions_styles.action_button_icon}/>
-                        </TouchableHighlight>
-                    </View>
-                    <TouchableHighlight style={point_styles.trash_icon} underlayColor="white" onPressIn={() => {this.props.deleteAlert(this.props.data.id);}} onHideUnderlay={() => {this.onTrashButtonRelease()}} onShowUnderlay={() => {this.onTrashButtonPress()}}> 
-                        <Feather name="trash-2" size={20} color={this.state.trashColor} />
-                    </TouchableHighlight>
-                </View>
-                    <Text style={[info_styles.title_text, {textAlign: 'left'}]}>
-                        {this.state.caption}
-                    </Text>
-                    <View style={[main_styles.horizontal_bar, {width: '100%'}]}/>
-                    {renderImageOrSelector}
-                </View>
-                {this.showEditCaptionDialog()}
-            </View>
-        );
-    }
-
-    //choose image from camera roll
-    async chooseImage() {
-        //check if we are not on the web and we have permission to the camera roll
-        if (Platform.OS !== 'web') 
-        {
-            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-            if (status !== 'granted') 
-            {
-              //alert('Sorry, we need camera roll permissions to make this work!');
-              console.log("permission to camera roll not allowed!");
-            }
-        }
-
-        //get the image, allow editing
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 4],
-            quality: 1,
-        });
-
-        //handle the result if an image is selected
-        if(!result.cancelled) {
-
-            //set the value of the image uri
-            this.state.image_uri = result.uri;
-
-            //update class value
-            this.props.pointsUpdatedImage(this.props.data.id, this.state.image_uri);
-        }
-
-        this.props.parentLazyUpdate();
-    }
-
-    onEditedCaption(value) {
-        this.state.caption = value;
-
-        //update class value
-        this.props.pointsUpdatedCaption(this.props.data.id, this.state.caption);
-    }
-
-    onTrashButtonPress() {
-        this.setState({trashColor: "red"});
-    }
-
-    onTrashButtonRelease() {
-        this.setState({trashColor: "black"});
-    }
-
-    onEditCaptionButtonPress() {
-        this.setState({editCaptionColor: "red"});
-    }
-
-    onEditCaptionButtonRelease() {
-        this.setState({editCaptionColor: "black"});
-    }
-
-    onEditImageButtonRelease() {
-        this.setState({editImageColor: "black"});
-    }
-
-    onEditImageButtonPress() {
-        this.setState({editImageColor: "red"});
-    }
-
-    showEditCaptionDialog() {
-        return (
-            <Dialog.Container visible={this.state.show_edit_caption_dialog}>
-                <Dialog.Title>
-                    Edit Caption
-                </Dialog.Title>
-                <Dialog.Input onEndEditing={(event) => {this.onEditedCaption(event.nativeEvent.text);}} defaultValue={this.props.data.caption}/>
-                <Dialog.Button label="Done" onPress={() => {this.setState({show_edit_caption_dialog: false});}}/>
-            </Dialog.Container>
-        );
-    }
-
-    lazyUpdate() {
-        this.forceUpdate();
-    }
 }
 
 //create a delete alert for deleting an attribute of id=id from

@@ -39,8 +39,8 @@ const main_styles = StyleSheet.create(
         horizontal_bar: {
             width: '94%',
             alignSelf: 'center',
-            borderBottomWidth: 1.5,
-            borderColor: '#b8b8b8'
+            borderBottomWidth: 1,
+            borderColor: GlobalValues.DARKER_OUTLINE
         }
     }
 );
@@ -87,7 +87,7 @@ const attribute_styles = StyleSheet.create({
         flexDirection:  'row',
     },
     multiline_input_text: {
-        fontSize: 18, 
+        fontSize: 16, 
         maxHeight: "96px", 
         textAlignVertical: "top",
     },
@@ -103,9 +103,9 @@ const attribute_styles = StyleSheet.create({
         maxHeight: 92,
         paddingVertical: 2,
         paddingHorizontal: 4,
-        backgroundColor: '#EAEAEA',
-        borderRadius: 8,
-        fontSize: 18, 
+        backgroundColor: GlobalValues.DARKER_OUTLINE,
+        borderRadius: 4,
+        fontSize: 16, 
     },
     slider: {
         alignSelf: 'center',
@@ -145,10 +145,10 @@ const inline_attribute_styles = StyleSheet.create({
         paddingVertical: 2,
         paddingHorizontal: 4,
         width: '100%',
-        backgroundColor: '#EAEAEA',
-        borderRadius: 4,
         textAlign: 'right',
-        fontSize: 18, 
+        backgroundColor: GlobalValues.DARKER_OUTLINE,
+        borderRadius: 4,
+        fontSize: 16, 
     },
     drop_down_selector: {
         paddingHorizontal: 4,
@@ -257,31 +257,6 @@ const image_styles = StyleSheet.create(
     }
 );
 
-const point_styles = StyleSheet.create(
-    {
-        body: {
-            borderColor: GlobalValues.ORANGE_COLOR,
-            borderTopWidth: 3,
-            borderBottomWidth: 3,
-        },
-        container: {
-
-        },
-        text: {
-            fontSize: 16,
-            alignSelf: 'center',
-        },
-        image: {
-            marginTop: 10,
-            width: Math.trunc(Dimensions.get('window').width * 0.90),
-            height: Math.trunc(Dimensions.get('window').width * 0.90), 
-        },
-        trash_icon: {
-            flexDirection: 'row-reverse',
-        }
-    }
-);
-
 export class YourProfileScreen extends React.Component {
     constructor(props) {
         super(props);
@@ -292,7 +267,6 @@ export class YourProfileScreen extends React.Component {
             last_name: "",
             description: "",
             attributes: [],
-            points: [],
             gender: "",
             shown: false,
 
@@ -362,11 +336,6 @@ export class YourProfileScreen extends React.Component {
         //this.validateFields = this.validateFields.bind(this);
         this.cleanImages = this.cleanImages.bind(this);
         this.showError = this.showError.bind(this);
-        this.deletePoint = this.deletePoint.bind(this);
-        this.deletePointAlert = this.deletePointAlert.bind(this);
-        this.addPoint = this.addPoint.bind(this);
-        this.pointsUpdatedCaption = this.pointsUpdatedCaption.bind(this);
-        this.pointsUpdatedImage = this.pointsUpdatedImage.bind(this);
         this.lazyUpdate = this.lazyUpdate.bind(this);
     }
 
@@ -452,8 +421,6 @@ export class YourProfileScreen extends React.Component {
                 this.state.attributes = user_information.attributes;
                 this.state.date = new Date(Date.parse(user_information.birthdate, "dd/MM/yyyy"));
                 this.state.gender_dropdown_value = user_information.gender;
-                this.state.points = user_information.points;
-
                 this.state.loading = false;
 
                 this.lazyUpdate();
@@ -496,7 +463,6 @@ export class YourProfileScreen extends React.Component {
     }
 
     render() { 
-        var pointsRender = [];//this.state.points;
 
         /*for (var i = 0; i < this.state.points.length; i++) {
             pointsRender.push(<Point key={i + this.state.points.length} index={i} data={this.state.points[i]} parentLazyUpdate={() => {this.lazyUpdate();}} deleteAlert={this.deletePointAlert} pointsUpdatedImage={this.pointsUpdatedImage} pointsUpdatedCaption={this.pointsUpdatedCaption}/>);
@@ -563,7 +529,7 @@ export class YourProfileScreen extends React.Component {
                             </Text>       
                             <View style={attribute_styles.input_text_view}>
                                 <TouchableOpacity onPress={() => this.setState({showDatePicker: true})}>
-                                    <Text style={{color: 'blue'}}>
+                                    <Text style={{color: GlobalValues.ORANGE_COLOR}}>
                                             {this.showDate()} 
                                             {" "}
                                     </Text>
@@ -600,7 +566,7 @@ export class YourProfileScreen extends React.Component {
                                 Description
                             </Text>     
                             <View style={attribute_styles.input_text_view}>
-                                <TextInput style={[attribute_styles.text_input, {fontSize: 18, textAlignVertical: "top"}]} multiline={true} editable={true} maxLength={160} numberOfLines={4} scrollEnables={true} defaultValue={this.state.description} onChangeText={(value) => {this.updateDescription(value);}} onEndEditing={(value) => {this.updateUpdateMade(false)}}/>
+                                <TextInput style={attribute_styles.text_input} multiline={true} editable={true} maxLength={160} numberOfLines={4} scrollEnables={true} defaultValue={this.state.description} onChangeText={(value) => {this.updateDescription(value);}} onEndEditing={(value) => {this.updateUpdateMade(false)}}/>
                             </View>                   
                         </View>                    
                     </View>
@@ -635,18 +601,6 @@ export class YourProfileScreen extends React.Component {
                             </TouchableOpacity>
                         </View>
                     </View>
-                    <View style={section_styles.gap} />
-                    <TouchableOpacity style={[info_styles.body, {flexDirection: "row", justifyContent: 'center'}]} onPress={() => {this.addPoint();}}>
-                        <Ionicons name="add-circle-outline" size={20} color={GlobalValues.ORANGE_COLOR} style={actions_styles.action_button_icon}/>
-                        <Text style={[actions_styles.action_button_text, {color: GlobalValues.ORANGE_COLOR}]}>
-                            {"Add Point "}
-                        </Text>
-                    </TouchableOpacity>
-                    {this.state.points.map((data, key) => {
-                        return (
-                            <Point key={data.id} data={data} parentLazyUpdate={() => {this.lazyUpdate();}} deleteAlert={this.deletePointAlert} pointsUpdatedImage={this.pointsUpdatedImage} pointsUpdatedCaption={this.pointsUpdatedCaption}/>
-                        );
-                    })}
                     <View style={section_styles.gap} />
                     <View style={section_styles.gap} />
                     <View style={section_styles.gap} />
@@ -718,91 +672,6 @@ export class YourProfileScreen extends React.Component {
     lazyUpdate() {
         this.forceUpdate();
     }
-
-    addPoint() {
-        //we have to set the id of the new points as it is the key of the point.
-        this.state.points.push(
-            {
-                id: "new_point_" + this.state.max_point_index,
-                caption: "",
-                image_uri: ""
-            }
-        );
-
-        this.state.max_point_index++;
-
-        this.state.addNewPointsToUpdateBody = true;
-
-        this.updateUpdateMade(true);
-    }
-
-    pointsUpdatedCaption(id, value) {
-        for (let [i, data] of this.state.points.entries()) {
-            if (data.id == id) {
-                if (!data.id.startsWith("new_point")) {
-                    this.state.addPointsToUpdateBody = true;
-                }
-
-                this.state.points[i].caption = value;
-
-                this.updateUpdateMade(false);
-                return;
-            }
-        }
-    }
-
-    pointsUpdatedImage(id, value) {
-        for (let [i, data] of this.state.points.entries()) {
-            if (data.id == id) {
-                if (!data.id.startsWith("new_point")) {
-                    this.state.addPointsToUpdateBody = true;
-
-                    this.state.new_point_images.push(data.id);
-                }
-
-                this.state.points[i].image_uri = value;
-
-                this.updateUpdateMade(false);
-                return;
-            }
-        }
-    }
-
-    deletePoint(id) {
-        for (let [i, data] of this.state.points.entries()) {
-            if (data.id == id) {
-                if (!data.id.startsWith("new_point")) {
-                    this.state.addPointsToUpdateBody = true;
-                }
-
-                this.state.points.splice(i, 1);
-                this.updateUpdateMade(true);
-                return;
-            }
-        }
-    }
-    
-    deletePointAlert(id) {
-        Alert.alert(
-            "Delete",
-            "Are you sure you want to delete this point?",
-            [
-                {
-                    text: "Cancel",
-                    onPress: () => {},
-                    style: "cancel",
-                },
-                {
-                    text: "Delete",
-                    onPress: () => {this.deletePoint(id);}
-                }
-            ],
-            {
-                cancelable: true,
-            }
-        );
-    }
-
     //get rid of any null entries
     cleanImages() {
         //this is not working right
@@ -934,28 +803,6 @@ export class YourProfileScreen extends React.Component {
     async syncUpdates() {
         if (!(await this.validateFields())) {
             return;
-        }
-
-        //if updated points
-        if (this.state.addPointsToUpdateBody) {
-            this.state.updateBody["points"] = [];
-
-            for (let [i, data] of this.state.points.entries()) {
-                if (!data.id.startsWith("new_point")) {
-                    this.state.updateBody["points"].push(data.id);
-                }
-            }
-        }
-
-        //if added new points
-        if (this.state.addNewPointsToUpdateBody) {
-            this.state.updateBody["new_points"] = [];
-
-            for (let [i, data] of this.state.points.entries()) {
-                if (data.id.startsWith("new_point")) {
-                    this.state.updateBody["new_points"].push(data.caption);
-                }
-            }
         }
         
         //if request was successful
@@ -1265,7 +1112,7 @@ class DropDown extends React.Component {
                         selectedValue={this.state.value}
                         //onValueChange={(value) => {this.setState({value: value, open: false});}}
                         onValueChange={(value) => {this.changeValue(value); this.setOpen(false)}}
-                        style={{width: GlobalValues.IOS_DROPDOWN_WIDTH}}
+                        style={{width: GlobalValues.IOS_DROPDOWN_WIDTH, backgroundColor: GlobalValues.DARKER_OUTLINE}}
                         >
                             {items.map((data) => {
                                 return (
@@ -1273,13 +1120,14 @@ class DropDown extends React.Component {
                                    key={data.label}
                                    label={data.label}
                                    value={data.value}
+                                   itemStyle = {{backgroundColor: GlobalValues.DARKER_OUTLINE}}
                                 />);
                             })}
                     </PickerIOS>
                 ) : (
                     //, flexBasis: 'sp'
                     <View style={{alignSelf: 'flex-end'}}>
-                        <TouchableOpacity style={{flexDirection: 'row', justifyContent: 'space-between'}} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.setState({open: true})}}>
+                        <TouchableOpacity style={{flexDirection: 'row', justifyContent: 'space-between', backgroundColor: GlobalValues.DARKER_OUTLINE}} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.setState({open: true})}}>
                             <Text style={{marginRight: 5}}>
                                 {this.state.value == null ? "Select" : this.state.items.find(e => e.value == this.state.value).label} 
                             </Text>
@@ -1297,8 +1145,8 @@ class DropDown extends React.Component {
                     setValue={this.setValue}
                     setItems={this.setItems}
                     listMode={"SCROLLVIEW"}
-                    style={{borderWidth: 0, borderRadius: 4, height: 40}}
-                    dropDownContainerStyle={{borderWidth: 0, borderRadius: 4}}
+                    style={{borderWidth: 0, borderRadius: 4, height: 50, backgroundColor: GlobalValues.DARKER_OUTLINE}}
+                    dropDownContainerStyle={{borderWidth: 0, borderRadius: 4, backgroundColor: GlobalValues.DARKER_OUTLINE, backgroundColor: GlobalValues.DARKER_OUTLINE}}
                     maxHeight={120}
                     placeholder={"Select"}
                     />
@@ -1373,162 +1221,6 @@ FilterSnap.defaultProps = {
 
 //TODO fix react native buttons (all, even in manage screen files for ones with onHideUnderlay and onShowUnderlay) click twice
 //work around: onPress is only called once, so put main stuff in there that is triggered with the button besides the color state variables
-
-class Point extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            image_uri: this.props.data.image_uri,
-            caption: this.props.data.caption,
-            trashColor: 'black',
-            editCaptionColor: 'black',
-            editImageColor: 'black',
-            show_edit_caption_dialog: false,
-        }
-
-        this.onEditCaptionButtonPress = this.onEditCaptionButtonPress.bind(this);
-        this.onEditCaptionButtonRelease = this.onEditCaptionButtonRelease.bind(this);
-        this.onEditImageButtonPress = this.onEditImageButtonPress.bind(this);
-        this.onEditImageButtonRelease = this.onEditImageButtonRelease.bind(this);
-        this.onTrashButtonPress = this.onTrashButtonPress.bind(this);
-        this.onTrashButtonRelease = this.onTrashButtonRelease.bind(this);
-        this.showEditCaptionDialog = this.showEditCaptionDialog.bind(this);
-
-        this.onEditedCaption = this.onEditedCaption.bind(this);
-        this.chooseImage = this.chooseImage.bind(this);
-        this.lazyUpdate = this.lazyUpdate.bind(this);
-    }
-
-    render() {
-        var renderImageOrSelector = {};
-
-        if (this.state.image_uri == "") {
-            renderImageOrSelector = (
-                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.chooseImage();}}>
-                    <View style={actions_styles.action_button_inner}>
-                        <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
-                        <Text style={actions_styles.action_button_text}>
-                            Choose Image
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-            );
-        }
-        else {
-            renderImageOrSelector = (
-                <Image style={[point_styles.image, {alignSelf: 'center'}]} source={handleImageURI(this.state.image_uri)}/>
-            );
-        }
-        return(
-            <View style={[info_styles.body, point_styles.body]}>
-                <View style={[actions_styles.body, point_styles.container]}> 
-                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                    <View style={{flexDirection: 'row'}}>
-                        <TouchableHighlight style={point_styles.trash_icon} underlayColor="white" onPressIn={() => {this.setState({show_edit_caption_dialog: true});}} onHideUnderlay={() => {this.onEditCaptionButtonRelease()}} onShowUnderlay={() => {this.onEditCaptionButtonPress()}}> 
-                            <Feather name="edit" size={20} color={this.state.editCaptionColor} style={actions_styles.action_button_icon}/>
-                        </TouchableHighlight>
-                        <TouchableHighlight style={point_styles.trash_icon} underlayColor="white" onPressIn={() => {this.chooseImage();}} onHideUnderlay={() => {this.onEditImageButtonRelease()}} onShowUnderlay={() => {this.onEditImageButtonPress()}}> 
-                            <Feather name="image" size={20} color={this.state.editImageColor} style={actions_styles.action_button_icon}/>
-                        </TouchableHighlight>
-                    </View>
-                    <TouchableHighlight style={point_styles.trash_icon} underlayColor="white" onPressIn={() => {this.props.deleteAlert(this.props.data.id);}} onHideUnderlay={() => {this.onTrashButtonRelease()}} onShowUnderlay={() => {this.onTrashButtonPress()}}> 
-                        <Feather name="trash-2" size={20} color={this.state.trashColor} />
-                    </TouchableHighlight>
-                </View>
-                    <Text style={[info_styles.title_text, {textAlign: 'left'}]}>
-                        {this.state.caption}
-                    </Text>
-                    <View style={[main_styles.horizontal_bar, {width: '100%'}]}/>
-                    {renderImageOrSelector}
-                </View>
-                {this.showEditCaptionDialog()}
-            </View>
-        );
-    }
-
-    //choose image from camera roll
-    async chooseImage() {
-        //check if we are not on the web and we have permission to the camera roll
-        if (Platform.OS !== 'web') 
-        {
-            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-            if (status !== 'granted') 
-            {
-              //alert('Sorry, we need camera roll permissions to make this work!');
-              console.log("permission to camera roll not allowed!");
-            }
-        }
-
-        //get the image, allow editing
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 4],
-            quality: 1,
-        });
-
-        //handle the result if an image is selected
-        if(!result.cancelled) {
-
-            //set the value of the image uri
-            this.state.image_uri = result.uri;
-
-            //update class value
-            this.props.pointsUpdatedImage(this.props.data.id, this.state.image_uri);
-        }
-
-        this.props.parentLazyUpdate();
-    }
-
-    onEditedCaption(value) {
-        this.state.caption = value;
-
-        //update class value
-        this.props.pointsUpdatedCaption(this.props.data.id, this.state.caption);
-    }
-
-    onTrashButtonPress() {
-        this.setState({trashColor: "red"});
-    }
-
-    onTrashButtonRelease() {
-        this.setState({trashColor: "black"});
-    }
-
-    onEditCaptionButtonPress() {
-        this.setState({editCaptionColor: "red"});
-    }
-
-    onEditCaptionButtonRelease() {
-        this.setState({editCaptionColor: "black"});
-    }
-
-    onEditImageButtonRelease() {
-        this.setState({editImageColor: "black"});
-    }
-
-    onEditImageButtonPress() {
-        this.setState({editImageColor: "red"});
-    }
-
-    showEditCaptionDialog() {
-        return (
-            <Dialog.Container visible={this.state.show_edit_caption_dialog}>
-                <Dialog.Title>
-                    Edit Caption
-                </Dialog.Title>
-                <Dialog.Input onEndEditing={(event) => {this.onEditedCaption(event.nativeEvent.text);}} defaultValue={this.props.data.caption}/>
-                <Dialog.Button label="Done" onPress={() => {this.setState({show_edit_caption_dialog: false});}}/>
-            </Dialog.Container>
-        );
-    }
-
-    lazyUpdate() {
-        this.forceUpdate();
-    }
-}
 
 /*<View style={actions_styles.body}> 
                 <Text style={info_styles.title_text}>

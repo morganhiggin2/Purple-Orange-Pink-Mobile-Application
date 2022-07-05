@@ -125,13 +125,14 @@ const inline_attribute_styles = StyleSheet.create({
     },
     text_input: {
         textAlignVertical: "center",
-        paddingVertical: 4,
+        paddingVertical: 2,
         paddingHorizontal: 4,
         width: '100%',
-        backgroundColor: '#EAEAEA',
+        
+        textAlign: 'right',
+        backgroundColor: GlobalValues.DARKER_OUTLINE,
         borderRadius: 4,
-        textAlign: 'left',
-        fontSize: 18,
+        fontSize: 16, 
     },
     drop_down_selector: {
         paddingHorizontal: 4,
@@ -483,8 +484,8 @@ class DropDown extends React.Component {
                     setValue={this.setValue}
                     setItems={this.setItems}
                     listMode={"SCROLLVIEW"}
-                    style={{borderWidth: 0, borderRadius: 4, height: 40}}
-                    dropDownContainerStyle={{borderWidth: 0, borderRadius: 4}}
+                    style={{borderWidth: 0, borderRadius: 4, height: 50, backgroundColor: GlobalValues.DARKER_OUTLINE}}
+                    dropDownContainerStyle={{borderWidth: 0, borderRadius: 4, backgroundColor: GlobalValues.DARKER_OUTLINE}}
                     maxHeight={120}
                     placeholder={"Select"}
                     />

@@ -52,8 +52,8 @@ const main_styles = StyleSheet.create(
         horizontal_bar: {
             width: '94%',
             alignSelf: 'center',
-            borderBottomWidth: 1.5,
-            borderColor: '#b8b8b8'
+            borderBottomWidth: 1,
+            borderColor: GlobalValues.DARKER_OUTLINE,
         }
     }
 );
@@ -134,7 +134,7 @@ const info_styles = StyleSheet.create(
             width: '100%',
             alignSelf: 'center',
             borderBottomWidth: 1,
-            borderColor: '#b8b8b8',
+            borderColor: GlobalValues.DARKER_OUTLINE,
             marginTop: 8,
             marginBottom: 4,
         }
@@ -231,9 +231,6 @@ export class OtherActivityScreen extends React.Component {
             //attributes
             attributes: [],
 
-            //points
-            point: [],
-
             //is physical event
             is_physical: true,
 
@@ -311,7 +308,6 @@ export class OtherActivityScreen extends React.Component {
                 this.state.date = activity_information.date;
                 this.state.is_physical = activity_information.is_physical;
                 this.state.description = activity_information.description;
-                this.state.points = activity_information.points;
                 this.state.invitation_type = activity_information.invitation_type;
                 this.state.num_members = activity_information.num_members;
                 this.state.distance = activity_information.distance;
@@ -529,16 +525,6 @@ export class OtherActivityScreen extends React.Component {
                                 </View>
                             </TouchableOpacity>
                         </View>
-                        <View style={info_styles.body}>
-                            <Text style={info_styles.title_text}>
-                                Points
-                            </Text>
-                        </View>
-                        {this.state.points.map((data, key) => {
-                            return (
-                                <Point key={data.id} data={data}/>
-                            );
-                        })}
                     </View>
                 );
             }
@@ -759,53 +745,5 @@ function handleImageURI(uri) {
     }
     else {
         return({uri: uri});
-    }
-}
-
-class Point extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            image_uri: this.props.data.image_uri,
-            caption: this.props.data.caption,
-            trashColor: 'black',
-            editCaptionColor: 'black',
-            editImageColor: 'black',
-            show_edit_caption_dialog: false,
-        }
-    }
-
-    render() {
-        var renderImageOrNone = {};
-
-        if (this.state.image_uri == "") {
-            renderImageOrNone = (
-                <View>
-
-                </View>
-            );
-        }
-        else {
-            renderImageOrNone = (
-                <View>
-                    <Image style={[point_styles.image, {alignSelf: 'center'}]} source={handleImageURI(this.state.image_uri)}/>
-                </View>
-            );
-        }
-        return(
-            <View style={[info_styles.body, point_styles.body]}>
-                <View style={[actions_styles.body, point_styles.container]}> 
-                    <Text style={[info_styles.title_text, {textAlign: 'left'}]}>
-                        {this.state.caption}
-                    </Text>
-                    {renderImageOrNone}
-                </View>
-            </View>
-        );
-    }
-
-    lazyUpdate() {
-        this.forceUpdate();
     }
 }

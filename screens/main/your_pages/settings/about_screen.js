@@ -32,8 +32,8 @@ const main_styles = StyleSheet.create(
         horizontal_bar: {
             width: '94%',
             alignSelf: 'center',
-            borderBottomWidth: 1.5,
-            borderColor: '#b8b8b8'
+            borderBottomWidth: 1,
+            borderColor: GlobalValues.DARKER_OUTLINE,
         }
     }
 );
@@ -230,7 +230,7 @@ export class ExploreFiltersScreen extends React.Component {
                                 Description
                             </Text>     
                             <View style={attribute_styles.input_text_view}>
-                                <TextInput style={[attribute_styles.text_input, {fontSize: 18, textAlignVertical: "top"}]} multiline={true} editable={true} maxLength={160} numberOfLines={4} scrollEnables={true} />
+                                <TextInput style={attribute_styles.text_input} multiline={true} editable={true} maxLength={160} numberOfLines={4} scrollEnables={true} />
                             </View>                   
                         </View>
                         <View style={main_styles.horizontal_bar}/>
@@ -240,13 +240,13 @@ export class ExploreFiltersScreen extends React.Component {
                             </Text>       
                             <View style={attribute_styles.input_text_view}>
                                     <TouchableOpacity onPress={() => this.setState({showDatePicker: true})}>
-                                    <Text style={{color: 'blue'}}>
+                                    <Text style={{color: GlobalValues.ORANGE_COLOR}}>
                                             {this.showDate()} 
                                             {" "}
                                     </Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => this.setState({showTimePicker: true})}>
-                                    <Text style={{color: 'blue'}}>
+                                    <Text style={{color: GlobalValues.ORANGE_COLOR}}>
                                         {this.showTime()}
                                     </Text>
                                 </TouchableOpacity>
@@ -492,8 +492,8 @@ class DropDown extends React.Component {
             setValue={this.setValue}
             setItems={this.setItems}
             listMode={"SCROLLVIEW"}
-            style={{borderWidth: 0, borderRadius: 4, height: 40}}
-            dropDownContainerStyle={{borderWidth: 0, borderRadius: 4}}
+            style={{borderWidth: 0, borderRadius: 4, height: 50, backgroundColor: GlobalValues.DARKER_OUTLINE}}
+            dropDownContainerStyle={{borderWidth: 0, borderRadius: 4, backgroundColor: GlobalValues.DARKER_OUTLINE}}
             maxHeight={120}
           />
       );

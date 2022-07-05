@@ -35,8 +35,8 @@ const main_styles = StyleSheet.create(
         horizontal_bar: {
             width: '94%',
             alignSelf: 'center',
-            borderBottomWidth: 1.5,
-            borderColor: '#b8b8b8'
+            borderBottomWidth: 1,
+            borderColor: GlobalValues.DARKER_OUTLINE,
         }
     }
 );
@@ -156,13 +156,14 @@ const inline_attribute_styles = StyleSheet.create({
     },
     text_input: {
         textAlignVertical: "center",
-        paddingVertical: 4,
+        paddingVertical: 2,
         paddingHorizontal: 4,
         width: '100%',
-        backgroundColor: '#EAEAEA',
+        
+        textAlign: 'right',
+        backgroundColor: GlobalValues.DARKER_OUTLINE,
         borderRadius: 4,
-        textAlign: 'left',
-        fontSize: 18,
+        fontSize: 16, 
     },
     numeric_text_input: {
         textAlignVertical: "center",

@@ -8,10 +8,8 @@ import { MaterialIcons, AntDesign, Ionicons, MaterialCommunityIcons } from '@exp
 
 import {ExploreNavigator} from './explore/explore_navigator.js';
 import {YourPagesNavigator} from './your_pages/your_pages_navigator.js';
-import { YourMessagesScreen } from './messages/your_messages_screen.js';
 import {YourMessagesNavigator} from './messages/messages_navigator.js';
 import { MapNavigator } from './map/map_navigator.js';
-import { PortalNavigator } from './portal/portal_navigator.js';
 import { StatusBar } from 'expo-status-bar';
 
 import {useNavigation} from '@react-navigation/native';
@@ -28,6 +26,27 @@ const main_styles = StyleSheet.create({
         flexDirection: 'row-reverse',
     }
 });
+
+/**
+ * 
+                    
+                    <Stack.Screen name="Your Messages Navigator" component={YourMessagesNavigator}
+                    options={{
+                        showLabel: false,
+                        tabBarIcon: () => (
+                            <AntDesign name="message1" size={28} color="black" />
+                        ),
+                    }} 
+                    />
+                    <Stack.Screen name="Your Pages Navigator" component={YourPagesNavigator}
+                    options={{
+                        showLabel: false,
+                        tabBarIcon: () => (
+                            <AntDesign name="profile" size={28} color="black" />
+                        ),
+                    }} 
+                    />
+ */
 
 // swipeEnabled={true}?
 //tabBarOptions={{showLabel: false, tabStyle: {backgroundColor: GlobalValues.LIGHT_ORANGE_COLOR, borderColor: GlobalValues.LIGHT_ORANGE_COLOR}}}

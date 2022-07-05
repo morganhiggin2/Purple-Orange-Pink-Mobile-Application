@@ -5,7 +5,7 @@ import {} from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
-import { GlobalProperties } from '../../../../global/global_properties';
+import { GlobalProperties, GlobalValues } from '../../../../global/global_properties';
 import { GlobalEndpoints } from '../../../../global/global_endpoints';
 
 const main_styles = StyleSheet.create(
@@ -75,8 +75,8 @@ const main_styles = StyleSheet.create(
         horizontal_bar: {
             width: '94%',
             alignSelf: 'center',
-            borderBottomWidth: 1.5,
-            borderColor: '#b8b8b8'
+            borderBottomWidth: 1,
+            borderColor: GlobalValues.DARKER_OUTLINE,
         }
     }
 );

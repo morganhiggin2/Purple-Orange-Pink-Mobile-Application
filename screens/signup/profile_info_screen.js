@@ -75,8 +75,8 @@ const main_styles = StyleSheet.create(
         horizontal_bar: {
             width: '94%',
             alignSelf: 'center',
-            borderBottomWidth: 1.5,
-            borderColor: '#b8b8b8'
+            borderBottomWidth: 1,
+            borderColor: GlobalValues.DARKER_OUTLINE,
         }
     }
 );
@@ -380,7 +380,7 @@ export class ProfileInfoScreen extends React.Component {
                             </Text>       
                             <View style={attribute_styles.input_text_view}>
                                     <TouchableOpacity onPress={() => this.setState({showDatePicker: true})}>
-                                    <Text style={{color: 'blue'}}>
+                                    <Text style={{color: GlobalValues.ORANGE_COLOR}}>
                                             {this.showDate()} 
                                             {" "}
                                     </Text>

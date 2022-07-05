@@ -93,7 +93,7 @@ const info_styles = StyleSheet.create(
             width: '100%',
             alignSelf: 'center',
             borderBottomWidth: 1,
-            borderColor: '#b8b8b8',
+            borderColor: GlobalValues.DARKER_OUTLINE,
             marginTop: 8,
             marginBottom: 4,
         }
@@ -242,8 +242,6 @@ export class OtherProfileScreen extends React.Component {
             profile_images: [],
 
             attributes: [],
-
-            points: [],
         };
 
         if (this.state.type == "activity") {
@@ -322,7 +320,6 @@ export class OtherProfileScreen extends React.Component {
                 this.state.description = requestJson.user_information.description;
                 this.state.distance = requestJson.user_information.distance;
                 this.state.attributes = requestJson.user_information.attributes;
-                this.state.points = requestJson.user_information.points;
 
                 //get images
                 if (this.state.profile_images.length == 0) {
@@ -576,16 +573,6 @@ export class OtherProfileScreen extends React.Component {
                                 </TouchableOpacity>
                             </View>
                         </View>
-                        <View style={info_styles.body}>
-                            <Text style={info_styles.title_text}>
-                                Points
-                            </Text>
-                        </View>
-                        {this.state.points.map((data, key) => {
-                            return (
-                                <Point key={data.id} data={data}/>
-                            );
-                        })}
                     </ScrollView>
                 </View>
             );
@@ -848,54 +835,6 @@ function handleImageURI(uri) {
     }
 }
 
-
-class Point extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            image_uri: this.props.data.image_uri,
-            caption: this.props.data.caption,
-            trashColor: 'black',
-            editCaptionColor: 'black',
-            editImageColor: 'black',
-            show_edit_caption_dialog: false,
-        }
-    }
-
-    render() {
-        var renderImageOrNone = {};
-
-        if (this.state.image_uri == "") {
-            renderImageOrNone = (
-                <View>
-
-                </View>
-            );
-        }
-        else {
-            renderImageOrNone = (
-                <View>
-                    <Image style={[point_styles.image, {alignSelf: 'center'}]} source={handleImageURI(this.state.image_uri)}/>
-                </View>
-            );
-        }
-        return(
-            <View style={[info_styles.body, point_styles.body]}>
-                <View style={[actions_styles.body, point_styles.container]}> 
-                    <Text style={[info_styles.title_text, {textAlign: 'left'}]}>
-                        {this.state.caption}
-                    </Text>
-                    {renderImageOrNone}
-                </View>
-            </View>
-        );
-    }
-
-    lazyUpdate() {
-        this.forceUpdate();
-    }
-}
 
 //<View style={{ borderBottomColor: '#CCCCCC', borderBottomWidth: 2, width: '95%', alignSelf: 'center', marginBottom: 0,}}/>
 //<FilterSnap innerText="light" color="#9A39E2"/>

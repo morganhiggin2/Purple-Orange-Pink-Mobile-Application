@@ -4,6 +4,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { SliderBox } from "react-native-image-slider-box";
 import { GlobalValues } from '../../../global/global_properties';
 import { AntDesign, Feather } from '@expo/vector-icons'; 
+import { GlobalValues } from '../../../../global/global_properties';
 
 const ImageStack = createMaterialTopTabNavigator();
 
@@ -90,7 +91,7 @@ const info_styles = StyleSheet.create(
             width: '100%',
             alignSelf: 'center',
             borderBottomWidth: 1,
-            borderColor: '#b8b8b8',
+            borderColor: GlobalValues.DARKER_OUTLINE,
             marginTop: 8,
             marginBottom: 4,
         }

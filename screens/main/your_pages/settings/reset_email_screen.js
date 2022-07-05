@@ -36,8 +36,8 @@ const main_styles = StyleSheet.create(
         horizontal_bar: {
             width: '94%',
             alignSelf: 'center',
-            borderBottomWidth: 1.5,
-            borderColor: '#b8b8b8'
+            borderBottomWidth: 1,
+            borderColor: GlobalValues.DARKER_OUTLINE,
         }
     }
 );
@@ -157,13 +157,14 @@ const inline_attribute_styles = StyleSheet.create({
     },
     text_input: {
         textAlignVertical: "center",
-        paddingVertical: 4,
+        paddingVertical: 2,
         paddingHorizontal: 4,
         width: '100%',
-        backgroundColor: '#EAEAEA',
+        
+        textAlign: 'right',
+        backgroundColor: GlobalValues.DARKER_OUTLINE,
         borderRadius: 4,
-        textAlign: 'left',
-        fontSize: 18,
+        fontSize: 16, 
     },
     numeric_text_input: {
         textAlignVertical: "center",
@@ -352,7 +353,7 @@ export class ResetEmailScreen extends React.Component {
                                 New Email
                             </Text>
                             <View style={attribute_styles.input_text_view}>
-                                <TextInput style={[attribute_styles.text_input, {fontSize: 18, textAlignVertical: "top"}]} keyboardType={"email-address"} textContentType={"emailAddress"} placeholderTextColor="black" editable={true} maxLength={160} onChangeText={(value) => {this.updateEmail(value);}}/>
+                                <TextInput style={attribute_styles.text_input} keyboardType={"email-address"} textContentType={"emailAddress"} placeholderTextColor="black" editable={true} maxLength={160} onChangeText={(value) => {this.updateEmail(value);}}/>
                             </View>
                         </View>
                         <View style={attribute_styles.body}>
@@ -360,7 +361,7 @@ export class ResetEmailScreen extends React.Component {
                                 Confirm
                             </Text>
                             <View style={attribute_styles.input_text_view}>
-                                <TextInput style={[attribute_styles.text_input, {fontSize: 18, textAlignVertical: "top"}]} keyboardType={"email-address"} textContentType={"emailAddress"} placeholderTextColor="black" editable={true} maxLength={160} onChangeText={(value) => {this.updateEmailConfirm(value);}}/>
+                                <TextInput style={attribute_styles.text_input} keyboardType={"email-address"} textContentType={"emailAddress"} placeholderTextColor="black" editable={true} maxLength={160} onChangeText={(value) => {this.updateEmailConfirm(value);}}/>
                             </View>
                         </View>
                     </View>
@@ -617,8 +618,8 @@ class DropDown extends React.Component {
                     setValue={this.setValue}
                     setItems={this.setItems}
                     listMode={"SCROLLVIEW"}
-                    style={{borderWidth: 0, borderRadius: 4, height: 40}}
-                    dropDownContainerStyle={{borderWidth: 0, borderRadius: 4}}
+                    style={{borderWidth: 0, borderRadius: 4, height: 50, backgroundColor: GlobalValues.DARKER_OUTLINE}}
+                    dropDownContainerStyle={{borderWidth: 0, borderRadius: 4, backgroundColor: GlobalValues.DARKER_OUTLINE}}
                     maxHeight={120}
                     placeholder={"Select"}
                     />

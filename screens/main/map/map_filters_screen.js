@@ -30,8 +30,8 @@ const main_styles = StyleSheet.create(
         horizontal_bar: {
             width: '94%',
             alignSelf: 'center',
-            borderBottomWidth: 1.5,
-            borderColor: '#b8b8b8'
+            borderBottomWidth: 1,
+            borderColor: GlobalValues.DARKER_OUTLINE,
         }
     }
 );
@@ -86,6 +86,11 @@ const attribute_styles = StyleSheet.create({
         backgroundColor: '#EAEAEA',
         borderRadius: 8,
     },
+    inner_text: {
+        color: 'gray',
+        fontSize: 14,
+        marginLeft: 5,
+    },
     slider: {
         alignSelf: 'center',
     },
@@ -121,13 +126,14 @@ const inline_attribute_styles = StyleSheet.create({
     },
     text_input: {
         textAlignVertical: "center",
-        paddingVertical: 4,
+        paddingVertical: 2,
         paddingHorizontal: 4,
         width: '100%',
-        backgroundColor: '#EAEAEA',
+        
+        textAlign: 'right',
+        backgroundColor: GlobalValues.DARKER_OUTLINE,
         borderRadius: 4,
-        textAlign: 'left',
-        fontSize: 18,
+        fontSize: 16, 
     },
     drop_down_selector: {
         paddingHorizontal: 4,
@@ -290,12 +296,8 @@ export class MapFiltersScreen extends React.Component {
                                     <FilterSnap key={index} id={index} innerText={attr} parent={this}/>
                                 );
                             })}
-                        </View>                                                    
-                    </View>
-
-                    <View style={section_styles.gap} />
-                    
-                    <View style={info_styles.body}>
+                        </View>  
+                        <View style={main_styles.horizontal_bar} />                       
                         <View style={inline_attribute_styles.body}>
                             <Text style={inline_attribute_styles.title_text}>
                                 Type
@@ -310,6 +312,11 @@ export class MapFiltersScreen extends React.Component {
                             </View>
                         </View>
                         {typeSpecificFilters}
+                    </View>
+                    <View style={info_styles.body}>
+                        <Text style={attribute_styles.inner_text}>
+                            Use the map to set the search area. The bigger the area, the more search results.
+                        </Text>
                     </View>
 
                     <View style={section_styles.gap} />
@@ -496,8 +503,8 @@ class DropDown extends React.Component {
                     setValue={this.setValue}
                     setItems={this.setItems}
                     listMode={"SCROLLVIEW"}
-                    style={{borderWidth: 0, borderRadius: 4, height: 40}}
-                    dropDownContainerStyle={{borderWidth: 0, borderRadius: 4}}
+                    style={{borderWidth: 0, borderRadius: 4, height: 50, backgroundColor: GlobalValues.DARKER_OUTLINE}}
+                    dropDownContainerStyle={{borderWidth: 0, borderRadius: 4, backgroundColor: GlobalValues.DARKER_OUTLINE}}
                     maxHeight={120}
                     placeholder={"Select"}
                     />
@@ -658,8 +665,8 @@ const main_styles = StyleSheet.create(
         horizontal_bar: {
             width: '94%',
             alignSelf: 'center',
-            borderBottomWidth: 1.5,
-            borderColor: '#b8b8b8'
+            borderBottomWidth: 1,
+            borderColor: GlobalValues.DARKER_OUTLINE,
         }
     }
 );
@@ -746,13 +753,14 @@ const inline_attribute_styles = StyleSheet.create({
     },
     text_input: {
         textAlignVertical: "center",
-        paddingVertical: 4,
+        paddingVertical: 2,
         paddingHorizontal: 4,
         width: '100%',
-        backgroundColor: '#EAEAEA',
+        
+        textAlign: 'right',
+        backgroundColor: GlobalValues.DARKER_OUTLINE,
         borderRadius: 4,
-        textAlign: 'left',
-        fontSize: 18,
+        fontSize: 16, 
     },
     drop_down_selector: {
         paddingHorizontal: 4,
@@ -857,7 +865,7 @@ export class MapFiltersScreen extends React.Component {
                                 Description
                             </Text>     
                             <View style={attribute_styles.input_text_view}>
-                                <TextInput style={[attribute_styles.text_input, {fontSize: 18, textAlignVertical: "top"}]} multiline={true} editable={true} maxLength={160} numberOfLines={4} scrollEnables={true}/>
+                                <TextInput style={attribute_styles.text_input} multiline={true} editable={true} maxLength={160} numberOfLines={4} scrollEnables={true}/>
                             </View>                   
                         </View>
                         <View style={main_styles.horizontal_bar}/>
@@ -867,13 +875,13 @@ export class MapFiltersScreen extends React.Component {
                             </Text>       
                             <View style={attribute_styles.input_text_view}>
                                     <TouchableOpacity onPress={() => this.setState({showDatePicker: true})}>
-                                    <Text style={{color: 'blue'}}>
+                                    <Text style={{color: GlobalValues.ORANGE_COLOR}}>
                                             {this.showDate()} 
                                             {" "}
                                     </Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => this.setState({showTimePicker: true})}>
-                                    <Text style={{color: 'blue'}}>
+                                    <Text style={{color: GlobalValues.ORANGE_COLOR}}>
                                         {this.showTime()}
                                     </Text>
                                 </TouchableOpacity>
@@ -1157,8 +1165,8 @@ class DropDown extends React.Component {
                 setValue={this.setValue}
                 setItems={this.setItems}
                 listMode={"SCROLLVIEW"}
-                style={{borderWidth: 0, borderRadius: 4, height: 40}}
-                dropDownContainerStyle={{borderWidth: 0, borderRadius: 4}}
+                style={{borderWidth: 0, borderRadius: 4, height: 50, backgroundColor: GlobalValues.DARKER_OUTLINE}}
+                dropDownContainerStyle={{borderWidth: 0, borderRadius: 4, backgroundColor: GlobalValues.DARKER_OUTLINE}}
                 maxHeight={120}
                 placeholder={this.state.value == null ? "Select" : this.state.items.find(e => e.value == this.state.value).label}
                 />
