@@ -145,31 +145,6 @@ const inline_attribute_styles = StyleSheet.create({
     }
 });
 
-const filter_snaps_styles = StyleSheet.create(
-    {
-        inner_text: {
-            borderRadius: 5,
-            borderWidth: 1,
-            paddingHorizontal: 3,
-            paddingVertical: 1,
-            fontSize: 16,
-            color: 'white', 
-            fontWeight: 'bold',
-            alignSelf: 'flex-start',
-            marginHorizontal: 2,
-            marginVertical: 2,
-            flexDirection: 'row',
-        },
-        container: {
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'white',
-        }
-    }
-);
-
 export class ExploreFiltersScreen extends React.Component {
     constructor(props) {
         super(props);
@@ -191,11 +166,6 @@ export class ExploreFiltersScreen extends React.Component {
         this.updateTypeDropDownValue = this.updateTypeDropDownValue.bind(this);
         this.updateGenderDropDownValue = this.updateGenderDropDownValue.bind(this);
         this.updateAgeRangeValues = this.updateAgeRangeValues.bind(this);
-
-        this.addAttribute = this.addAttribute.bind(this);
-        this.addFilter = this.addFilter.bind(this);
-        this.removeAttribute = this.removeAttribute.bind(this);
-        this.afterDeleteAlertAttributes = this.afterDeleteAlertAttributes.bind(this);
 
         this.lazyUpdate = this.lazyUpdate.bind(this);
         
@@ -259,27 +229,6 @@ export class ExploreFiltersScreen extends React.Component {
                 <View>
                     <View style={info_styles.body}>
                         <View style={inline_attribute_styles.body}>
-                            <View style={inline_attribute_styles.title_view}>
-                                <Text style={inline_attribute_styles.title_text}>
-                                {"Attributes "}
-                                </Text>
-                                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Attributes", GlobalValues.ATTRIBUTES_INFORMATION);}}>
-                                    <AntDesign name="infocirlceo" size={14} color="black" />
-                                </TouchableOpacity>
-                            </View>
-                            <View style={inline_attribute_styles.input_text_view}>
-                                <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="black" editable={true} maxLength={160} ref={(input) => {this.state.attributes_input_handler = input}} onEndEditing={(event) => {this.addFilter(event.nativeEvent.text)}}/>
-                            </View>
-                        </View>
-                        <View style={filter_snaps_styles.container}> 
-                            {GlobalProperties.search_attributes.map((attr, index) => {
-                                return (
-                                    <FilterSnap key={index} id={index} innerText={attr} parent={this}/>
-                                );
-                            })}
-                        </View>      
-                        <View style={main_styles.horizontal_bar} />
-                        <View style={inline_attribute_styles.body}>
                             <Text style={inline_attribute_styles.title_text}>
                                 Type
                             </Text>
@@ -318,40 +267,6 @@ export class ExploreFiltersScreen extends React.Component {
     lazyUpdate() {
         this.forceUpdate();
     }
-
-
-    //for the filters
-    addFilter(input) {
-        GlobalProperties.search_filters_updated = true;
-        GlobalProperties.map_filters_updated = true;
-
-        this.addAttribute(input);
-        //clear the text input
-        this.state.attributes_input_handler.clear();
-        //update the screen
-        this.lazyUpdate();
-    }
-
-    addAttribute(attribute) {
-        //check if it already exists
-        if (!GlobalProperties.search_attributes.includes(attribute)) {
-            //if not, add it
-            GlobalProperties.search_attributes.push(attribute);
-        }
-    }
-
-    removeAttribute(attribute) {
-        var newAttributes = []
-
-        for (const attr of GlobalProperties.search_attributes) {
-            if (attr != attribute) {
-                newAttributes.push(attr);
-            }
-        }
-
-        GlobalProperties.search_attributes = newAttributes;
-    }
-
     //update the dropdown selector for activities
     updateTypeDropDownValue(value) {
         GlobalProperties.search_filters_updated = true;
@@ -381,15 +296,6 @@ export class ExploreFiltersScreen extends React.Component {
         GlobalProperties.search_maxAge = value[1];
 
         this.state.age_range_values = value;
-        this.lazyUpdate();
-    }
-
-    //after delete alert, delete attribute and update screen
-    afterDeleteAlertAttributes(attr) {
-        GlobalProperties.search_filters_updated = true;
-        GlobalProperties.map_filters_updated = true;
-
-        this.removeAttribute(attr);
         this.lazyUpdate();
     }
 }
@@ -569,45 +475,4 @@ class Slider extends React.Component {
             );
         }
     }
-}
-
-class FilterSnap extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
-    render() {
-        return( 
-            <TouchableOpacity activeOpacity={1} onPress={() => {deleteAlertAttributes(this.props.parent, this.props.innerText, this.props.id)}}>
-                <Text style={[filter_snaps_styles.inner_text, { backgroundColor: this.props.color, borderColor: this.props.color}]}>
-                    {this.props.innerText}
-                </Text>
-            </TouchableOpacity>
-        );
-    }
-}
-
-FilterSnap.defaultProps = {
-    color: GlobalValues.ORANGE_COLOR,
-}
-
-const deleteAlertAttributes = (frameComponent, attr) => {
-    Alert.alert(
-        "Delete",
-        "Are you sure you want to delete this attribute?",
-        [
-            {
-                text: "Cancel",
-                onPress: () => {},
-                style: "cancel",
-            },
-            {
-                text: "Delete",
-                onPress: () => frameComponent.afterDeleteAlertAttributes(attr),
-            }
-        ],
-        {
-            cancelable: true,
-        }
-    );
 }

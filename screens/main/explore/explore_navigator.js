@@ -13,6 +13,8 @@ import { ViewAdminsScreen } from '../your_pages/manageScreens/view_admins_screen
 import { ViewParticipantsScreen } from '../your_pages/manageScreens/view_participants_screen.js';
 import { ActivityCreationScreen } from '../your_pages/creationScreens/activity_creation_screen.js';
 import { ViewMapScreen } from '../your_pages/view_map_screen.js';
+import {ListNavigator} from '../explore/explore_screen';
+import { ListScreen } from './list_screen.js';
 
 const MainStack = createStackNavigator();
 //const RootStack = createStackNavigator();
@@ -53,7 +55,18 @@ export class ExploreNavigator extends React.Component {
             <MainStack.Navigator initialRouteName="Explore Drawer"
                 screenOptions={{headerMode:"float", cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}} animation="fade">
 
-                <MainStack.Screen name="Explore Screen" component={ExploreScreen} options={{headerTitle: () => <HeaderTitle title="Explore"/>, headerBackTitle: "back", headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}} initialParams={{bottomTabBarHeight: 50}}/>
+                <MainStack.Screen name="List Screen" component={ListScreen} options={{headerShown: false, headerTitle: () => <HeaderTitle title="Explore"/>, headerBackTitle: "back", headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}} initialParams={{bottomTabBarHeight: 50}}/>
+                
+            </MainStack.Navigator>
+        );
+    }
+
+    /**render() {
+        return (
+            <MainStack.Navigator initialRouteName="Explore Drawer"
+                screenOptions={{headerMode:"float", cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}} animation="fade">
+
+                <MainStack.Screen name="Explore Screen" component={ListNavigator} options={{headerTitle: () => <HeaderTitle title="Explore"/>, headerBackTitle: "back", headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}} initialParams={{bottomTabBarHeight: 50}}/>
                 <MainStack.Screen name="Explore Filters Screen" component={ExploreFiltersScreen} options={{headerTitle: () => <HeaderTitle title="Filters"/>, headerBackTitle: "back", headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'vertical', cardStyleInterpolator:CardStyleInterpolators.forVerticalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}} />
                 <MainStack.Screen name="Other Profile Screen" component={OtherProfileScreen} options={{ headerBackTitle: "back", headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}} />
                 <MainStack.Screen name="Other Activity Screen" component={OtherActivityScreen} options={{ headerBackTitle: "back", headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}} />
@@ -67,7 +80,7 @@ export class ExploreNavigator extends React.Component {
 
             </MainStack.Navigator>
         );
-    }
+    } */
 }
 
 

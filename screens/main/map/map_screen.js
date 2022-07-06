@@ -340,6 +340,39 @@ export class MapScreen extends React.Component {
         else {
             return (
                 <View style={[main_styles.page]}>
+                    <View sytle={{flex: 1}}>
+                        <MapView 
+                            style={map_styles.body}
+                            initialRegion={this.state.initialRegion}
+                            onRegionChangeComplete={this.onRegionChange}
+                            ref={(ref) => {this.state.map_ref = ref;}}
+                        >
+                            {this.renderMarkers()}
+                        </MapView>
+                    </View>
+                    <View style={main_styles.map_button_container}>
+                        <TouchableOpacity style={main_styles.map_button} disabled={this.state.grayout_map_button} activeOpacity={this.state.grayout_map_button ? 0.5 : GlobalValues.ACTIVE_OPACITY} onPress={() => {this.searchRegion();}}>
+                            <Text style={main_styles.map_button_text}>
+                                {this.state.grayout_map_button ? "Loading..." : "Search this region"}
+                            </Text>
+                        </TouchableOpacity> 
+                        <TouchableOpacity style={main_styles.map_button} disabled={this.state.grayout_reset_location_button} activeOpacity={this.state.grayout_reset_location_button ? 0.5 : GlobalValues.ACTIVE_OPACITY} onPress={() => {this.resetLocation();}}>
+                            <MaterialIcons name="my-location" size={24} color="white" />
+                        </TouchableOpacity> 
+                    </View>
+                </View>); 
+        }
+    }
+
+    /**render() {
+        if (this.state.loading == true || this.state.loading == null) {
+            return (
+                <LoadingScreen tryAgain={this.fetchUserData} reload={this.state.reload}/>
+            );
+        }
+        else {
+            return (
+                <View style={[main_styles.page]}>
                     <View style={main_styles.top_bar}>
                         <View style={main_styles.search_bar}>
                             <Feather name="search" size={30} color="gray" style={{alignSelf: 'center'}}/>
@@ -371,7 +404,7 @@ export class MapScreen extends React.Component {
                     </View>
                 </View>); 
         }
-    }
+    } */
 
     /**<TouchableOpacity style={main_styles.map_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {}}>
                         <Text style={main_styles.map_button_text}>
@@ -459,7 +492,7 @@ export class MapScreen extends React.Component {
         }
 
         //update search as location changed
-        this.GlobalProperties.map_filters_updated = true;
+        GlobalProperties.map_filters_updated = true;
 
         //call on updating markers
     }

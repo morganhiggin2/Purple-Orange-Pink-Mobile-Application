@@ -36,8 +36,8 @@ const main_styles = StyleSheet.create(
         horizontal_bar: {
             width: '94%',
             alignSelf: 'center',
-            borderBottomWidth: 1.5,
-            borderColor: GlobalValues.DISTINCT_GRAY
+            borderBottomWidth: 1,
+            borderColor: GlobalValues.DARKER_OUTLINE
         }
     }
 );

@@ -1,7 +1,8 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Image, SafeAreaView, ScrollView, Dimensions, FlatList, ImageBackground, Alert, RefreshControl} from 'react-native';
+import {StyleSheet, View, Text, TextInput, Image, SafeAreaView, ScrollView, Dimensions, FlatList, ImageBackground, Alert, RefreshControl, TouchableOpacity} from 'react-native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { AntDesign, Feather, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons'; 
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import {Route} from '@react-navigation/native';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { render } from 'react-dom';
@@ -9,6 +10,7 @@ import { GlobalProperties, GlobalValues } from '../../../global/global_propertie
 import { GlobalEndpoints } from '../../../global/global_endpoints.js';
 import * as Location from 'expo-location';
 import { LoadingScreen } from '../../misc/loading_screen.js';
+import { MapScreen } from '../map/map_screen.js';
 
 const frame_styles = StyleSheet.create(
     {
@@ -71,21 +73,44 @@ const frame_styles = StyleSheet.create(
     }
 );
 
+/*
+const post_styles = StyleSheet.create(
+    {
+        post_button: {
+            flexDirection: "row",
+            position: 'absolute',
+            borderRadius: 3,
+            borderWidth: 4,
+            backgroundColor: GlobalValues.ORANGE_COLOR,
+            borderColor: GlobalValues.ORANGE_COLOR,
+            padding: 3,
+            paddingVertical: 0,
+            alignSelf: 'center',
+            alignContent: 'center',
+            marginBottom: 50,
+        },
+        post_button_text: {
+            color: 'white',
+            fontSize: 18,
+            alignSelf: 'center',
+        }
+    }
+);*/
 
 const post_styles = StyleSheet.create(
     {
         post_button: {
             flexDirection: "row",
-            alignItems: 'flex-start',
-            borderRadius: 3,
-            borderWidth: 4,
-            backgroundColor: '#FE3C3C',
-            borderColor: '#FE3C3C',
             padding: 3,
             paddingVertical: 0,
             alignSelf: 'center',
-            alignContent: 'center',
-            marginTop: "5%",
+            backgroundColor: GlobalValues.ORANGE_COLOR,
+            borderColor: GlobalValues.ORANGE_COLOR,
+            minWidth: 50,
+            minHeight: 50,
+            top: 10,
+            left: 50,
+            position: 'absolute'
         },
         post_button_text: {
             color: 'white',
@@ -107,7 +132,7 @@ const main_styles = StyleSheet.create(
             backgroundColor: '#DFDFDF',
             borderRadius: 5,
             flexDirection: 'row',
-            width: Math.trunc(Dimensions.get('window').width * 0.85),
+            width: Math.trunc(Dimensions.get('window').width * 0.86),
         },
         text_input: {
             backgroundColor: '#DFDFDF', //#FECAB9
@@ -121,15 +146,19 @@ const main_styles = StyleSheet.create(
             marginLeft: 5,
         },
         top_bar: {
-            flexDirection: 'row',
-            justifyContent: 'space-between',
+            flexDirection: 'column',
             backgroundColor: 'white', //#FFCDCD
             borderRadius: 5,
             padding: 8,
-            marginTop: "2%",
-            marginHorizontal: '2%',
-            borderLeftWidth: 5,
-            borderLeftWidth: 0,
+        },
+        top_bar_area_top: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+        },
+        top_bar_gap: {
+            borderBottomWidth: 1,
+            borderColor: GlobalValues.DARKER_OUTLINE,
+            marginVertical: '2%'
         },
         scroll_area: {
             
@@ -266,11 +295,6 @@ class FrameComponent extends React.Component{
                                         <FontAwesome name="calendar" size={12} color="red" />
                                         {" " + this.props.date_time}
                                     </Text> 
-                                </View>
-                                <View style={[frame_styles.inner_text_container, {maxHight: 50}]}>
-                                    <Text numberOfLines={3} style={[frame_styles.description_text, {flex: 1, flexWrap: 'wrap'}]}>
-                                        {this.props.description}
-                                    </Text>
                                 </View>
                             </View>
                         </View>
@@ -687,19 +711,7 @@ export class ExploreScreen extends React.Component {
                     (
                         <LoadingScreen reload={this.state.reload} tryAgain={this.updateSearch} />
                     ) : (
-                    <View style={{flex: 1}}>
-                        <View style={main_styles.top_bar}>
-                            <TouchableHighlight underlayColor="white" onPress={() => {this.props.navigation.navigate("Activity Creation Screen")}} onHideUnderlay={() => {}} onShowUnderlay={() => {}}>
-                                <View style={post_styles.post_button}>
-                                    <Text style={post_styles.post_button_text}>
-                                        Create
-                                    </Text>
-                                </View>
-                            </TouchableHighlight>
-                            <TouchableHighlight underlayColor="white" onPress={() => {this.props.navigation.navigate("Explore Filters Screen");}}>
-                                <Feather name="list" size={36} color="gray" />
-                            </TouchableHighlight>
-                        </View>
+                    <View style={{minHeight: '100%', flex: 1}}>
                         <View>
                             <ScrollView 
                                 contentContainerStyle={{alignItems: 'center'}}
@@ -716,12 +728,23 @@ export class ExploreScreen extends React.Component {
                                 {this.state.frameComponents.map((component) => (component))}
                                 <EmptySpace key={0}/>
                             </ScrollView>
-                        </View>                      
+                        </View>    
                     </View>) 
                     }
             </View>
         );
     }
+
+/**
+                                 
+                        <TouchableHighlight style={post_styles.post_button} underlayColor="white" onPress={() => {this.props.navigation.navigate("Activity Creation Screen")}} onHideUnderlay={() => {}} onShowUnderlay={() => {}}>         
+                                <Text style={post_styles.post_button_text}>
+                                    Create
+                                </Text>
+                        </TouchableHighlight>      */
+
+//                                <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="black" editable={true} maxLength={160} ref={(input) => {this.state.attributes_input_handler = input}} onEndEditing={(event) => {this.addFilter(event.nativeEvent.text)}}/>
+
 
     ScrollViewIsCloseToBottom(layoutMeasurement, contentOffset, contentSize) {
         //const paddingToBottom = 20;
@@ -734,6 +757,15 @@ export class ExploreScreen extends React.Component {
                                 <Feather name="search" size={30} color="gray" style={{alignSelf: 'center'}}/>
                                 <TextInput style={main_styles.text_input} placeholderTextColor="black"/>
                             </View>
+
+                            
+                            <TouchableHighlight underlayColor="white" onPress={() => {this.props.navigation.navigate("Activity Creation Screen")}} onHideUnderlay={() => {}} onShowUnderlay={() => {}}>
+                                <View style={post_styles.post_button}>
+                                    <Text style={post_styles.post_button_text}>
+                                        Create
+                                    </Text>
+                                </View>
+                            </TouchableHighlight>
      */
 
     // contentContainerStyle={{flexDirection: "row", flexWrap: "wrap", flexGrow: 1}} 
@@ -747,9 +779,92 @@ export class ExploreScreen extends React.Component {
         return true;
     }
 
+    
+    //for the filters
+    addFilter(input) {
+        GlobalProperties.search_filters_updated = true;
+        GlobalProperties.map_filters_updated = true;
+
+        this.addAttribute(input);
+        //clear the text input
+        this.state.attributes_input_handler.clear();
+        //update the screen
+        this.lazyUpdate();
+    }
+
+    addAttribute(attribute) {
+        //check if it already exists
+        if (!GlobalProperties.search_attributes.includes(attribute)) {
+            //if not, add it
+            GlobalProperties.search_attributes.push(attribute);
+        }
+    }
+
+    removeAttribute(attribute) {
+        var newAttributes = []
+
+        for (const attr of GlobalProperties.search_attributes) {
+            if (attr != attribute) {
+                newAttributes.push(attr);
+            }
+        }
+
+        GlobalProperties.search_attributes = newAttributes;
+    }
+
+    //after delete alert, delete attribute and update screen
+    afterDeleteAlertAttributes(attr) {
+        GlobalProperties.search_filters_updated = true;
+        GlobalProperties.map_filters_updated = true;
+
+        this.removeAttribute(attr);
+        this.lazyUpdate();
+    }
+
     lazyUpdate() {
         this.forceUpdate();
     }
+}
+
+class FilterSnap extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        return( 
+            <TouchableOpacity activeOpacity={1} onPress={() => {deleteAlertAttributes(this.props.parent, this.props.innerText, this.props.id)}}>
+                <Text style={[filter_snaps_styles.inner_text, { backgroundColor: this.props.color, borderColor: this.props.color}]}>
+                    {this.props.innerText}
+                </Text>
+            </TouchableOpacity>
+        );
+    }
+}
+
+FilterSnap.defaultProps = {
+    color: GlobalValues.ORANGE_COLOR,
+}
+
+const deleteAlertAttributes = (frameComponent, attr) => {
+    Alert.alert(
+        "Delete",
+        "Are you sure you want to delete this attribute?",
+        [
+            {
+                text: "Cancel",
+                onPress: () => {},
+                style: "cancel",
+            },
+            {
+                text: "Delete",
+                onPress: () => frameComponent.afterDeleteAlertAttributes(attr),
+            }
+        ],
+        {
+            cancelable: true,
+        }
+    );
 }
 
 //<Feather name="search" size={30} color="gray" style={{alignSelf: 'center'}}/>

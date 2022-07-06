@@ -62,7 +62,7 @@ export class MainNavigator extends React.Component {
     render() {
         return (
             <NavigationContainer>
-                <Tab.Navigator initialRouteName="Explore Screen" screenOptions={{headerMode:"float", headerShown: false, tabBarShowLabel: false, tabBarStyle: {backgroundColor: GlobalValues.LIGHT_ORANGE_COLOR, borderColor: GlobalValues.LIGHT_ORANGE_COLOR, display: "flex"}}}>
+                <Tab.Navigator initialRouteName="Explore Navigator" screenOptions={{headerMode:"float", headerShown: false, tabBarShowLabel: false, tabBarStyle: {backgroundColor: GlobalValues.LIGHT_ORANGE_COLOR, borderColor: GlobalValues.LIGHT_ORANGE_COLOR, display: "flex"}}}>
                     <Stack.Screen name="Explore Navigator" component={ExploreNavigator} 
                     options={{
                         showLabel: false,
