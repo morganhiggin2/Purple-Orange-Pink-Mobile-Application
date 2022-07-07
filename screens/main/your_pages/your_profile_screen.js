@@ -16,8 +16,6 @@ import { GlobalEndpoints } from '../../../global/global_endpoints.js';
 import { ScreenStackHeaderBackButtonImage } from 'react-native-screens';
 import { LoadingScreen } from '../../misc/loading_screen.js';
 
-var ImageStack = createMaterialTopTabNavigator();
-
 const main_styles = StyleSheet.create(
     {
         page: {
@@ -485,7 +483,7 @@ export class YourProfileScreen extends React.Component {
                             <Text style={inline_attribute_styles.title_text}>
                                 Gender
                             </Text>
-                            <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {}]}>
+                            <View style={inline_attribute_styles.drop_down_selector}>
                                 <DropDown 
                                         style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
                                         items={[{label: 'Male', value: 'male'}, {label: 'Female', value: 'female', }, {label: "Other", value: "other"}]}
@@ -538,7 +536,7 @@ export class YourProfileScreen extends React.Component {
                                 Description
                             </Text>     
                             <View style={attribute_styles.input_text_view}>
-                                <TextInput style={attribute_styles.text_input} multiline={true} editable={true} maxLength={160} numberOfLines={4} scrollEnables={true} defaultValue={this.state.description} onChangeText={(value) => {this.updateDescription(value);}} onEndEditing={(value) => {this.updateUpdateMade(false)}}/>
+                                <TextInput style={attribute_styles.text_input} placeholder="Anything else we should know?" placeholderTextColor="gray" multiline={true} editable={true} maxLength={160} numberOfLines={4} scrollEnables={true} defaultValue={this.state.description} onChangeText={(value) => {this.updateDescription(value);}} onEndEditing={(value) => {this.updateUpdateMade(false)}}/>
                             </View>                   
                         </View>                    
                     </View>

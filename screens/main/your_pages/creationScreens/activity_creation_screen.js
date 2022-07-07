@@ -425,6 +425,8 @@ export class ActivityCreationScreen extends React.Component {
         });
     }
 
+    //style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {}]}
+
     //TODO add images and edit images
 
 /*
@@ -459,23 +461,16 @@ export class ActivityCreationScreen extends React.Component {
         if (!this.state.setSearchLocationToTargetLocation) {
             searchLocationRender = (
             <View>                
-                <View style={attribute_styles.body}>
-                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => 
+                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => 
                         {
                             this.state.searchMapRequest = "Search";
-                            this.props.navigation.navigate("Map Search Screen", {
-                                latitude: this.state.search_latitude,
-                                longitude: this.state.search_longitude
-                            });
+                            this.props.navigation.navigate("Map Search Screen", {latitude: this.state.search_latitude, longitude: this.state.search_longitude});
                         }}>
-                        <View style={actions_styles.action_button_inner}>
-                            <Feather name="map-pin" size={20} color="white" style={actions_styles.action_button_icon}/>
-                            <Text style={actions_styles.action_button_text}>
-                                Set Search Location
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
+                    <Text style={actions_styles.action_button_text}>
+                        Drop Search Pin
+                    </Text>
+                    <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
+                </TouchableOpacity>
             </View>
             );
         }
@@ -561,7 +556,7 @@ export class ActivityCreationScreen extends React.Component {
                 <View>
                     <View style={inline_attribute_styles.body}>
                         <Text style={inline_attribute_styles.title_text}>
-                            {"It will be at "}
+                            It will be at
                         </Text>
                         <View style={inline_attribute_styles.input_text_view}>
                             <TextInput style={inline_attribute_styles.text_input} placeholder="1111 sharron drive" placeholderTextColor="gray" autoCorrect={false} editable={true} maxLength={160} defaultValue={this.state.target_address} onChangeText={(value) => {this.updateAddress(value);}} onEndEditing={(event) => {}}/>
@@ -577,11 +572,10 @@ export class ActivityCreationScreen extends React.Component {
                             });
                         }}>
                         <Text style={actions_styles.action_button_text}>
-                        Drop Pin
+                            Drop Pin
                         </Text>
                         <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
                     </TouchableOpacity>
-                    
                 </View>
             );
 
@@ -635,27 +629,23 @@ export class ActivityCreationScreen extends React.Component {
 
             physicalEventLocation = (
                 <View>
-                    <View style={attribute_styles.body}>
-                        <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => 
-                            {
-                                this.state.searchMapRequest = "Search";
-                                this.props.navigation.navigate("Map Search Screen", {latitude: this.state.search_latitude, longitude: this.state.search_longitude});
-                            }}>
-                            <View style={actions_styles.action_button_inner}>
-                                <Feather name="map-pin" size={20} color="white" style={actions_styles.action_button_icon}/>
-                                <Text style={actions_styles.action_button_text}>
-                                    Set Search Location
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => 
+                        {
+                            this.state.searchMapRequest = "Search";
+                            this.props.navigation.navigate("Map Search Screen", {latitude: this.state.search_latitude, longitude: this.state.search_longitude});
+                        }}>
+                        <Text style={actions_styles.action_button_text}>
+                            Drop Search Pin
+                        </Text>
+                        <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
+                    </TouchableOpacity>
                     <View style={main_styles.horizontal_bar}/>
                     <View style={inline_attribute_styles.body}>
                         <Text style={inline_attribute_styles.title_text}>
-                            Virtual Link
+                            The link is
                         </Text>
                         <View style={inline_attribute_styles.input_text_view}>
-                            <TextInput style={inline_attribute_styles.text_input} placeholder="discord, steam..." placeholderTextColor="gray" autoCorrect={false} editable={true} maxLength={160} placeholder={this.state.virtual_link} onChangeText={(value) => {this.updateVirtualLink;}}/>
+                            <TextInput style={inline_attribute_styles.text_input} placeholder="discord, steam..." placeholderTextColor="gray" autoCorrect={false} editable={true} maxLength={160} onChangeText={(value) => {this.updateVirtualLink;}}/>
                         </View>
                     </View>
                 </View>
@@ -699,7 +689,7 @@ export class ActivityCreationScreen extends React.Component {
                                 Description
                             </Text>     
                             <View style={attribute_styles.input_text_view}>
-                                <TextInput style={attribute_styles.text_input} multiline={true} editable={true} maxLength={160} numberOfLines={4} scrollEnables={true} onChangeText={(value) => {this.updateDescription(value);}}/>
+                                <TextInput style={attribute_styles.text_input} placeholder={"Details go here"} placeholderTextColor={"gray"} multiline={true} editable={true} maxLength={160} numberOfLines={4} scrollEnables={true} onChangeText={(value) => {this.updateDescription(value);}}/>
                             </View>                   
                         </View>
                         <View style={main_styles.horizontal_bar}/>    
@@ -707,12 +697,13 @@ export class ActivityCreationScreen extends React.Component {
                             <Text style={inline_attribute_styles.title_text}>
                                 Participant gender
                             </Text>
-                            <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {width: '50%', alignSelf: 'flex-end'}]}>
+                            <View style={inline_attribute_styles.drop_down_selector}>
                                     <DropDown 
                                         style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
                                         items={[{label: 'All', value: 'all'}, {label: 'Male', value: 'male'}, {label: 'Female', value: 'female', }, {label: "Other", value: "other"}]}
                                         onChangeValue = {this.updateGenderDropDownValue}
                                         currentValue = {this.state.gender_dropdown_value}
+                                        width={110}
                                         />
                             </View>
                         </View>
@@ -743,12 +734,13 @@ export class ActivityCreationScreen extends React.Component {
                                     <AntDesign name="infocirlceo" size={14} color="black" />
                                 </TouchableOpacity>
                             </View>
-                            <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {width: '50%', alignSelf: 'flex-end'}]}>
+                            <View style={inline_attribute_styles.drop_down_selector}>
                                     <DropDown 
                                         style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
                                         items={[{label: "Anyone", value: "anyone"}, {label: 'Invitation Required', value: 'invite_required', }, {label: 'Invite Only', value: 'invite_only'}]}
                                         onChangeValue = {this.updateInvitationTypeValueOnRender}
                                         currentValue={this.state.invitation_type_dropdown_value}
+                                        width={180}
                                         />
                             </View>
                         </View>
@@ -811,7 +803,7 @@ export class ActivityCreationScreen extends React.Component {
                     <View style={info_styles.body}>
                         <View style={inline_attribute_styles.body}>
                             <Text style={inline_attribute_styles.title_text}>
-                                {"We are going to "}
+                                We are going to 
                             </Text>
                             <View style={inline_attribute_styles.input_text_view}>
                                 <TextInput style={inline_attribute_styles.text_input} placeholder={"play videogames"} placeholderTextColor="gray" editable={true} maxLength={160} onChangeText={(value) => {this.updateTitle(value);}}/>
@@ -843,7 +835,7 @@ export class ActivityCreationScreen extends React.Component {
                         <View style={main_styles.horizontal_bar}/>
                         <View style={inline_attribute_styles.body}>
                             <Text style={inline_attribute_styles.title_text}>
-                                {"It's about "}
+                                It's about
                             </Text>
                             <View style={inline_attribute_styles.input_text_view}>
                                 <TextInput style={inline_attribute_styles.text_input} placeholder="biking, partying, gaming..." placeholderTextColor="gray" editable={true} maxLength={160} ref={(input) => {this.state.attributes_input_handler = input}} onEndEditing={(event) => {this.addFilter(event.nativeEvent.text)}}/>
@@ -1287,6 +1279,7 @@ function handleImageURI(uri) {
     }
 }
 
+
 class DropDown extends React.Component {
     constructor(props) {
       super(props);
@@ -1294,7 +1287,8 @@ class DropDown extends React.Component {
       this.state = {
         open: false,
         value: props.currentValue,
-        items: props.items
+        items: props.items,
+        width: props.width,
       };
   
       this.setValue = this.setValue.bind(this);
@@ -1334,12 +1328,10 @@ class DropDown extends React.Component {
     }
   
     render() {
-      const { open, value, items } = this.state;
-  
       return (
-        items ? (
+        this.state.items ? (
             Platform.OS == 'ios' ? (
-                open ? (
+                this.state.open ? (
                     <PickerIOS
                         //open={open}
                         selectedValue={this.state.value}
@@ -1347,7 +1339,7 @@ class DropDown extends React.Component {
                         onValueChange={(value) => {this.changeValue(value); this.setOpen(false)}}
                         style={{width: GlobalValues.IOS_DROPDOWN_WIDTH}}
                         >
-                            {items.map((data) => {
+                            {this.state.items.map((data) => {
                                 return (
                                 <PickerIOS.Item
                                    key={data.label}
@@ -1368,23 +1360,24 @@ class DropDown extends React.Component {
                     </View>
                 )
             ) : (
-                <View>
+                <View style={{width: this.state.width}}>
                     <DropDownPicker
-                    open={open}
-                    value={value}
-                    items={items}
+                    open={this.state.open}
+                    value={this.state.value}
+                    items={this.state.items}
                     setOpen={this.setOpen}
                     setValue={this.setValue}
                     setItems={this.setItems}
                     listMode={"SCROLLVIEW"}
-                    style={{borderWidth: 0, borderRadius: 4, height: 50, backgroundColor: GlobalValues.DARKER_OUTLINE}}
-                    dropDownContainerStyle={{borderWidth: 0, borderRadius: 4, backgroundColor: GlobalValues.DARKER_OUTLINE}}
-                    maxHeight={120}
+                    textStyle={{fontSize: 14}}
+                    style={{borderWidth: 0, width: this.state.width}}
+                    dropDownContainerStyle={{borderWidth: 0, width: this.state.width}}
+                    maxHeight={80}
                     placeholder={"Select"}
                     />
 
-                    {open ? (
-                        <View style={{height: 120}}/>
+                    {this.state.open ? (
+                        <View style={{height: 90}}/>
                     ) : (
                         <View/>
                     )}

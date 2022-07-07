@@ -198,7 +198,7 @@ export class ExploreFiltersScreen extends React.Component {
                             <Text style={inline_attribute_styles.title_text}>
                                 Gender
                             </Text>
-                            <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {}]}>
+                            <View style={inline_attribute_styles.drop_down_selector}>
                                 <DropDown 
                                     style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
                                     items={[{label: 'All', value: ''}, {label: 'Male', value: 'male'}, {label: 'Female', value: 'female', }, {label: "Other", value: "other"}]}
@@ -231,7 +231,7 @@ export class ExploreFiltersScreen extends React.Component {
                             <Text style={inline_attribute_styles.title_text}>
                                 Type
                             </Text>
-                            <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {}]}>
+                            <View style={inline_attribute_styles.drop_down_selector}>
                                     <DropDown 
                                         style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
                                         items={[{label: 'People', value: 'people'}, {label: 'Activities', value: 'activities'}]}
