@@ -38,6 +38,12 @@ const main_styles = StyleSheet.create({
     }
 });
 
+const EmptyTitle = (props) => {
+    return(
+        <View style={{height: 0}}/>
+    )
+}
+
 const ActionBarIcon = (props) => {
     return(
         <Image style={main_styles.logo} source={require("../../../images/fakelogo.png")} resizeMode='contain'/>
@@ -99,7 +105,7 @@ export class YourPagesNavigator extends React.Component {
     render() {
         return (
             <Stack.Navigator >
-                <Stack.Screen name="Your Feed" component={FeedNavigator} options={{headerLeft: null, headerTitle: () => <HeaderTitle title="Manage"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, headerShown: true,  headerTitleAlign:'center'}}/>                
+                <Stack.Screen name="Your Feed" component={FeedNavigator} options={{headerTitle: () => <EmptyTitle/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR, height: StatusBar.currentHeight}, headerShown: true, headerTitleAlign:'center'}}/>                
                 <Stack.Screen name="Activity Creation Screen" component={ActivityCreationScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title="Create Activity"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
 
                 <Stack.Screen name="Manage Activity Screen"  component={ManageActivityScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"Manage Activity"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
@@ -145,7 +151,7 @@ then can access them at this.props.route.params.[param_name]
 /*
 
             <Stack.Navigator initialRouteName="Your Pages Screen"  
-                screenOptions={{headerMode:"float", gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: false, 
+                screenOptions={{headerMode:"float", gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS, headerShown: false, 
                 transitionSpec: {
                     open: transition_config,
                     close: transition_config,

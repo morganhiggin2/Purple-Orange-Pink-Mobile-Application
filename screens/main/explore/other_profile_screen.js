@@ -226,8 +226,7 @@ export class OtherProfileScreen extends React.Component {
             id: this.props.route.params.id,
             type: this.props.route.params.type,
             viewing: this.props.route.params.viewing,
-            first_name: "",
-            last_name: "",
+            name: "",
             age: 19,
             gender: "",
             description: "",
@@ -313,8 +312,7 @@ export class OtherProfileScreen extends React.Component {
 
                 //add user information
                 
-                this.state.first_name = requestJson.user_information.first_name;
-                this.state.last_name = requestJson.user_information.last_name;
+                this.state.name = requestJson.user_information.name;
                 this.state.age = requestJson.user_information.age;
                 this.state.gender = requestJson.user_information.gender;
                 this.state.description = requestJson.user_information.description;
@@ -325,8 +323,6 @@ export class OtherProfileScreen extends React.Component {
                 if (this.state.profile_images.length == 0) {
                     this.state.profile_images = [require("../../../images/default_image.png")];
                 }
-
-                this.state.name = this.state.first_name + " " + this.state.last_name;
 
                 this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={this.state.name}/>});
 

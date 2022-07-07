@@ -203,10 +203,10 @@ export class MapScreen extends React.Component {
             }
             else {
                 GlobalProperties.map_params = {
-                    latitude: locationResult.location.location.coords.latitude,
-                    longitude: locationResult.location.location.coords.longitude,
+                    latitude: locationResult.location.coords.latitude,
+                    longitude: locationResult.location.coords.longitude,
                     latitudeDelta: GlobalProperties.default_map_params.latitudeDelta,
-                    longitudeDelta: GlobalProperties.default_map_paramslongitudeDelta,
+                    longitudeDelta: GlobalProperties.default_map_params.longitudeDelta,
                 };
             }
         }
@@ -584,16 +584,16 @@ export class MapScreen extends React.Component {
 
             //animate change
             this.state.map_ref.animateToRegion({
-                latitude: locationResult.location.location.coords.latitude,
-                longitude: locationResult.location.location.coords.longitude,
+                latitude: locationResult.location.coords.latitude,
+                longitude: locationResult.location.coords.longitude,
                 latitudeDelta: GlobalProperties.map_params.latitudeDelta,
                 longitudeDelta: GlobalProperties.map_params.longitudeDelta,
             });
 
             //set default region
             GlobalProperties.default_map_params = {
-                latitude: locationResult.location.location.coords.latitude,
-                longitude: locationResult.location.location.coords.longitude,
+                latitude: locationResult.location.coords.latitude,
+                longitude: locationResult.location.coords.longitude,
                 latitudeDelta: GlobalProperties.map_params.latitudeDelta,
                 longitudeDelta: GlobalProperties.map_params.longitudeDelta,
             };

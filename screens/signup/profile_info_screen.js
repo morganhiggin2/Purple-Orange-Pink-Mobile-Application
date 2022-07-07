@@ -207,18 +207,15 @@ export class ProfileInfoScreen extends React.Component {
             //for the activity dropdown
             gender_dropdown_value: "",
 
-            first_name: "",
-            last_name: "",
+            name: "",
         }
 
+        this.updateName = this.updateName.bind(this);
         this.renderErrorMessage = this.renderErrorMessage.bind(this);
         this.validateBirthDate = this.validateBirthDate.bind(this);
-        this.validateFirstName = this.validateFirstName.bind(this);
-        this.validateLastName = this.validateLastName.bind(this);
+        this.validateName = this.validateName.bind(this);
         this.validateGender = this.validateGender.bind(this);
         this.updateGenderDropDownValue = this.updateGenderDropDownValue.bind(this);
-        this.updateFirstName = this.updateFirstName.bind(this);
-        this.updateLastName =this.updateLastName.bind(this);
         this.showDate = this.showDate.bind(this);
         this.showDatePicker = this.showDatePicker.bind(this);
         this.register = this.register.bind(this);
@@ -229,7 +226,7 @@ export class ProfileInfoScreen extends React.Component {
     //attempt to login with the information in the text fields
     async register() {
         //validate username and password before
-        if (!this.validateFirstName() || !this.validateLastName() || !this.validateBirthDate() || !this.validateGender()) {
+        if (!this.validateName() || !this.validateBirthDate() || !this.validateGender()) {
             this.lazyUpdate();
             return;
         }
@@ -240,8 +237,7 @@ export class ProfileInfoScreen extends React.Component {
         var body = {
             "birthdate": this.state.date.getDate() + "/" + this.state.date.getMonth() + "/" + this.state.date.getFullYear(),
             "gender": this.state.gender_dropdown_value,
-            "first_name": this.state.first_name,
-            "last_name": this.state.last_name,
+            "name": this.state.name,
         };
 
         //if request was successful
@@ -366,12 +362,7 @@ export class ProfileInfoScreen extends React.Component {
                     <View style={info_styles.body}>
                         <View style={attribute_styles.body}>
                             <View style={attribute_styles.input_text_view}>
-                                <TextInput style={attribute_styles.text_input} onChangeText={(input)  => {this.updateFirstName(input);}} placeholderTextColor="gray" placeholder="First Name" editable={true} maxLength={160}/>
-                            </View>
-                        </View>
-                        <View style={attribute_styles.body}>
-                            <View style={attribute_styles.input_text_view}>
-                                <TextInput style={attribute_styles.text_input} onChangeText={(input)  => {this.updateLastName(input);}} placeholderTextColor="gray" placeholder="Last Name" editable={true} maxLength={160}/>
+                                <TextInput style={attribute_styles.text_input} onChangeText={(input)  => {this.updateName(input);}} placeholderTextColor="gray" placeholder="Name" editable={true} maxLength={160}/>
                             </View>
                         </View>
                         <View style={inline_attribute_styles.body}>
@@ -442,18 +433,9 @@ export class ProfileInfoScreen extends React.Component {
         }
     }
     
-    validateFirstName() {
-        if (this.state.first_name == "") {
+    validateName() {
+        if (this.state.name == "") {
             this.state.error_message = "First Name field is empty";
-            return false;
-        }
-
-        return true;
-    }
-
-    validateLastName() {
-        if (this.state.last_name == "") {
-            this.state.error_message = "Last Name field is empty";
             return false;
         }
 
@@ -516,13 +498,9 @@ export class ProfileInfoScreen extends React.Component {
         this.state.gender_dropdown_value = value;
     }
 
-    //update first name
-    updateFirstName(value) {
-        this.state.first_name = value;
-    }
-
-    updateLastName(value) {
-        this.state.last_name = value;
+    //update name
+    updateName(value) {
+        this.state.name = value;
     }
 }
 

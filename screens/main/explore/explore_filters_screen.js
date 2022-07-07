@@ -29,7 +29,7 @@ const main_styles = StyleSheet.create(
         horizontal_bar: {
             width: '94%',
             alignSelf: 'center',
-            height: 2,
+            height: 1,
             backgroundColor: GlobalValues.DARKER_OUTLINE
         }
     }
@@ -48,10 +48,9 @@ const section_styles = StyleSheet.create({
 const info_styles = StyleSheet.create({
     body: {
         backgroundColor: 'white', //#FFCDCD
-        borderRadius: 5,
-        paddingVertical: 4,
-        marginVertical: "3%",
-        marginHorizontal: '2%'
+        marginHorizontal: 8,
+        borderRadius: 4,
+        marginVertical: 16
     }
 });
 
@@ -59,14 +58,14 @@ const attribute_styles = StyleSheet.create({
     body: {
         backgroundColor: 'white',
         flexDirection: "column",
-        paddingVertical: "3%",
-        paddingHorizontal: "3%",
+        paddingHorizontal: 10,
+        paddingVertical: 2,
     },
     input_text_view: {
         flexDirection:  'row',
     },
     multiline_input_text: {
-        fontSize: 18, 
+        fontSize: 14, 
         maxHeight: "96px", 
         textAlignVertical: "top",
     },
@@ -74,21 +73,19 @@ const attribute_styles = StyleSheet.create({
         alignSelf: 'flex-start',
         fontSize: 16,
         color: 'black',
-        marginBottom: 6,
+        marginBottom: 2,
     },
     text_input: {
         textAlignVertical: "top",
         flex: 1,
         maxHeight: 95,
-        paddingVertical: 4,
-        paddingHorizontal: 4,
-        backgroundColor: '#EAEAEA',
+        marginLeft: 2,
         borderRadius: 8,
     },
     inner_text: {
         color: 'gray',
         fontSize: 14,
-        marginLeft: 5,
+        marginHorizontal: 4
     },
     slider: {
         alignSelf: 'center',
@@ -98,7 +95,7 @@ const attribute_styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     title_value: {
-        fontSize: 16,
+        fontSize: 14,
         alignSelf: 'center'
     }
 });
@@ -107,11 +104,14 @@ const inline_attribute_styles = StyleSheet.create({
     body: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingVertical: "3%",
-        paddingHorizontal: "3%",
+        paddingHorizontal: 10,
+        paddingVertical: 8,
     },
     title_view: {
         flexDirection: 'row',
+    },
+    text_view: {
+        paddingVertical: 4
     },
     title_text: {
         alignSelf: 'flex-start',
@@ -125,17 +125,14 @@ const inline_attribute_styles = StyleSheet.create({
     },
     text_input: {
         textAlignVertical: "center",
-        paddingVertical: 2,
         paddingHorizontal: 4,
         width: '100%',
-        
         textAlign: 'right',
-        backgroundColor: GlobalValues.DARKER_OUTLINE,
         borderRadius: 4,
         fontSize: 16, 
     },
     drop_down_selector: {
-        paddingHorizontal: 4,
+        marginRight: -10
     },
     drop_down_selector_gap: {
         height: 100,
@@ -144,6 +141,7 @@ const inline_attribute_styles = StyleSheet.create({
         width: 200,
     }
 });
+
 
 export class ExploreFiltersScreen extends React.Component {
     constructor(props) {
@@ -200,12 +198,13 @@ export class ExploreFiltersScreen extends React.Component {
                             <Text style={inline_attribute_styles.title_text}>
                                 Gender
                             </Text>
-                            <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {width: '50%', alignSelf: 'flex-end'}]}>
+                            <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {}]}>
                                 <DropDown 
                                     style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
                                     items={[{label: 'All', value: ''}, {label: 'Male', value: 'male'}, {label: 'Female', value: 'female', }, {label: "Other", value: "other"}]}
                                     onChangeValue = {this.updateGenderDropDownValue}
                                     currentValue = {this.state.gender_dropdown_value}
+                                    width = {110}
                                     />
                             </View>
                         </View>
@@ -232,12 +231,13 @@ export class ExploreFiltersScreen extends React.Component {
                             <Text style={inline_attribute_styles.title_text}>
                                 Type
                             </Text>
-                            <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {width: '50%', alignSelf: 'flex-end'}]}>
+                            <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {}]}>
                                     <DropDown 
                                         style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
                                         items={[{label: 'People', value: 'people'}, {label: 'Activities', value: 'activities'}]}
                                         onChangeValue = {this.updateTypeDropDownValue}
                                         currentValue = {this.state.type_dropdown_value}
+                                        width = {110}
                                         />
                             </View>
                         </View>
@@ -307,7 +307,8 @@ class DropDown extends React.Component {
       this.state = {
         open: false,
         value: props.currentValue,
-        items: props.items
+        items: props.items,
+        width: props.width,
       };
   
       this.setValue = this.setValue.bind(this);
@@ -347,12 +348,10 @@ class DropDown extends React.Component {
     }
   
     render() {
-      const { open, value, items } = this.state;
-  
       return (
-        items ? (
+        this.state.items ? (
             Platform.OS == 'ios' ? (
-                open ? (
+                this.state.open ? (
                     <PickerIOS
                         //open={open}
                         selectedValue={this.state.value}
@@ -360,7 +359,7 @@ class DropDown extends React.Component {
                         onValueChange={(value) => {this.changeValue(value); this.setOpen(false)}}
                         style={{width: GlobalValues.IOS_DROPDOWN_WIDTH}}
                         >
-                            {items.map((data) => {
+                            {this.state.items.map((data) => {
                                 return (
                                 <PickerIOS.Item
                                    key={data.label}
@@ -381,23 +380,24 @@ class DropDown extends React.Component {
                     </View>
                 )
             ) : (
-                <View>
+                <View style={{width: this.state.width}}>
                     <DropDownPicker
-                    open={open}
-                    value={value}
-                    items={items}
+                    open={this.state.open}
+                    value={this.state.value}
+                    items={this.state.items}
                     setOpen={this.setOpen}
                     setValue={this.setValue}
                     setItems={this.setItems}
                     listMode={"SCROLLVIEW"}
-                    style={{borderWidth: 0, borderRadius: 4, height: 50, backgroundColor: GlobalValues.DARKER_OUTLINE}}
-                    dropDownContainerStyle={{borderWidth: 0, borderRadius: 4, backgroundColor: GlobalValues.DARKER_OUTLINE}}
-                    maxHeight={120}
+                    textStyle={{fontSize: 14}}
+                    style={{borderWidth: 0, width: this.state.width}}
+                    dropDownContainerStyle={{borderWidth: 0, width: this.state.width}}
+                    maxHeight={80}
                     placeholder={"Select"}
                     />
 
-                    {open ? (
-                        <View style={{height: 120}}/>
+                    {this.state.open ? (
+                        <View style={{height: 90}}/>
                     ) : (
                         <View/>
                     )}
@@ -411,6 +411,10 @@ class DropDown extends React.Component {
       );
     }
 }
+
+/*
+                    style={{borderWidth: 0, borderRadius: 4, padding: 0, margin: 0}}
+                    dropDownContainerStyle={{borderWidth: 0, borderRadius: 4, backgroundColor: "orange", height: 10}}*/
 
 class Slider extends React.Component {
     constructor(props) {
@@ -438,7 +442,7 @@ class Slider extends React.Component {
                     min={this.props.min}
                     max={this.props.max}
                     step={this.props.step}
-                    sliderLength={300}
+                    sliderLength={320}
                     isMarkersSeparated = {true}
                     width={'100%'}
                     snapped={true}
@@ -448,6 +452,7 @@ class Slider extends React.Component {
                     trackStyle = {{backgroundColor: GlobalValues.DISTINCT_GRAY, height: 4}}
                     selectedStyle={{backgroundColor: GlobalValues.ORANGE_COLOR, height: 4}}
                     markerStyle={{backgroundColor: 'white', borderColor: GlobalValues.DISTINCT_GRAY, borderWidth: 2, padding: 8}}
+                    containerStyle={{margin: 0, padding: 0, height: 30}}
                     ios_backgroundColor = {GlobalValues.ORANGE_COLOR}
                 />
             );

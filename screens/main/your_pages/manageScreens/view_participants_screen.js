@@ -209,7 +209,7 @@ export class ViewParticipantsScreen extends React.Component {
 
         for (var i = 0; i < this.state.participants.length; i++) { 
             var json = this.state.participants[i];
-            this.state.participantComponents.push(<FrameComponent key={i} id={json.id} firstName={json.first_name} lastInitial={json.last_initial} distance={json.distance} getType={this.getType} getId={this.getId} navigation={this.props.navigation}/>);
+            this.state.participantComponents.push(<FrameComponent key={i} id={json.id} name={json.name} distance={json.distance} getType={this.getType} getId={this.getId} navigation={this.props.navigation}/>);
         }
     }
 
@@ -353,12 +353,7 @@ class FrameComponent extends React.Component{
         super (props);
 
         this.state = {
-            name: this.props.firstName + " " + this.props.lastInitial
-        }
-
-        //deal if name if too long to fit on screen
-        if (this.state.name.length > 11) {
-            this.state.name = this.state.name.substring(0, 13) + "...";
+            name: this.props.name
         }
     }
 

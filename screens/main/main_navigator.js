@@ -62,20 +62,12 @@ export class MainNavigator extends React.Component {
     render() {
         return (
             <NavigationContainer>
-                <Tab.Navigator initialRouteName="Explore Navigator" screenOptions={{headerMode:"float", headerShown: false, tabBarShowLabel: false, tabBarStyle: {backgroundColor: GlobalValues.LIGHT_ORANGE_COLOR, borderColor: GlobalValues.LIGHT_ORANGE_COLOR, display: "flex"}}}>
+                <Tab.Navigator initialRouteName="Explore Navigator" screenOptions={{tabBarHideOnKeyboard: true, headerMode:"float", headerShown: false, tabBarShowLabel: false, tabBarStyle: {backgroundColor: GlobalValues.LIGHT_ORANGE_COLOR, borderColor: GlobalValues.LIGHT_ORANGE_COLOR, display: "flex"}}}>
                     <Stack.Screen name="Explore Navigator" component={ExploreNavigator} 
                     options={{
                         showLabel: false,
                         tabBarIcon: () => (
                             <MaterialIcons name="search" size={28} color="black" />
-                        ),
-                    }} 
-                    />
-                    <Stack.Screen name="Map Navigator" component={MapNavigator} 
-                    options={{
-                        showLabel: false,
-                        tabBarIcon: () => (
-                            <Ionicons name="earth" size={28} color="black" />
                         ),
                     }} 
                     />

@@ -37,7 +37,7 @@ const main_styles = StyleSheet.create(
             width: '94%',
             alignSelf: 'center',
             borderBottomWidth: 1,
-            borderColor: GlobalValues.DARKER_OUTLINE,
+            borderColor: GlobalValues.DARKER_OUTLINE
         }
     }
 );
@@ -45,7 +45,7 @@ const main_styles = StyleSheet.create(
 const section_styles = StyleSheet.create({
     body: {
         marginTop: "10%",
-        backgroundColor: "white",
+        backgroundColor: GlobalValues.DARKER_WHITE,
     },
     gap: {
         height: 30,
@@ -55,10 +55,9 @@ const section_styles = StyleSheet.create({
 const info_styles = StyleSheet.create({
     body: {
         backgroundColor: 'white', //#FFCDCD
-        borderRadius: 5,
-        paddingVertical: 4,
-        marginVertical: "3%",
-        marginHorizontal: '2%'
+        marginHorizontal: 8,
+        borderRadius: 4,
+        marginVertical: 16
     }
 });
 
@@ -66,14 +65,15 @@ const attribute_styles = StyleSheet.create({
     body: {
         backgroundColor: 'white',
         flexDirection: "column",
-        paddingVertical: "3%",
-        paddingHorizontal: "3%",
+        paddingHorizontal: 10,
+        paddingVertical: 2,
     },
     input_text_view: {
         flexDirection:  'row',
+        paddingVertical: 6
     },
     multiline_input_text: {
-        fontSize: 18, 
+        fontSize: 14, 
         maxHeight: "96px", 
         textAlignVertical: "top",
     },
@@ -81,16 +81,19 @@ const attribute_styles = StyleSheet.create({
         alignSelf: 'flex-start',
         fontSize: 16,
         color: 'black',
-        marginBottom: 6,
+        marginBottom: 2,
     },
     text_input: {
         textAlignVertical: "top",
         flex: 1,
         maxHeight: 95,
-        paddingVertical: 4,
-        paddingHorizontal: 4,
-        backgroundColor: '#EAEAEA',
+        marginLeft: 2,
         borderRadius: 8,
+    },
+    inner_text: {
+        color: 'gray',
+        fontSize: 14,
+        marginHorizontal: 4
     },
     slider: {
         alignSelf: 'center',
@@ -100,53 +103,23 @@ const attribute_styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     title_value: {
-        fontSize: 16,
+        fontSize: 14,
         alignSelf: 'center'
-    },
-});
-
-const actions_styles = StyleSheet.create(
-    {
-        body: {
-            paddingVertical: "2%",
-            paddingHorizontal: "3%",
-        },
-        actions_button:  {
-            borderRadius: 3,
-            borderWidth: 4,
-            backgroundColor: GlobalValues.ORANGE_COLOR,
-            borderColor: GlobalValues.ORANGE_COLOR,
-            padding: 3,
-            paddingVertical: 3,
-            alignSelf: 'center',
-            width: "100%",
-            marginTop: 10,
-        },
-        action_button_inner: {
-            flexDirection: "row",
-            alignSelf: 'center',
-        },
-        action_button_icon: {
-            marginRight: 5,
-            alignSelf: 'center',
-        },
-        action_button_text: {
-            color: 'white',
-            fontSize: 18,
-            alignSelf: 'center',
-        }
     }
-);
+});
 
 const inline_attribute_styles = StyleSheet.create({
     body: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingVertical: "3%",
-        paddingHorizontal: "3%",
+        paddingHorizontal: 10,
+        paddingVertical: 8,
     },
     title_view: {
         flexDirection: 'row',
+    },
+    text_view: {
+        paddingVertical: 4
     },
     title_text: {
         alignSelf: 'flex-start',
@@ -158,34 +131,27 @@ const inline_attribute_styles = StyleSheet.create({
         flexDirection:  'row',
         width: "70%",
     },
+    input_text_view_continuation: {
+        flexDirection:  'row',
+    },
     text_input: {
         textAlignVertical: "center",
-        paddingVertical: 4,
         paddingHorizontal: 4,
         width: '100%',
-        backgroundColor: '#EAEAEA',
-        borderRadius: 4,
         textAlign: 'right',
-        fontSize: 18,
+        borderRadius: 4,
+        fontSize: 16, 
     },
-    numeric_text_input: {
+    text_input_continuation: {
         textAlignVertical: "center",
-        paddingVertical: 4,
-        paddingHorizontal: 4,
-        width: 100,
-        backgroundColor: '#EAEAEA',
-        borderRadius: 4,
+        paddingRight: 4,
+        width: '100%',
         textAlign: 'left',
-        fontSize: 18,
-        textAlign: 'right',
-    },
-    numeric_input_text_view: {
-        flexDirection:  'row',
-        width: "70%",
-        justifyContent: 'flex-end'
+        borderRadius: 4,
+        fontSize: 16, 
     },
     drop_down_selector: {
-        paddingHorizontal: 4,
+        marginRight: -10
     },
     drop_down_selector_gap: {
         height: 100,
@@ -194,6 +160,28 @@ const inline_attribute_styles = StyleSheet.create({
         width: 200,
     }
 });
+
+const actions_styles = StyleSheet.create(
+    {
+        body: {
+
+        },
+        actions_button:  {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginVertical: 10,
+            paddingHorizontal: 10,
+        },
+        action_button_inner: {
+        },
+        action_button_icon: {
+        },
+        action_button_text: {
+            color: 'black',
+            fontSize: 16,
+        }
+    }
+);
 
 const post_button_styles = StyleSheet.create({
     button_view: {
@@ -559,40 +547,40 @@ export class ActivityCreationScreen extends React.Component {
             
         }
 
-        if (this.state.is_physical_event) {
-            physicalEventLocation = (
-                <View>
-                    <View style={attribute_styles.body}>
-                        <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => 
-                            {
-                                this.state.searchMapRequest = "Target";
-                                this.props.navigation.navigate("Map Search Screen", {
-                                    latitude: this.state.target_latitude,
-                                    longitude: this.state.target_longitude
-                                });
-                            }}>
-                            <View style={actions_styles.action_button_inner}>
-                                <Feather name="map-pin" size={20} color="white" style={actions_styles.action_button_icon}/>
-                                <Text style={actions_styles.action_button_text}>
-                                    Set Activity Location
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={main_styles.horizontal_bar}/>
-                    <View style={inline_attribute_styles.body}>
-                        <View style={inline_attribute_styles.title_view}>
+        /**<View style={inline_attribute_styles.title_view}>
                             <Text style={inline_attribute_styles.title_text}>
                                 {"Address "}
                             </Text>
                             <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Invitation Type", GlobalValues.ADDRESS_INFORMATION);}}>
                                 <AntDesign name="infocirlceo" size={14} color="black" />
                             </TouchableOpacity>
-                        </View>
+                        </View> */
+
+        if (this.state.is_physical_event) {
+            physicalEventLocation = (
+                <View>
+                    <View style={inline_attribute_styles.body}>
+                        <Text style={inline_attribute_styles.title_text}>
+                            {"It will be at "}
+                        </Text>
                         <View style={inline_attribute_styles.input_text_view}>
-                            <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="black" autoCorrect={false} editable={true} maxLength={160} defaultValue={this.state.target_address} onChangeText={(value) => {this.updateAddress(value);}} onEndEditing={(event) => {}}/>
+                            <TextInput style={inline_attribute_styles.text_input} placeholder="1111 sharron drive" placeholderTextColor="gray" autoCorrect={false} editable={true} maxLength={160} defaultValue={this.state.target_address} onChangeText={(value) => {this.updateAddress(value);}} onEndEditing={(event) => {}}/>
                         </View>
                     </View>
+                    <View style={main_styles.horizontal_bar}/>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => 
+                        {
+                            this.state.searchMapRequest = "Target";
+                            this.props.navigation.navigate("Map Search Screen", {
+                                latitude: this.state.target_latitude,
+                                longitude: this.state.target_longitude
+                            });
+                        }}>
+                        <Text style={actions_styles.action_button_text}>
+                        Drop Pin
+                        </Text>
+                        <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
+                    </TouchableOpacity>
                     
                 </View>
             );
@@ -667,7 +655,7 @@ export class ActivityCreationScreen extends React.Component {
                             Virtual Link
                         </Text>
                         <View style={inline_attribute_styles.input_text_view}>
-                            <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="black" autoCorrect={false} editable={true} maxLength={160} placeholder={this.state.virtual_link} onChangeText={(value) => {this.updateVirtualLink;}}/>
+                            <TextInput style={inline_attribute_styles.text_input} placeholder="discord, steam..." placeholderTextColor="gray" autoCorrect={false} editable={true} maxLength={160} placeholder={this.state.virtual_link} onChangeText={(value) => {this.updateVirtualLink;}}/>
                         </View>
                     </View>
                 </View>
@@ -823,22 +811,24 @@ export class ActivityCreationScreen extends React.Component {
                     <View style={info_styles.body}>
                         <View style={inline_attribute_styles.body}>
                             <Text style={inline_attribute_styles.title_text}>
-                                Title
+                                {"We are going to "}
                             </Text>
                             <View style={inline_attribute_styles.input_text_view}>
-                                <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="black" editable={true} maxLength={160} placeholder={this.state.title} onChangeText={(value) => {this.updateTitle(value);}}/>
+                                <TextInput style={inline_attribute_styles.text_input} placeholder={"play videogames"} placeholderTextColor="gray" editable={true} maxLength={160} onChangeText={(value) => {this.updateTitle(value);}}/>
                             </View>
                         </View>
                         <View style={main_styles.horizontal_bar}/>
+                        {physicalEventLocation}
+                        <View style={main_styles.horizontal_bar}/>
                         <View style={inline_attribute_styles.body}>
                             <Text style={inline_attribute_styles.title_text}>
-                                Date
+                                It's at
                             </Text>       
                             <View style={attribute_styles.input_text_view}>
-                                    <TouchableOpacity onPress={() => this.setState({showDatePicker: true})}>
+                                <TouchableOpacity onPress={() => this.setState({showDatePicker: true})}>
                                     <Text style={{color: GlobalValues.ORANGE_COLOR}}>
-                                            {this.showDate()} 
-                                            {" "}
+                                        {this.showDate()} 
+                                        {" "}
                                     </Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => this.setState({showTimePicker: true})}>
@@ -852,16 +842,11 @@ export class ActivityCreationScreen extends React.Component {
                         {this.showTimePicker()}
                         <View style={main_styles.horizontal_bar}/>
                         <View style={inline_attribute_styles.body}>
-                            <View style={inline_attribute_styles.title_view}>
-                                <Text style={inline_attribute_styles.title_text}>
-                                    {"Attributes "}
-                                </Text>
-                                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Attributes", GlobalValues.ATTRIBUTES_INFORMATION);}}>
-                                    <AntDesign name="infocirlceo" size={14} color="black" />
-                                </TouchableOpacity>
-                            </View>
+                            <Text style={inline_attribute_styles.title_text}>
+                                {"It's about "}
+                            </Text>
                             <View style={inline_attribute_styles.input_text_view}>
-                                <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="black" editable={true} maxLength={160} ref={(input) => {this.state.attributes_input_handler = input}} onEndEditing={(event) => {this.addFilter(event.nativeEvent.text)}}/>
+                                <TextInput style={inline_attribute_styles.text_input} placeholder="biking, partying, gaming..." placeholderTextColor="gray" editable={true} maxLength={160} ref={(input) => {this.state.attributes_input_handler = input}} onEndEditing={(event) => {this.addFilter(event.nativeEvent.text)}}/>
                             </View>
                         </View>
                         <View style={filter_snaps_styles.container}> 
@@ -871,10 +856,7 @@ export class ActivityCreationScreen extends React.Component {
                                 );
                             })}
                         </View>
-                    </View>
-                    <View style={section_styles.gap} />
-                    <View style={section_styles.gap} />
-                    <View style={info_styles.body}>
+                        <View style={main_styles.horizontal_bar}/>
                         <View style={inline_attribute_styles.body}>
                             <Text style={inline_attribute_styles.title_text}>
                                 Is physical event
@@ -887,8 +869,6 @@ export class ActivityCreationScreen extends React.Component {
                                 value = {this.state.is_physical_event}
                             />
                         </View>
-                        <View style={main_styles.horizontal_bar}/>
-                        {physicalEventLocation}
                     </View>
                     <View style={section_styles.gap} />
                     <View style={info_styles.body}>
