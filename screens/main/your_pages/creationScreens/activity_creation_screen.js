@@ -232,31 +232,6 @@ const filter_snaps_styles = StyleSheet.create(
     }
 );
 
-const point_styles = StyleSheet.create(
-    {
-        body: {
-            borderColor: GlobalValues.ORANGE_COLOR,
-            borderTopWidth: 3,
-            borderBottomWidth: 3,
-        },
-        container: {
-
-        },
-        text: {
-            fontSize: 16,
-            alignSelf: 'center',
-        },
-        image: {
-            marginTop: 10,
-            width: Math.trunc(Dimensions.get('window').width * 0.90),
-            height: Math.trunc(Dimensions.get('window').width * 0.90), 
-        },
-        trash_icon: {
-            flexDirection: 'row-reverse',
-        }
-    }
-);
-
 //map selector, goes to map to select location
 //if they enter an address, it finds its longitude and latitude
 //  if it cannot be found, says address cannot be found, use map selector as well
@@ -521,7 +496,7 @@ export class ActivityCreationScreen extends React.Component {
             );
         }
         else {
-
+            inviteCapRender = (<View />);
         }
 
         if (this.state.participants_cap_enable) {
@@ -539,7 +514,7 @@ export class ActivityCreationScreen extends React.Component {
             );
         }
         else {
-            
+            participantsCapRender = (<View />);
         }
 
         /**<View style={inline_attribute_styles.title_view}>
@@ -645,7 +620,7 @@ export class ActivityCreationScreen extends React.Component {
                             The link is
                         </Text>
                         <View style={inline_attribute_styles.input_text_view}>
-                            <TextInput style={inline_attribute_styles.text_input} placeholder="discord, steam..." placeholderTextColor="gray" autoCorrect={false} editable={true} maxLength={160} onChangeText={(value) => {this.updateVirtualLink;}}/>
+                            <TextInput style={inline_attribute_styles.text_input} placeholder="discord, steam..." placeholderTextColor="gray" autoCorrect={false} editable={true} maxLength={160} onChangeText={(value) => {this.updateVirtualLink(value);}}/>
                         </View>
                     </View>
                 </View>
@@ -1278,7 +1253,6 @@ function handleImageURI(uri) {
         return({uri: uri});
     }
 }
-
 
 class DropDown extends React.Component {
     constructor(props) {

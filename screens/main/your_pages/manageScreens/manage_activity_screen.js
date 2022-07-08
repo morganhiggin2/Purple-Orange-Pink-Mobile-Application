@@ -28,8 +28,8 @@ const main_styles = StyleSheet.create(
         },
         title_text: {
             alignSelf: 'center',
-            fontSize: 24,
-            color: 'gray',
+            fontSize: 22,
+            color: 'black',
             padding: 5,
         }, 
         horizontal_bar: {
@@ -47,6 +47,7 @@ const main_styles = StyleSheet.create(
         name_view: {
             flexDirection: 'row',
             justifyContent: 'center',
+            marginTop: 16
         },
         scroll_view: {
             backgroundColor: "white",
@@ -211,6 +212,9 @@ const filter_snaps_styles = StyleSheet.create(
             flexWrap: 'wrap',
             width: '80%',
         },
+        icon: {
+            alignSelf: 'center'
+        }
     }
 );
 
@@ -269,8 +273,6 @@ export class ManageActivityScreen extends React.Component {
             //id of the activity
             id: this.props.route.params.id,
         }
-
-        this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={"Manage Activity"}/>});
         
         this.viewInvitations = this.viewInvitations.bind(this);
         this.viewAdmins = this.viewAdmins.bind(this);
@@ -278,7 +280,6 @@ export class ManageActivityScreen extends React.Component {
         this.fetchActivityInformation = this.fetchActivityInformation.bind(this);
         this.leave = this.leave.bind(this);
         this.leaveAlert = this.leaveAlert.bind(this);
-        this.createAdminConversation = this.createAdminConversation.bind(this);
 
         this.lazyUpdate = this.lazyUpdate.bind(this);
         this.cleanImages = this.cleanImages.bind(this);
@@ -391,61 +392,17 @@ export class ManageActivityScreen extends React.Component {
         this.lazyUpdate();
     }
     render() {
-        var imagesRender;
         var distanceRender;
         var addressTitle;
         var actionsRender;
         var descriptionRender;
-
-        if (this.state.activity_images.length > 0) {
-            imagesRender = (
-                <View style={image_styles.container}>
-                    <SliderBox
-                        images={this.state.activity_images.map(uri => {
-                            return(handleImageURI(uri));
-                        })}
-                        parentWidth={image_styles.image.width}
-                        sliderBoxHeight={image_styles.image.height}
-                        dotColor={GlobalValues.ORANGE_COLOR}
-                        inactiveDotColor={GlobalValues.DISTINCT_GRAY}
-                    />
-                </View>
-            );
-        }
-        else {
-            imagesRender = (
-                <View style={main_styles.no_images_buffer}/>
-            )
-        }
-
-        var joinRender;
-
-        if (this.state.invitation_type == "anyone") {
-            joinRender = (
-                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {}}>
-                    <Text style={actions_styles.action_button_text}>
-                        Join
-                    </Text>
-                    <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
-                </TouchableOpacity>
-            );
-        }
-        else if (this.state.invitation_type == "invite_required") {
-            joinRender = (
-                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {}}>
-                    <Text style={actions_styles.action_button_text}>
-                        Request to Join
-                    </Text>
-                    <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
-                </TouchableOpacity>     
-            );
-        }
+        var editActivityRender;
 
         if (this.state.distance) {
             distanceRender = (
                 <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
-                    <Entypo name="location-pin" size={24} color="red" style={filter_snaps_styles.icon}/>
-                    <Text style={{color: 'black', fontSize: 18}}>
+                    <Entypo name="location-pin" size={14} color="red" style={filter_snaps_styles.icon}/>
+                    <Text style={{color: 'black', fontSize: 14}}>
                         {this.state.distance + " mi"}
                     </Text>
                 </View>
@@ -485,13 +442,6 @@ export class ManageActivityScreen extends React.Component {
         if (this.state.is_admin) {
             actionsRender = (
                 <View>
-                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("Edit Activity Screen", {id: this.state.id});}}>
-                        <Text style={actions_styles.action_button_text}>
-                            View Location
-                        </Text>
-                        <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
-                    </TouchableOpacity>     
-                    <View style={main_styles.horizontal_bar} />   
                     <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.createConversation("all");}}>
                         <Text style={actions_styles.action_button_text}>
                             Message Everyone
@@ -514,6 +464,18 @@ export class ManageActivityScreen extends React.Component {
                     </TouchableOpacity>     
                 </View>
             );
+
+            editActivityRender = (
+                <View>
+                    <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("Edit Activity Screen", {id: this.state.id})}}>
+                        <Text style={actions_styles.action_button_text}>
+                            Edit Activity
+                        </Text>
+                        <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
+                    </TouchableOpacity>     
+                    <View style={main_styles.horizontal_bar} />  
+                </View>
+            );
         }
         else if (this.state.is_participant) {
             actionsRender = (
@@ -533,11 +495,15 @@ export class ManageActivityScreen extends React.Component {
                     </TouchableOpacity>     
                 </View>
             );
+
+            editActivityRender = (<View />);
         }   
         else {
             actionsRender = (
                 <View />
             );
+            
+            editActivityRender = (<View />);
         }
 
         const renderComponent = () => {
@@ -551,7 +517,6 @@ export class ManageActivityScreen extends React.Component {
             else {
                 return (
                     <View>
-                        {imagesRender}
                         <View style={main_styles.name_view}>
                             <Text style={main_styles.title_text}>
                                 {this.state.title}
@@ -560,13 +525,13 @@ export class ManageActivityScreen extends React.Component {
                         <View style={filter_snaps_styles.profile_container}>
                             {distanceRender}
                             <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>
-                                <Text style={{color: 'black', fontSize: 18}}>
+                                <Text style={{color: 'black', fontSize: 14}}>
                                     {this.state.is_phiscal ? "Physical" : "Virtual"}
                                 </Text>
                             </View>
                             <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>
-                                <MaterialIcons name="person" size={20} color="black" style={filter_snaps_styles.icon}/>
-                                <Text style={{color: 'black', fontSize: 18}}>
+                                <MaterialIcons name="person" size={18} color="black" style={filter_snaps_styles.icon}/>
+                                <Text style={{color: 'black', fontSize: 14}}>
                                     {this.state.num_members}
                                 </Text>
                             </View>
@@ -602,10 +567,10 @@ export class ManageActivityScreen extends React.Component {
                                     );
                                 })}
                             </View>
-                            <View style={main_styles.horizontal_bar} />  
                             {descriptionRender}
                         </View>
                         <View style={info_styles.body}> 
+                            {editActivityRender}
                             <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("View Map Screen", {location: this.state.location})}}>
                                 <Text style={actions_styles.action_button_text}>
                                     View Location
@@ -765,10 +730,6 @@ export class ManageActivityScreen extends React.Component {
         this.lazyUpdate();
     }
 
-    createAdminConversation() {
-
-    }
-
     leaveAlert() {
         Alert.alert(
             "Delete",
@@ -794,17 +755,8 @@ export class ManageActivityScreen extends React.Component {
         //if request was successful
         var successful = false;
 
-        var url = "";
-
-        if (this.state.is_admin) {
-            url = "/api/User/Friends/RemoveFromCreatedActivity?id=" + this.state.id;
-        }
-        else if (this.state.is_participant) {
-            url = "/api/User/Friends/LeaveActivityAsParticipant?id=" + this.state.id;
-        }
-
         //make request
-        var result = await GlobalEndpoints.makeGetRequest(true, url)
+        var result = await GlobalEndpoints.makeGetRequest(true, "/api/User/Friends/LeaveActivityAsUser?id=")
             .then((result) => {
                 if (result == undefined) {
                     successful = false;

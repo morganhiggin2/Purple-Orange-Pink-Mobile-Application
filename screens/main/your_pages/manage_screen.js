@@ -409,15 +409,15 @@ class FrameComponent extends React.Component {
 
         var url = "";
 
-        if (this.type == "activity") {
-            url = "/api/User/Friends/RemoveFromCreatedActivity?id=" + this.state.item.id;
+        if (this.state.item.type == "activity") {
+            url = "/api/User/Friends/LeaveActivityAsUser?id=" + this.state.item.id;
         }
-        else if (this.type == "invitation") {
-            url = "/api/User/Generic/RejectInvitation?id=" + this.state.item.id
+        else if (this.state.item.type == "invitation") {
+            url = "/api/User/Generic/RejectInvitation?id=" + this.state.item.id;
         }
 
         //make request
-        var result = await GlobalEndpoints.makeGetRequest(true, "/api/User/Friends/RemoveFromCreatedActivity?id=" + this.state.item.id)
+        var result = await GlobalEndpoints.makeGetRequest(true, url)
             .then((result) => {
                 successful = true;
                 return(result);

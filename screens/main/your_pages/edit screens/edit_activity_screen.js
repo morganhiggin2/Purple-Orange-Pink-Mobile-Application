@@ -45,7 +45,7 @@ const main_styles = StyleSheet.create(
 const section_styles = StyleSheet.create({
     body: {
         marginTop: "10%",
-        backgroundColor: "white",
+        backgroundColor: GlobalValues.DARKER_WHITE,
     },
     gap: {
         height: 30,
@@ -55,31 +55,25 @@ const section_styles = StyleSheet.create({
 const info_styles = StyleSheet.create({
     body: {
         backgroundColor: 'white', //#FFCDCD
-        borderRadius: 5,
-        paddingVertical: 4,
-        marginVertical: "3%",
-        marginHorizontal: '2%'
-    },
-    title_text: {
-        alignSelf: 'flex-start',
-        fontSize: 16,
-        color: 'black',
-        marginBottom: 6,
-    }, 
+        marginHorizontal: 8,
+        borderRadius: 4,
+        marginVertical: 16
+    }
 });
 
 const attribute_styles = StyleSheet.create({
     body: {
         backgroundColor: 'white',
         flexDirection: "column",
-        paddingVertical: "3%",
-        paddingHorizontal: "3%",
+        paddingHorizontal: 10,
+        paddingVertical: 2,
     },
     input_text_view: {
         flexDirection:  'row',
+        paddingVertical: 6
     },
     multiline_input_text: {
-        fontSize: 18, 
+        fontSize: 14, 
         maxHeight: "96px", 
         textAlignVertical: "top",
     },
@@ -87,16 +81,19 @@ const attribute_styles = StyleSheet.create({
         alignSelf: 'flex-start',
         fontSize: 16,
         color: 'black',
-        marginBottom: 6,
+        marginBottom: 2,
     },
     text_input: {
         textAlignVertical: "top",
         flex: 1,
         maxHeight: 95,
-        paddingVertical: 4,
-        paddingHorizontal: 4,
-        backgroundColor: '#EAEAEA',
+        marginLeft: 2,
         borderRadius: 8,
+    },
+    inner_text: {
+        color: 'gray',
+        fontSize: 14,
+        marginHorizontal: 4
     },
     slider: {
         alignSelf: 'center',
@@ -106,53 +103,23 @@ const attribute_styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     title_value: {
-        fontSize: 16,
+        fontSize: 14,
         alignSelf: 'center'
-    },
-});
-
-const actions_styles = StyleSheet.create(
-    {
-        body: {
-            paddingVertical: "2%",
-            paddingHorizontal: "3%",
-        },
-        actions_button:  {
-            borderRadius: 3,
-            borderWidth: 4,
-            backgroundColor: GlobalValues.ORANGE_COLOR,
-            borderColor: GlobalValues.ORANGE_COLOR,
-            padding: 3,
-            paddingVertical: 3,
-            alignSelf: 'center',
-            width: "100%",
-            marginTop: 10,
-        },
-        action_button_inner: {
-            flexDirection: "row",
-            alignSelf: 'center',
-        },
-        action_button_icon: {
-            marginRight: 5,
-            alignSelf: 'center',
-        },
-        action_button_text: {
-            color: 'white',
-            fontSize: 18,
-            alignSelf: 'center',
-        }
     }
-);
+});
 
 const inline_attribute_styles = StyleSheet.create({
     body: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingVertical: "3%",
-        paddingHorizontal: "3%",
+        paddingHorizontal: 10,
+        paddingVertical: 8,
     },
     title_view: {
         flexDirection: 'row',
+    },
+    text_view: {
+        paddingVertical: 4
     },
     title_text: {
         alignSelf: 'flex-start',
@@ -164,34 +131,27 @@ const inline_attribute_styles = StyleSheet.create({
         flexDirection:  'row',
         width: "70%",
     },
+    input_text_view_continuation: {
+        flexDirection:  'row',
+    },
     text_input: {
         textAlignVertical: "center",
-        paddingVertical: 4,
         paddingHorizontal: 4,
         width: '100%',
-        backgroundColor: '#EAEAEA',
-        borderRadius: 4,
         textAlign: 'right',
-        fontSize: 18,
+        borderRadius: 4,
+        fontSize: 16, 
     },
-    numeric_text_input: {
+    text_input_continuation: {
         textAlignVertical: "center",
-        paddingVertical: 4,
-        paddingHorizontal: 4,
-        width: 100,
-        backgroundColor: '#EAEAEA',
-        borderRadius: 4,
+        paddingRight: 4,
+        width: '100%',
         textAlign: 'left',
-        fontSize: 18,
-        textAlign: 'right',
-    },
-    numeric_input_text_view: {
-        flexDirection:  'row',
-        width: "70%",
-        justifyContent: 'flex-end'
+        borderRadius: 4,
+        fontSize: 16, 
     },
     drop_down_selector: {
-        paddingHorizontal: 4,
+        marginRight: -10
     },
     drop_down_selector_gap: {
         height: 100,
@@ -200,6 +160,28 @@ const inline_attribute_styles = StyleSheet.create({
         width: 200,
     }
 });
+
+const actions_styles = StyleSheet.create(
+    {
+        body: {
+
+        },
+        actions_button:  {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginVertical: 10,
+            paddingHorizontal: 10,
+        },
+        action_button_inner: {
+        },
+        action_button_icon: {
+        },
+        action_button_text: {
+            color: 'black',
+            fontSize: 16,
+        }
+    }
+);
 
 const post_button_styles = StyleSheet.create({
     button_view: {
@@ -246,31 +228,6 @@ const filter_snaps_styles = StyleSheet.create(
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: 'white',
-        }
-    }
-);
-
-const point_styles = StyleSheet.create(
-    {
-        body: {
-            borderColor: GlobalValues.ORANGE_COLOR,
-            borderTopWidth: 3,
-            borderBottomWidth: 3,
-        },
-        container: {
-
-        },
-        text: {
-            fontSize: 16,
-            alignSelf: 'center',
-        },
-        image: {
-            marginTop: 10,
-            width: Math.trunc(Dimensions.get('window').width * 0.90),
-            height: Math.trunc(Dimensions.get('window').width * 0.90), 
-        },
-        trash_icon: {
-            flexDirection: 'row-reverse',
         }
     }
 );
@@ -396,11 +353,6 @@ export class EditActivityScreen extends React.Component {
         this.updateSetPhysicalEventToEnable = this.updateSetPhysicalEventToEnable.bind(this);
         this.updateParticipantsCap = this.updateParticipantsCap.bind(this);
         this.updateParticipantsCapEnable = this.updateParticipantsCapEnable.bind(this);
-        this.deletePoint = this.deletePoint.bind(this);
-        this.deletePointAlert = this.deletePointAlert.bind(this);
-        this.addPoint = this.addPoint.bind(this);
-        this.pointsUpdatedCaption = this.pointsUpdatedCaption.bind(this);
-        this.pointsUpdatedImage = this.pointsUpdatedImage.bind(this);
         this.updateUpdateMade = this.updateUpdateMade.bind(this);
         this.updateAdvancedSettingsEnable = this.updateAdvancedSettingsEnable.bind(this);
         this.validateFields = this.validateFields.bind(this);
@@ -641,32 +593,24 @@ export class EditActivityScreen extends React.Component {
         //if they decide to set search location elsewhere, then show options 
         if (!this.state.setSearchLocationToTargetLocation) {
             searchLocationRender = (
-                <View>
-                    <View style={actions_styles.body}> 
-                        <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => 
-                            {
-                                this.state.searchMapRequest = "Search";
-                                this.props.navigation.navigate("Map Search Screen", {
-                                    latitude: this.state.search_latitude,
-                                    longitude: this.state.search_longitude
-                                });
-                                this.updateUpdateMade(false);
-                            }}>
-                            <View style={actions_styles.action_button_inner}>
-                                <Feather name="map-pin" size={20} color="white" style={actions_styles.action_button_icon}/>
-                                <Text style={actions_styles.action_button_text}>
-                                    Set Search Location
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                </View>
+            <View>                
+                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => 
+                        {
+                            this.state.searchMapRequest = "Search";
+                            this.props.navigation.navigate("Map Search Screen", {latitude: this.state.search_latitude, longitude: this.state.search_longitude});
+                        }}>
+                    <Text style={actions_styles.action_button_text}>
+                        Drop Search Pin
+                    </Text>
+                    <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
+                </TouchableOpacity>
+            </View>
             );
         }
         else {
 
         }
-        
+
         //if they decide to set search radius, then show options 
         if (this.state.setSearchRadiusToEnable) {
             searchRadiusRender = (
@@ -697,20 +641,20 @@ export class EditActivityScreen extends React.Component {
         //if they decide to set a cap on invites
         if (this.state.invite_cap_enable) {
             inviteCapRender = (
-            <View>
-                <View style={inline_attribute_styles.body}>
-                    <Text style={inline_attribute_styles.title_text}>
-                        Invitation Cap
-                    </Text>
-                    <View style={inline_attribute_styles.numeric_input_text_view}>
-                        <TextInput style={inline_attribute_styles.numeric_text_input} placeholderTextColor="black" keyboardType={'numeric'} editable={true} maxLength={9} defaultValue={this.state.invite_cap_value.toString()} onChangeText={(value) => {this.updateInviteCapValue(value); this.updateUpdateMade(false);}}/>
+                <View>
+                    <View style={inline_attribute_styles.body}>
+                        <Text style={inline_attribute_styles.title_text}>
+                            Invitation Cap
+                        </Text>
+                        <View style={inline_attribute_styles.numeric_input_text_view}>
+                            <TextInput style={inline_attribute_styles.numeric_text_input} placeholderTextColor="black" keyboardType={'numeric'} editable={true} maxLength={9} placeholder={this.state.invite_cap_value.toString()} onChangeText={(value) => {this.updateInviteCapValue(value);}} onEndEditing={() => {this.updateUpdateMade(false);}}/>
+                        </View>
                     </View>
                 </View>
-            </View>
             );
         }
         else {
-
+            inviteCapRender = (<View />);
         }
 
         if (this.state.participants_cap_enable) {
@@ -721,50 +665,50 @@ export class EditActivityScreen extends React.Component {
                             Participants Cap
                         </Text>
                         <View style={inline_attribute_styles.numeric_input_text_view}>
-                            <TextInput style={inline_attribute_styles.numeric_text_input} placeholderTextColor="black" keyboardType={'numeric'} editable={true} maxLength={9} placeholder={this.state.participants_cap_value.toString()} onChangeText={(value) => {this.updateParticipantsCap(value);}}/>
+                            <TextInput style={inline_attribute_styles.numeric_text_input} placeholderTextColor="black" keyboardType={'numeric'} editable={true} maxLength={9} placeholder={this.state.invite_cap_value.toString()} onChangeText={(value) => {this.updateParticipantsCap(value);}} onEndEditing={() => {this.updateUpdateMade(false);}}/>
                         </View>
                     </View>
                 </View>
             );
         }
         else {
-            
+            participantsCapRender = (<View />);
         }
 
-        if (this.state.is_physical_event) {
-            physicalEventLocation = (
-                <View>
-                    <View style={attribute_styles.body}>
-                        <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => 
-                            {
-                                this.state.searchMapRequest = "Target";
-                                this.props.navigation.navigate("Map Search Screen", {
-                                    latitude: this.state.target_latitude,
-                                    longitude: this.state.target_longitude
-                                });
-                            }}>
-                            <View style={actions_styles.action_button_inner}>
-                                <Feather name="map-pin" size={20} color="white" style={actions_styles.action_button_icon}/>
-                                <Text style={actions_styles.action_button_text}>
-                                    Set Activity Location
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={main_styles.horizontal_bar}/>
-                    <View style={inline_attribute_styles.body}>
-                        <View style={inline_attribute_styles.title_view}>
+        /**<View style={inline_attribute_styles.title_view}>
                             <Text style={inline_attribute_styles.title_text}>
                                 {"Address "}
                             </Text>
                             <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Invitation Type", GlobalValues.ADDRESS_INFORMATION);}}>
                                 <AntDesign name="infocirlceo" size={14} color="black" />
                             </TouchableOpacity>
-                        </View>
+                        </View> */
+
+        if (this.state.is_physical_event) {
+            physicalEventLocation = (
+                <View>
+                    <View style={inline_attribute_styles.body}>
+                        <Text style={inline_attribute_styles.title_text}>
+                            It will be at
+                        </Text>
                         <View style={inline_attribute_styles.input_text_view}>
-                            <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="black" autoCorrect={false} editable={true} maxLength={160} defaultValue={this.state.target_address} onChangeText={(value) => {this.updateAddress(value);}} onEndEditing={(event) => {this.updateUpdateMade(false);}}/>
+                            <TextInput style={inline_attribute_styles.text_input} placeholder="1111 sharron drive" placeholderTextColor="gray" autoCorrect={false} editable={true} maxLength={160} defaultValue={this.state.target_address} onChangeText={(value) => {this.updateAddress(value);}} onEndEditing={(event) => {this.updateUpdateMade(false);}}/>
                         </View>
                     </View>
+                    <View style={main_styles.horizontal_bar}/>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => 
+                        {
+                            this.state.searchMapRequest = "Target";
+                            this.props.navigation.navigate("Map Search Screen", {
+                                latitude: this.state.target_latitude,
+                                longitude: this.state.target_longitude
+                            });
+                        }}>
+                        <Text style={actions_styles.action_button_text}>
+                            Drop Pin
+                        </Text>
+                        <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
+                    </TouchableOpacity>
                 </View>
             );
 
@@ -815,74 +759,26 @@ export class EditActivityScreen extends React.Component {
             }
         }
         else {
-            /*if (this.state.vitrual_event_search_location_enable) {
-                virtualEventSearch = (
-                    <View>
-                        <View style={attribute_styles.body}>
-                            <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => 
-                                {
-                                    this.state.searchMapRequest = "Search";
-                                    this.props.navigation.navigate("Map Search Screen", {
-                                        latitude: this.state.search_latitude,
-                                        longitude: this.state.search_longitude
-                                    });
-                                    this.updateUpdateMade(false);
-                                }}>
-                                <View style={actions_styles.action_button_inner}>
-                                    <Feather name="map-pin" size={20} color="white" style={actions_styles.action_button_icon}/>
-                                    <Text style={actions_styles.action_button_text}>
-                                        Set Search Location
-                                    </Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={attribute_styles.body}>
-                            <View style={attribute_styles.title_with_value}>
-                                <Text style={attribute_styles.title_text}>
-                                    Search Range
-                                </Text>
-                                <Text style={attribute_styles.title_value}>
-                                    {(this.state.search_range == -1 ? "max" : this.state.search_range + " miles")}
-                                </Text>
-                            </View>
-                            <View style={attribute_styles.slider}>
-                                <Slider twoSlider={false} onChangeValue={this.updateSearchRange} min={0} max={20} step={1} initialValue={this.state.search_range} backgroundColor={GlobalValues.ORANGE_COLOR}/> 
-                            </View>
-                        </View>
-                    </View>
-                );
-            }
-            else {
-                
-            }*/
 
             physicalEventLocation = (
                 <View>
-                    <View style={attribute_styles.body}>
-                        <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => 
-                            {
-                                this.state.searchMapRequest = "Search";
-                                this.props.navigation.navigate("Map Search Screen", {
-                                    latitude: this.state.search_latitude,
-                                    longitude: this.state.search_longitude
-                                });
-                                this.updateUpdateMade(false);
-                            }}>
-                            <View style={actions_styles.action_button_inner}>
-                                <Feather name="map-pin" size={20} color="white" style={actions_styles.action_button_icon}/>
-                                <Text style={actions_styles.action_button_text}>
-                                    Set Search Location
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => 
+                        {
+                            this.state.searchMapRequest = "Search";
+                            this.props.navigation.navigate("Map Search Screen", {latitude: this.state.search_latitude, longitude: this.state.search_longitude});
+                        }}>
+                        <Text style={actions_styles.action_button_text}>
+                            Drop Search Pin
+                        </Text>
+                        <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
+                    </TouchableOpacity>
                     <View style={main_styles.horizontal_bar}/>
                     <View style={inline_attribute_styles.body}>
                         <Text style={inline_attribute_styles.title_text}>
-                            Virtual Link
+                            The link is
                         </Text>
                         <View style={inline_attribute_styles.input_text_view}>
-                            <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="black" autoCorrect={false} editable={true} maxLength={160} defaultValue={this.state.virtual_link} onChangeText={(value) => {this.updateVirtualLink;}} onEndEditing={() => {this.updateUpdateMade(false);}}/>
+                            <TextInput style={inline_attribute_styles.text_input} placeholder="discord, steam..." placeholderTextColor="gray" autoCorrect={false} editable={true} maxLength={160} onChangeText={(value) => {this.updateVirtualLink(value);}} onEndEditing={() => {this.updateUpdateMade(false);}}/>
                         </View>
                     </View>
                 </View>
@@ -901,7 +797,7 @@ export class EditActivityScreen extends React.Component {
                                 </Text>
                             </View>
                             <View style={attribute_styles.slider}>
-                                <Slider twoSlider={false} onChangeValue={this.updateSearchRange} min={0} max={20} step={1} initialValue={this.state.search_range} backgroundColor={GlobalValues.ORANGE_COLOR}/> 
+                                <Slider twoSlider={false} onChangeValue={this.updateSearchRange} min={0} max={20} step={1} initialValue={this.state.search_range} backgroundColor={'#FF7485'}/> 
                             </View>
                         </View>
                     </View>
@@ -925,20 +821,21 @@ export class EditActivityScreen extends React.Component {
                                 Description
                             </Text>     
                             <View style={attribute_styles.input_text_view}>
-                                <TextInput style={attribute_styles.text_input} multiline={true} editable={true} maxLength={160} numberOfLines={4} scrollEnables={true} defaultValue={this.state.description} onChangeText={(value) => {this.updateDescription(value);}} onEndEditing={() => {this.updateUpdateMade(false);}}/>
+                                <TextInput style={attribute_styles.text_input} placeholder={"Details go here"} placeholderTextColor={"gray"} multiline={true} editable={true} maxLength={160} numberOfLines={4} scrollEnables={true} onChangeText={(value) => {this.updateDescription(value);}} onEndEditing={() => {this.updateUpdateMade(false);}}/>
                             </View>                   
-                        </View>     
-                        <View style={main_styles.horizontal_bar}/>     
-                        <View style={inline_attribute_styles.body}>
+                        </View>
+                        <View style={main_styles.horizontal_bar}/>    
+                        <View style={inline_attribute_styles.body}> 
                             <Text style={inline_attribute_styles.title_text}>
                                 Participant gender
                             </Text>
-                            <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {width: '50%', alignSelf: 'flex-end'}]}>
+                            <View style={inline_attribute_styles.drop_down_selector}>
                                     <DropDown 
                                         style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
                                         items={[{label: 'All', value: 'all'}, {label: 'Male', value: 'male'}, {label: 'Female', value: 'female', }, {label: "Other", value: "other"}]}
                                         onChangeValue = {this.updateGenderDropDownValue}
                                         currentValue = {this.state.gender_dropdown_value}
+                                        width={110}
                                         />
                             </View>
                         </View>
@@ -954,7 +851,7 @@ export class EditActivityScreen extends React.Component {
 
                             </View>
                             <View style={attribute_styles.slider}>
-                                <Slider twoSlider={true} onChangeValue={this.updateAgeRangeValues} min={18} max={100} step={2} initialValue={this.state.age_range_values} backgroundColor={GlobalValues.ORANGE_COLOR}/> 
+                                <Slider twoSlider={true} onChangeValue={this.updateAgeRangeValues} min={18} max={100} step={2} initialValue={this.state.age_range_values} backgroundColor={'#FF7485'}/> 
                             </View>
                         </View>
                     </View>
@@ -969,12 +866,13 @@ export class EditActivityScreen extends React.Component {
                                     <AntDesign name="infocirlceo" size={14} color="black" />
                                 </TouchableOpacity>
                             </View>
-                            <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {width: '50%', alignSelf: 'flex-end'}]}>
+                            <View style={inline_attribute_styles.drop_down_selector}>
                                     <DropDown 
                                         style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
                                         items={[{label: "Anyone", value: "anyone"}, {label: 'Invitation Required', value: 'invite_required', }, {label: 'Invite Only', value: 'invite_only'}]}
                                         onChangeValue = {this.updateInvitationTypeValueOnRender}
                                         currentValue={this.state.invitation_type_dropdown_value}
+                                        width={180}
                                         />
                             </View>
                         </View>
@@ -1019,11 +917,18 @@ export class EditActivityScreen extends React.Component {
                     </View>
                     <View style={section_styles.gap} />
                     {advancedPhysicalEventLocation}
-                    <View style={section_styles.gap} />
+                    
                 </View>
             );
         }
+        else {
+            advancedSettings = (
+                <View>
 
+                </View>
+            );
+        }
+        
         //TODO add physical option to virtual component (both setting location and search radius)
 
         const renderComponent = ({item}) => {
@@ -1032,22 +937,24 @@ export class EditActivityScreen extends React.Component {
                     <View style={info_styles.body}>
                         <View style={inline_attribute_styles.body}>
                             <Text style={inline_attribute_styles.title_text}>
-                                Title
+                                We are going to 
                             </Text>
                             <View style={inline_attribute_styles.input_text_view}>
-                                <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="black" editable={true} maxLength={160} defaultValue={this.state.title} onChangeText={(value) => {this.updateTitle(value);}} onEndEditing={() => {this.updateUpdateMade(false);}}/>
+                                <TextInput style={inline_attribute_styles.text_input} placeholder={"play videogames"} placeholderTextColor="gray" editable={true} maxLength={160} onChangeText={(value) => {this.updateTitle(value);}} onEndEditing={() => {this.updateUpdateMade(false);}}/>
                             </View>
                         </View>
                         <View style={main_styles.horizontal_bar}/>
+                        {physicalEventLocation}
+                        <View style={main_styles.horizontal_bar}/>
                         <View style={inline_attribute_styles.body}>
                             <Text style={inline_attribute_styles.title_text}>
-                                Date
+                                It's at
                             </Text>       
                             <View style={attribute_styles.input_text_view}>
-                                    <TouchableOpacity onPress={() => this.setState({showDatePicker: true})}>
+                                <TouchableOpacity onPress={() => this.setState({showDatePicker: true})}>
                                     <Text style={{color: GlobalValues.ORANGE_COLOR}}>
-                                            {this.showDate()} 
-                                            {" "}
+                                        {this.showDate()} 
+                                        {" "}
                                     </Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => this.setState({showTimePicker: true})}>
@@ -1061,16 +968,11 @@ export class EditActivityScreen extends React.Component {
                         {this.showTimePicker()}
                         <View style={main_styles.horizontal_bar}/>
                         <View style={inline_attribute_styles.body}>
-                            <View style={inline_attribute_styles.title_view}>
-                                <Text style={inline_attribute_styles.title_text}>
-                                    {"Attributes "}
-                                </Text>
-                                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Attributes", GlobalValues.ATTRIBUTES_INFORMATION);}}>
-                                    <AntDesign name="infocirlceo" size={14} color="black" />
-                                </TouchableOpacity>  
-                            </View>
+                            <Text style={inline_attribute_styles.title_text}>
+                                It's about
+                            </Text>
                             <View style={inline_attribute_styles.input_text_view}>
-                                <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="black" editable={true} maxLength={160} ref={(input) => {this.state.attributes_input_handler = input}} onEndEditing={(event) => {this.addFilter(event.nativeEvent.text)}}/>
+                                <TextInput style={inline_attribute_styles.text_input} placeholder="biking, partying, gaming..." placeholderTextColor="gray" editable={true} maxLength={160} ref={(input) => {this.state.attributes_input_handler = input}} onEndEditing={(event) => {this.addFilter(event.nativeEvent.text)}}/>
                             </View>
                         </View>
                         <View style={filter_snaps_styles.container}> 
@@ -1079,25 +981,20 @@ export class EditActivityScreen extends React.Component {
                                     <FilterSnap key={key} parent={this} innerText={data} data={this.state.attributes} id={key}/>
                                 );
                             })}
-                        </View>                  
-                    </View>
-                    <View style={section_styles.gap} />
-                    <View style={section_styles.gap} />
-                    <View style={info_styles.body}>
+                        </View>
+                        <View style={main_styles.horizontal_bar}/>
                         <View style={inline_attribute_styles.body}>
                             <Text style={inline_attribute_styles.title_text}>
                                 Is physical event
                             </Text>
                             <Switch
                                 trackColor = {{false: GlobalValues.DISTINCT_GRAY, true: GlobalValues.ORANGE_COLOR}}
-                                thumbColor = {'white'}
+                                thumbColor = 'white'
                                 ios_backgroundColor = {GlobalValues.DISTINCT_GRAY}
                                 onValueChange = {this.updateSetPhysicalEventToEnable}
                                 value = {this.state.is_physical_event}
                             />
                         </View>
-                        <View style={main_styles.horizontal_bar}/>
-                        {physicalEventLocation}
                     </View>
                     <View style={section_styles.gap} />
                     <View style={info_styles.body}>
@@ -1577,7 +1474,8 @@ class DropDown extends React.Component {
       this.state = {
         open: false,
         value: props.currentValue,
-        items: props.items
+        items: props.items,
+        width: props.width,
       };
   
       this.setValue = this.setValue.bind(this);
@@ -1617,12 +1515,10 @@ class DropDown extends React.Component {
     }
   
     render() {
-      const { open, value, items } = this.state;
-  
       return (
-        items ? (
+        this.state.items ? (
             Platform.OS == 'ios' ? (
-                open ? (
+                this.state.open ? (
                     <PickerIOS
                         //open={open}
                         selectedValue={this.state.value}
@@ -1630,7 +1526,7 @@ class DropDown extends React.Component {
                         onValueChange={(value) => {this.changeValue(value); this.setOpen(false)}}
                         style={{width: GlobalValues.IOS_DROPDOWN_WIDTH}}
                         >
-                            {items.map((data) => {
+                            {this.state.items.map((data) => {
                                 return (
                                 <PickerIOS.Item
                                    key={data.label}
@@ -1651,23 +1547,24 @@ class DropDown extends React.Component {
                     </View>
                 )
             ) : (
-                <View>
+                <View style={{width: this.state.width}}>
                     <DropDownPicker
-                    open={open}
-                    value={value}
-                    items={items}
+                    open={this.state.open}
+                    value={this.state.value}
+                    items={this.state.items}
                     setOpen={this.setOpen}
                     setValue={this.setValue}
                     setItems={this.setItems}
                     listMode={"SCROLLVIEW"}
-                    style={{borderWidth: 0, borderRadius: 4, height: 50, backgroundColor: GlobalValues.DARKER_OUTLINE}}
-                    dropDownContainerStyle={{borderWidth: 0, borderRadius: 4, backgroundColor: GlobalValues.DARKER_OUTLINE}}
-                    maxHeight={120}
+                    textStyle={{fontSize: 14}}
+                    style={{borderWidth: 0, width: this.state.width}}
+                    dropDownContainerStyle={{borderWidth: 0, width: this.state.width}}
+                    maxHeight={80}
                     placeholder={"Select"}
                     />
 
-                    {open ? (
-                        <View style={{height: 120}}/>
+                    {this.state.open ? (
+                        <View style={{height: 90}}/>
                     ) : (
                         <View/>
                     )}
