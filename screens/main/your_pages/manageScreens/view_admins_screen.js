@@ -30,20 +30,20 @@ const frame_styles = StyleSheet.create(
             justifyContent: 'space-between',
             flexDirection: 'row',
             alignContent: 'flex-end',
-            backgroundColor: 'black',
+            backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR,
             paddingHorizontal: 2,
         },
         main_text: {
-            fontSize: 12,
+            fontSize: 14,
             marginLeft: 2,
             marginBottom: 2,
-            color: 'white',
+            color: 'black',
         },
         name_text: {
-            fontSize: 12,
+            fontSize: 14,
             marginLeft: 2,
             marginBottom: 2,
-            color: 'white',
+            color: 'black',
         },
     }
 )
@@ -352,6 +352,10 @@ class FrameComponent extends React.Component{
 
         this.state = {
             name: this.props.name
+        }
+
+        if (this.state.name.length > 13) {
+            this.state.name = this.state.name.substring(0, 10) + "...";
         }
     }
 

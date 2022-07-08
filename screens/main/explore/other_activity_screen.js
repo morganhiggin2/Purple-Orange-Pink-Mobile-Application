@@ -3,7 +3,7 @@ import {StyleSheet, View, Text, TextInput, Image, ScrollView, FlatList, Alert, D
 import { createStackNavigator, CardStyleInterpolators} from '@react-navigation/stack';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import {TouchableHighlight, TouchableOpacity} from 'react-native-gesture-handler';
-import { AntDesign, Feather, Entypo, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'; 
+import { AntDesign, Feather, Entypo, MaterialCommunityIcons, MaterialIcons, FontAwesome } from '@expo/vector-icons'; 
 
 import { GlobalValues, GlobalProperties } from '../../../global/global_properties';
 import { GlobalEndpoints } from '../../../global/global_endpoints';
@@ -392,6 +392,7 @@ export class OtherActivityScreen extends React.Component {
                         </Text>
                         <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
                     </TouchableOpacity>
+                    <View style={main_styles.horizontal_bar} />
                 </View>
             );
         }
@@ -405,6 +406,7 @@ export class OtherActivityScreen extends React.Component {
                         </Text>
                         <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
                     </TouchableOpacity>
+                    <View style={main_styles.horizontal_bar} />
                 </View>
             );
         }
@@ -424,6 +426,29 @@ export class OtherActivityScreen extends React.Component {
         }
         else {
             distanceRender = (<View />);
+        }
+
+        if (this.state.description.length > 0) {
+            descriptionRender = (
+                <View>
+                    <View style={main_styles.horizontal_bar}/>
+                    <View style={attribute_styles.body}>
+                        <Text style={attribute_styles.title_text}>
+                            Description
+                        </Text>     
+                        <View style={attribute_styles.input_text_view}>
+                            <Text style={attribute_styles.text_input}>
+                                {this.state.description}
+                            </Text>
+                        </View>                   
+                    </View>  
+                </View>
+            );
+        }
+        else {
+            descriptionRender = (
+                <View />
+            );
         }
         
         const renderComponent = () => {

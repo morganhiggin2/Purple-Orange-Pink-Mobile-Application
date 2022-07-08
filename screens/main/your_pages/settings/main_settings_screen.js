@@ -104,6 +104,7 @@ export class MainSettingsScreen extends React.Component {
 
         this.signOut = this.signOut.bind(this);
         this.deleteAccount = this.deleteAccount.bind(this);
+        this.clearMessages = this.clearMessages.bind(this);
 
         this.lazyUpdate = this.lazyUpdate.bind(this);
     }
@@ -141,6 +142,26 @@ export class MainSettingsScreen extends React.Component {
                             </View>
                         </TouchableHighlight>
                         <View style={main_styles.horizontal_bar}/>
+                        <TouchableHighlight underlayColor={"#b8b8b8"} onPress = {() => {clearMessagesAlert(this.clearMessages);}}>
+                            <View style={selector_styles.body}>
+                                <Text style={selector_styles.title_text}>
+                                    Clear Messages
+                                </Text>
+                                <MaterialIcons name="keyboard-arrow-right" size={28} color="black" style={selector_styles.arrow}/>
+                            </View>
+                        </TouchableHighlight>
+                    </View>
+                    <View style={section_styles.body}>
+                        <TouchableHighlight underlayColor={"#b8b8b8"} onPress = {() => {signOutAlert(this.signOut);}}>
+                            <View style={selector_styles.body}>
+                                <Text style={selector_styles.title_text}>
+                                    Sign Out
+                                </Text>
+                                <MaterialIcons name="keyboard-arrow-right" size={28} color="black" style={selector_styles.arrow}/>
+                            </View>
+                        </TouchableHighlight>
+                    </View>
+                    <View style={section_styles.body}>
                         <TouchableHighlight underlayColor={"#b8b8b8"} onPress = {() => {this.props.navigation.navigate("Privacy Screen");}}>
                             <View style={selector_styles.body}>
                                 <Text style={selector_styles.title_text}>
@@ -168,28 +189,18 @@ export class MainSettingsScreen extends React.Component {
                             </View>
                         </TouchableHighlight>
                     </View>
-                    <View style={section_styles.body}>
-                        <TouchableHighlight underlayColor={"#b8b8b8"} onPress = {() => {signOutAlert(this.signOut);}}>
-                            <View style={selector_styles.body}>
-                                <Text style={selector_styles.title_text}>
-                                    Sign Out
-                                </Text>
-                                <MaterialIcons name="keyboard-arrow-right" size={28} color="black" style={selector_styles.arrow}/>
-                            </View>
-                        </TouchableHighlight>
-                    </View>
-                        <View style={section_styles.body}> 
-                            <View style={actions_styles.body}>
-                                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {deleteAccountAlert(this.deleteAccount)}}>
-                                    <View style={actions_styles.action_button_inner}>
-                                        <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
-                                        <Text style={actions_styles.action_button_text}>
-                                            Delete Account
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
+                    <View style={section_styles.body}> 
+                        <View style={actions_styles.body}>
+                            <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {deleteAccountAlert(this.deleteAccount)}}>
+                                <View style={actions_styles.action_button_inner}>
+                                    <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
+                                    <Text style={actions_styles.action_button_text}>
+                                        Delete Account
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
                         </View>
+                    </View>
                 </View>
             );
         };
@@ -202,7 +213,85 @@ export class MainSettingsScreen extends React.Component {
     }
 
     async deleteAccount() {
+        if (this.state.reload) {
+            this.state.reload = false;
 
+            //reload to now hide reload button
+            this.lazyUpdate();
+        }
+
+        //if request was successful
+        var successful = false;
+
+        //make request
+        var result = await GlobalEndpoints.makeGetRequest(true, "/api/AccountManager/Remove")
+            .then((result) => {
+                if (result == undefined) {
+                    successful = false;
+                }
+                else {
+                    successful = true;
+                }
+                return(result);
+            })
+            .catch((error) => {
+                successful = false;
+                return(error);
+            });
+
+        //if there is no error message, request was good
+        if (successful) {
+
+            //if result status is ok
+            if (result.request.status ==  200) {
+                GlobalProperties.is_logged_in = false;
+                
+                await GlobalProperties.messagesHandler.closeRealm();
+                await GlobalProperties.put_key_value_pair("User_PurpleOrangePink_Api_Token", "");
+                await GlobalProperties.put_key_value_pair("User_Password", "");
+                GlobalProperties.app_connect();
+
+                return;
+            }
+            else {
+                //returned bad response, fetch server generated error message
+                //and set 
+                Alert.alert(result.data);
+                return;
+            }
+        }
+        else {
+
+            //invalid request
+            if (result == undefined) {
+                this.lazyUpdate();
+            
+                return;
+            }
+            else if (result.response.status == 400 && result.response.data) {
+                Alert.alert(JSON.stringify(result.response.data));
+                return;
+            }
+            //handle not found case
+            else if (result.response.status == 404) {
+                this.lazyUpdate();
+                GlobalEndpoints.handleNotFound(false);
+            }
+            else {
+                this.lazyUpdate();
+                return;
+            }
+        }
+
+        //once done, lazy update
+        this.lazyUpdate();
+    }
+
+    async clearMessages() {
+        //delete all the messages
+        await GlobalProperties.messagesHandler.openRealm();
+        await GlobalProperties.messagesHandler.deleteAll();
+        GlobalProperties.reload_messages = true;
     }
 
     async signOut() {
@@ -239,8 +328,9 @@ export class MainSettingsScreen extends React.Component {
             if (result.request.status ==  200) {
                 GlobalProperties.is_logged_in = false;
                 
-                GlobalProperties.put_key_value_pair("User_PurpleOrangePink_Api_Token", "");
-                GlobalProperties.put_key_value_pair("User_Password", "");
+                await GlobalProperties.messagesHandler.closeRealm();
+                await GlobalProperties.put_key_value_pair("User_PurpleOrangePink_Api_Token", "");
+                await GlobalProperties.put_key_value_pair("User_Password", "");
                 GlobalProperties.app_connect();
 
                 return;
@@ -285,6 +375,27 @@ export class MainSettingsScreen extends React.Component {
     }
 }
  
+const clearMessagesAlert = (clearAccount) => {
+    Alert.alert(
+        "Delete",
+        "Are you sure you want to clear all your messagse? This will do this for all users.",
+        [
+            {
+                text: "Cancel",
+                onPress: () => {},
+                style: "cancel",
+            },
+            {
+                text: "Clear",
+                onPress: () => {clearAccount();},
+            }
+        ],
+        {
+            cancelable: true,
+        }
+    );
+}
+
 const deleteAccountAlert = (deleteAccount) => {
     Alert.alert(
         "Delete",
