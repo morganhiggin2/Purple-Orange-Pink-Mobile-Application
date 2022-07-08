@@ -154,10 +154,19 @@ export class MapScreen extends React.Component {
         else {
             this.state.initialRegion = GlobalProperties.map_params;
         }
+
+        //set search radius
+        GlobalProperties.search_radius = GlobalProperties.get_haversine_distance(this.state.initialRegion.latitude, this.state.initialRegion.longitude, this.state.initialRegion.latitudeDelta, this.state.initialRegion.longitudeDelta);
+
+        //call on updating
+        GlobalProperties.map_filters_updated = true;
     }
     
     componentDidMount() {
         this.props.navigation.addListener('focus', () => {
+            //update lazy update method for current explore screen
+            GlobalProperties.currentExploreScreenSearchUpdate = this.updateSearch;
+
             this.state.global_props = GlobalProperties.screen_props;
             GlobalProperties.screenActivated();
 
@@ -177,7 +186,7 @@ export class MapScreen extends React.Component {
         this.state.grayout_map_button = true;
         this.lazyUpdate();
 
-        let search_radius = GlobalProperties.map_search_radius;
+        let search_radius = GlobalProperties.search_radius;
 
         //make sure the attriutes are good
         /*if (!this.validateAttributes()) {
@@ -344,7 +353,7 @@ export class MapScreen extends React.Component {
                         <MapView 
                             style={map_styles.body}
                             initialRegion={this.state.initialRegion}
-                            onRegionChangeComplete={this.onRegionChange}
+                            onRegionChangeComplete={this.onRegionChangeComplete}
                             ref={(ref) => {this.state.map_ref = ref;}}
                         >
                             {this.renderMarkers()}
@@ -482,19 +491,12 @@ export class MapScreen extends React.Component {
     }
 
     onRegionChangeComplete(region) {
-
         //update global values
         GlobalProperties.map_params = region;
-        GlobalProperties.map_search_radius = GlobalProperties.get_haversine_distance(region.latitude, region.longitude, region.latitudeDelta, region.longitudeDelta);
-
-        if (GlobalProperties.use_map_settings) {
-            GlobalProperties.search_radius = GlobalProperties.map_search_radius;
-        }
-
-        //update search as location changed
-        GlobalProperties.map_filters_updated = true;
+        GlobalProperties.search_radius = GlobalProperties.get_haversine_distance(region.latitude, region.longitude, region.latitudeDelta, region.longitudeDelta);
 
         //call on updating markers
+        GlobalProperties.map_filters_updated = true;
     }
 
     updateGroups(groups) {

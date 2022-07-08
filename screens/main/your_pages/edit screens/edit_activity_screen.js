@@ -1156,7 +1156,7 @@ export class EditActivityScreen extends React.Component {
 
     updateDateTime(value) {
         this.state.date = new Date(value);
-        this.state.updateBody["date_time"] = this.state.date.getDate() + "/" + this.state.date.getMonth() + "/" + this.state.date.getFullYear() + " " + this.state.date.getHours() + ":" + this.state.date.getMinutes();
+        this.state.updateBody["date_time"] = this.state.date.getDate() + "/" + (this.state.date.getMonth() + 1) + "/" + this.state.date.getFullYear() + " " + this.state.date.getHours() + ":" + this.state.date.getMinutes();
         this.updateUpdateMade(true);
     }
 

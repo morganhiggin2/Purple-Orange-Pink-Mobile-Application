@@ -235,7 +235,7 @@ export class ProfileInfoScreen extends React.Component {
         this.state.error_message = "";
 
         var body = {
-            "birthdate": this.state.date.getDate() + "/" + this.state.date.getMonth() + "/" + this.state.date.getFullYear(),
+            "birthdate": this.state.date.getDate() + "/" + (this.state.date.getMonth() + 1) + "/" + this.state.date.getFullYear(),
             "gender": this.state.gender_dropdown_value,
             "name": this.state.name,
         };

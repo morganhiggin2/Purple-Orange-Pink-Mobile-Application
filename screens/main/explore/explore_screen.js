@@ -21,7 +21,7 @@ const frame_styles = StyleSheet.create(
             marginLeft: Math.trunc(Dimensions.get('window').width * 0.029),
             marginBottom: Math.trunc(Dimensions.get('window').width * 0.029),*/
             width: Math.trunc(Dimensions.get('window').width * 0.96),
-            marginTop: Math.trunc(Dimensions.get('window').width * 0.02),
+            marginTop: 10,
             borderRadius: 4,
             borderWidth: 5,
             borderColor: "white",
@@ -166,6 +166,32 @@ const main_styles = StyleSheet.create(
     }
 );
 
+const filter_snaps_styles = StyleSheet.create(
+    {
+        inner_text: {
+            borderRadius: 5,
+            borderWidth: 1,
+            paddingHorizontal: 3,
+            paddingVertical: 1,
+            fontSize: 14,
+            color: 'white', 
+            fontWeight: 'bold',
+            alignSelf: 'flex-start',
+            marginHorizontal: 2,
+            marginVertical: 1,
+            flexDirection: 'row',
+        },
+        container: {
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'white',
+        }
+    }
+);
+
+
 class FrameComponent extends React.Component{
     constructor(props) {
         super (props);
@@ -180,7 +206,7 @@ class FrameComponent extends React.Component{
         }*/
 
         if (this.props.type == "person") {
-            this.state.name = this.props.firstName + " " + this.props.lastInitial;
+            this.state.name = this.props.name;
         
             //deal if name if too long to fit on screen
             /*if (this.state.name.length > 25) {
@@ -254,7 +280,7 @@ class FrameComponent extends React.Component{
                                 </View>
                                 <View style={frame_styles.inner_text_apart_container}>
                                     <Text style={frame_styles.main_text}>
-                                        <FontAwesome style={{marginRight: 0}} name="road" size={12} color="gray"/>
+                                        <FontAwesome name="road" size={12} color="gray" style={filter_snaps_styles.icon}/>
                                         {" " + this.props.distance + " miles"}
                                     </Text> 
                                     <Text style={frame_styles.main_text}>
@@ -288,7 +314,7 @@ class FrameComponent extends React.Component{
                                 </View>
                                 <View style={[frame_styles.inner_text_apart_container]}>
                                     <Text style={frame_styles.main_text}>
-                                        <FontAwesome style={{marginRight: 0}} name="road" size={12} color="gray"/>
+                                        <FontAwesome name="road" size={12} color="gray" style={filter_snaps_styles.icon}/>
                                         {" " + this.props.distance + " miles"}
                                     </Text> 
                                     <Text style={frame_styles.main_text}>
@@ -422,7 +448,11 @@ export class ExploreScreen extends React.Component {
     }
 
     componentDidMount() {
+        GlobalProperties.currentExploreScreenSearchUpdate = this.updateSearch;
         this.props.navigation.addListener('focus', () => {
+            //update lazy update method for current explore screen
+            GlobalProperties.currentExploreScreenSearchUpdate = this.updateSearch;
+
             if (GlobalProperties.search_filters_updated) {
                 this.state.loading = true;
                 this.state.reload = false;
@@ -482,7 +512,7 @@ export class ExploreScreen extends React.Component {
             var json = this.state.frames[i];
 
             if (json.type == "person") {
-                this.state.frameComponents.push(<FrameComponent key={json.id} id={json.id} type={json.type} firstName={json.first_name} lastInitial={json.last_initial} description={json.description} age={json.age} distance={json.distance} navigation={this.props.navigation}/>);
+                this.state.frameComponents.push(<FrameComponent key={json.id} id={json.id} type={json.type} name={json.name} description={json.description} age={json.age} distance={json.distance} navigation={this.props.navigation}/>);
             }
             else if (json.type == "activity") {
                 this.state.frameComponents.push(<FrameComponent key={json.id} id={json.id} type={json.type} name={json.name} description={json.description} date_time={json.date_time} distance={json.distance} navigation={this.props.navigation}/>);
@@ -609,7 +639,7 @@ export class ExploreScreen extends React.Component {
 
             requestUrl = "/api/User/Friends/SearchActivities";
         }
-        
+
         if (GlobalProperties.search_attributes != null) {
             body["attributes"] = GlobalProperties.search_attributes;
         }

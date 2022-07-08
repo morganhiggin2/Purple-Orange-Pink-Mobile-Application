@@ -4,20 +4,20 @@ import { createStackNavigator, CardStyleInterpolators} from '@react-navigation/s
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import {TouchableHighlight, TouchableOpacity} from 'react-native-gesture-handler';
 import { AntDesign, Feather, Entypo, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'; 
-import {SliderBox } from "react-native-image-slider-box";
 
 import { GlobalValues, GlobalProperties } from '../../../global/global_properties';
 import { GlobalEndpoints } from '../../../global/global_endpoints';
 import { LoadingScreen } from '../../misc/loading_screen';
 
-const ImageStack = createMaterialTopTabNavigator();
 
 const main_styles = StyleSheet.create(
     {
         page: {
-            backgroundColor:GlobalValues.DARKER_WHITE,
-            height: '100%',
+            backgroundColor: GlobalValues.DARKER_WHITE,
+            height: '50%',
             width: '100%',
+            flexDirection: "column",
+            flex: 1,
         },
         sections: {
             flexDirection: "column",
@@ -28,11 +28,16 @@ const main_styles = StyleSheet.create(
         },
         title_text: {
             alignSelf: 'center',
-            fontSize: 24,
+            fontSize: 22,
             color: 'black',
             padding: 5,
-            marginBottom: 5,
         }, 
+        horizontal_bar: {
+            width: '94%',
+            alignSelf: 'center',
+            borderBottomWidth: 1,
+            borderColor: GlobalValues.DARKER_OUTLINE
+        },
         name_text: {
             alignSelf: 'center',
             fontSize: 20,
@@ -42,116 +47,138 @@ const main_styles = StyleSheet.create(
         name_view: {
             flexDirection: 'row',
             justifyContent: 'center',
+            marginTop: 16
         },
         scroll_view: {
             backgroundColor: "white",
         },
-        no_images_buffer: {
-            height: 30,
-        }, 
-        horizontal_bar: {
-            width: '94%',
-            alignSelf: 'center',
-            borderBottomWidth: 1,
-            borderColor: GlobalValues.DARKER_OUTLINE,
-        }
     }
 );
 
-const actions_styles = StyleSheet.create(
-    {
-        actions_view: {
-
-        },
-        actions_button:  {
-            borderRadius: 3,
-            borderWidth: 4,
-            backgroundColor: GlobalValues.ORANGE_COLOR,
-            borderColor: GlobalValues.ORANGE_COLOR,
-            padding: 3,
-            paddingVertical: 3,
-            alignSelf: 'center',
-            width: "100%",
-            marginTop: 10,
-        },
-        action_button_inner: {
-            flexDirection: "row",
-            alignSelf: 'center',
-        },
-        action_button_icon: {
-            marginRight: 5,
-            alignSelf: 'center',
-        },
-        action_button_text: {
-            color: 'white',
-            fontSize: 18,
-            alignSelf: 'center',
-        }
+const section_styles = StyleSheet.create({
+    body: {
+        marginTop: "10%",
+        backgroundColor: GlobalValues.DARKER_WHITE,
+    },
+    gap: {
+        height: 30,
     }
-);
+});
 
-const image_styles = StyleSheet.create(
-    {
-        container: {
-            backgroundColor: "white",
-            width: 254,
-            height: 250,
-            marginVertical: '10%',
-            marginBottom: 5,
-            alignSelf: 'center',
-        },
-        image: {
-            width: 250,
-            height: 250,
-        },
+const info_styles = StyleSheet.create({
+    body: {
+        backgroundColor: 'white', //#FFCDCD
+        marginHorizontal: 8,
+        borderRadius: 4,
+        marginVertical: 16
     }
-);
+});
 
-const info_styles = StyleSheet.create(
-    {
-        body: {
-            backgroundColor: 'white', //#FFCDCD
-            borderRadius: 5,
-            padding: 8,
-            marginVertical: "2%",
-            marginHorizontal: '2%'
-        },
-        title_text: {
-            color: 'black',
-            fontSize: 16,
-            marginLeft: 5,
-        }, 
-        inner_text: {
-            color: 'gray',
-            fontSize: 14,
-            marginLeft: 5,
-            marginVertical: 4,
-        },
-        horizontal_gap: {
-            height: 10,
-        },
-        horizontal_bar: {
-            width: '100%',
-            alignSelf: 'center',
-            borderBottomWidth: 1,
-            borderColor: GlobalValues.DARKER_OUTLINE,
-            marginTop: 8,
-            marginBottom: 4,
-        }
+const attribute_styles = StyleSheet.create({
+    body: {
+        backgroundColor: 'white',
+        flexDirection: "column",
+        paddingHorizontal: 10,
+        paddingVertical: 2,
+    },
+    input_text_view: {
+        flexDirection:  'row',
+        paddingVertical: 6
+    },
+    multiline_input_text: {
+        fontSize: 14, 
+        maxHeight: "96px", 
+        textAlignVertical: "top",
+    },
+    title_text: {
+        alignSelf: 'flex-start',
+        fontSize: 16,
+        color: 'black',
+        marginBottom: 2,
+    },
+    text_input: {
+        textAlignVertical: "top",
+        flex: 1,
+        maxHeight: 95,
+        marginLeft: 2,
+        borderRadius: 8,
+    },
+    inner_text: {
+        color: 'gray',
+        fontSize: 14,
+        marginHorizontal: 4
+    },
+    slider: {
+        alignSelf: 'center',
+    },
+    title_with_value: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    title_value: {
+        fontSize: 14,
+        alignSelf: 'center'
     }
-);
+});
+
+const inline_attribute_styles = StyleSheet.create({
+    body: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+    },
+    title_view: {
+        flexDirection: 'row',
+    },
+    text_view: {
+        paddingVertical: 4
+    },
+    title_text: {
+        alignSelf: 'flex-start',
+        alignSelf: 'center',
+        fontSize: 16,
+        color: 'black',
+    },
+    input_text_view: {
+        flexDirection:  'row',
+        width: "70%",
+    },
+    text_input: {
+        textAlignVertical: "center",
+        paddingHorizontal: 4,
+        width: '100%',
+        textAlign: 'right',
+        borderRadius: 4,
+        fontSize: 16, 
+    },
+    drop_down_selector: {
+        marginRight: -10
+    },
+    drop_down_selector_gap: {
+        height: 100,
+    },
+    date_picker: {
+        width: 200,
+    }
+});
 
 const filter_snaps_styles = StyleSheet.create(
     {
-        profile_container: {
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignSelf: 'center',
-            marginBottom: 10,
-            flexWrap: 'wrap',
-            width: '80%',
-        },
         inner_text: {
+            borderRadius: 5,
+            borderWidth: 2,
+            paddingHorizontal: 3,
+            paddingVertical: 1,
+            fontSize: 16,
+            color: 'white', 
+            fontWeight: 'bold',
+            alignSelf: 'flex-start',
+            marginHorizontal: 2,
+            marginBottom: 8,
+            textAlign: 'center',
+        },
+        tag_inner_text: {
             borderRadius: 5,
             borderWidth: 2,
             paddingHorizontal: 3,
@@ -167,38 +194,45 @@ const filter_snaps_styles = StyleSheet.create(
             justifyContent: 'center',
             alignSelf: 'center'
         },
-        icon: {
-            alignSelf: 'center',
-            marginRight: 4
-        },
         container: {
             flexDirection: 'row',
             flexWrap: 'wrap',
+            alignItems: 'center',
+            backgroundColor: 'white',
+            marginHorizontal: 8
+        },
+        profile_container: {
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignSelf: 'center',
+            marginBottom: 10,
+            flexWrap: 'wrap',
+            width: '80%',
+        },
+        icon: {
+            alignSelf: 'center'
         }
     }
 );
 
-const point_styles = StyleSheet.create(
+const actions_styles = StyleSheet.create(
     {
         body: {
-            borderColor: GlobalValues.ORANGE_COLOR,
-            borderTopWidth: 3,
-            borderBottomWidth: 3,
-        },
-        container: {
 
         },
-        text: {
+        actions_button:  {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginVertical: 10,
+            paddingHorizontal: 10,
+        },
+        action_button_inner: {
+        },
+        action_button_icon: {
+        },
+        action_button_text: {
+            color: 'black',
             fontSize: 16,
-            alignSelf: 'center',
-        },
-        image: {
-            marginTop: 10,
-            width: Math.trunc(Dimensions.get('window').width * 0.90),
-            height: Math.trunc(Dimensions.get('window').width * 0.90), 
-        },
-        trash_icon: {
-            flexDirection: 'row-reverse',
         }
     }
 );
@@ -208,10 +242,6 @@ export class OtherActivityScreen extends React.Component {
         super(props);
 
         this.state = {
-            id: this.props.route.params.id,
-            type: this.props.route.params.type,
-            viewing: this.props.route.params.viewing,
-
             //is loading
             loading: true,
             reload: false,
@@ -219,11 +249,8 @@ export class OtherActivityScreen extends React.Component {
             description: "",
             date: "",
             invitation_type: "",
-            distance: 0,
-            location: null,
-
-            //images
-            activity_images: [],
+            is_admin: false,
+            is_participant: false,
 
             //address
             address: "",
@@ -232,7 +259,7 @@ export class OtherActivityScreen extends React.Component {
             attributes: [],
 
             //is physical event
-            is_physical: true,
+            is_phiscal: true,
 
             //name of activity
             title: this.props.route.params.name,
@@ -249,7 +276,6 @@ export class OtherActivityScreen extends React.Component {
         this.block = this.block.bind(this);
 
         this.lazyUpdate = this.lazyUpdate.bind(this);
-        this.cleanImages = this.cleanImages.bind(this);
     }
 
     componentDidMount() {
@@ -258,12 +284,6 @@ export class OtherActivityScreen extends React.Component {
         });
 
         this.fetchActivityInformation();
-
-        //TODO this goes in fetch code for valid case
-        //gets the images from the response
-        //...
-        //clean images
-        this.cleanImages();
 
         this.lazyUpdate();
     }
@@ -313,9 +333,8 @@ export class OtherActivityScreen extends React.Component {
                 this.state.distance = activity_information.distance;
                 this.state.is_admin = activity_information.is_admin;
                 this.state.is_participant = activity_information.is_participant;
+                this.state.is_in_activity = activity_information.is_in_activity;
                 this.state.location = activity_information.location;
-
-                this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={this.state.title}/>});
 
                 this.state.loading = false;
 
@@ -357,81 +376,67 @@ export class OtherActivityScreen extends React.Component {
         //once done, lazy update
         this.lazyUpdate();
     }
+
     render() {
-        var imagesRender;
         var distanceRender;
-        var addressTitle;
-
-        if (this.state.activity_images.length > 0) {
-            imagesRender = (
-                <View style={image_styles.container}>
-                    <SliderBox
-                        images={this.state.activity_images.map(uri => {
-                            return(handleImageURI(uri));
-                        })}
-                        parentWidth={image_styles.image.width}
-                        sliderBoxHeight={image_styles.image.height}
-                        dotColor={GlobalValues.ORANGE_COLOR}
-                        inactiveDotColor={GlobalValues.DISTINCT_GRAY}
-                    />
-                </View>
-            );
-        }
-        else {
-            imagesRender = (
-                <View style={main_styles.no_images_buffer}/>
-            )
-        }
-
         var joinRender;
+        var descriptionRender;
 
         if (this.state.invitation_type == "anyone") {
             joinRender = (
-                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.joinOtherActivity();}}>
-                    <View style={actions_styles.action_button_inner}>
-                        <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
+                <View>
+                    <View style={main_styles.horizontal_bar} />
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.joinOtherActivity();}}>
                         <Text style={actions_styles.action_button_text}>
                             Join
                         </Text>
-                    </View>
-                </TouchableOpacity>
+                        <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
+                    </TouchableOpacity>
+                </View>
             );
         }
         else if (this.state.invitation_type == "invite_required") {
             joinRender = (
-                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.joinOtherActivity();}}>
-                    <View style={actions_styles.action_button_inner}>
-                        <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
+                <View>
+                    <View style={main_styles.horizontal_bar} />
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.joinOtherActivity();}}>
                         <Text style={actions_styles.action_button_text}>
                             Request to Join
                         </Text>
-                    </View>
-                </TouchableOpacity>
+                        <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
+                    </TouchableOpacity>
+                </View>
             );
+        }
+        else {
+            joinRender = (<View />);
         }
 
         if (this.state.distance) {
             distanceRender = (
-                <View style={[filter_snaps_styles.inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
-                    <Entypo name="location-pin" size={24} color="red" style={filter_snaps_styles.icon}/>
-                    <Text style={{color: 'black', fontSize: 18}}>
+                <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
+                    <FontAwesome name="road" size={12} color="gray" style={filter_snaps_styles.icon}/>
+                    <Text style={{color: 'black', fontSize: 14}}>
                         {this.state.distance + " mi"}
                     </Text>
                 </View>
             );
         }
-
+        else {
+            distanceRender = (<View />);
+        }
+        
         const renderComponent = () => {
             if (this.state.loading == true) {
                 return (
-                    <LoadingScreen tryAgain={this.fetchActivityInformation} reload={this.state.reload}/>
+                    <View>
+                        <LoadingScreen tryAgain={this.fetchActivityInformation} reload={this.state.reload}/>
+                    </View>
                 );
             }
             else {
                 return (
                     <View>
-                        {imagesRender}
-    
                         <View style={main_styles.name_view}>
                             <Text style={main_styles.title_text}>
                                 {this.state.title}
@@ -439,90 +444,63 @@ export class OtherActivityScreen extends React.Component {
                         </View>
                         <View style={filter_snaps_styles.profile_container}>
                             {distanceRender}
-                            <View style={[filter_snaps_styles.inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>
-                                <Text style={{color: 'black', fontSize: 18}}>
+                            <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>
+                                <Text style={{color: 'black', fontSize: 14}}>
                                     {this.state.is_phiscal ? "Physical" : "Virtual"}
                                 </Text>
                             </View>
-                            <View style={[filter_snaps_styles.inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>
-                                <MaterialIcons name="person" size={20} color="black" style={filter_snaps_styles.icon}/>
-                                <Text style={{color: 'black', fontSize: 18}}>
+                            <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>
+                                <MaterialIcons name="person" size={18} color="black" style={filter_snaps_styles.icon}/>
+                                <Text style={{color: 'black', fontSize: 14}}>
                                     {this.state.num_members}
                                 </Text>
                             </View>
                         </View>
                         <View style={info_styles.body}>
-                            <Text style={info_styles.title_text}>
-                                Description
-                            </Text>
-                            <Text style={info_styles.inner_text}>
-                                {this.state.description}
-                            </Text>
-                            <View style={info_styles.horizontal_bar} />
-                            <Text style={info_styles.title_text}>
-                                Date
-                            </Text>
-                            <Text style={info_styles.inner_text}>
-                                {this.state.date}
-                            </Text>
-                        </View>
-    
-                        <View style={info_styles.body}>
-                            <Text style={info_styles.title_text}>
-                                Attributes
-                            </Text>
+                            <View style={inline_attribute_styles.body}>
+                                <Text style={inline_attribute_styles.title_text}>
+                                    <Text style={{color: "gray"}}>
+                                        {"It is on "} 
+                                    </Text>
+                                    {this.state.date}
+                                </Text>
+                            </View>
+                            <View style={main_styles.horizontal_bar} />  
+                            <View style={inline_attribute_styles.body}>
+                                <Text style={inline_attribute_styles.title_text}>
+                                    It's about
+                                </Text>
+                            </View>
                             <View style={filter_snaps_styles.container}> 
                                 {this.state.attributes.map((data, key) => {
                                     return (
                                         <FilterSnap key={key} parent={this} innerText={data} data={this.state.attributes} id={key}/>
                                     );
                                 })}
-                            </View> 
-                        </View>
-    
-                        <View style={info_styles.body}>
-                            <Text style={info_styles.title_text}>
-                                Actions
-                            </Text>
-                            <View style={actions_styles.actions_view}> 
-                                {joinRender}
-                                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("View Map Screen", {location: this.state.location})}}>
-                                    <View style={actions_styles.action_button_inner}>
-                                        <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
-                                        <Text style={actions_styles.action_button_text}>
-                                            View Location
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.block()}}>
-                                    <View style={actions_styles.action_button_inner}>
-                                        <MaterialCommunityIcons name="block-helper" size={20} color="white" style={actions_styles.action_button_icon}/>
-                                        <Text style={actions_styles.action_button_text}>
-                                            Block
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
                             </View>
+                            {descriptionRender}
                         </View>
-                        <View style={info_styles.body}>
-                            <Text style={info_styles.title_text}>
-                                Members
-                            </Text>
-                            <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.viewAdmins();}}>
-                                <View style={actions_styles.action_button_inner}>
-                                    <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
-                                    <Text style={actions_styles.action_button_text}>
-                                        View Admins
-                                    </Text>
-                                </View>
+                        <View style={info_styles.body}> 
+                            {joinRender}
+                            <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("View Map Screen", {location: this.state.location})}}>
+                                <Text style={actions_styles.action_button_text}>
+                                    View Location
+                                </Text>
+                                <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
+                            </TouchableOpacity>     
+                            <View style={main_styles.horizontal_bar} />             
+                            <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.viewAdmins();}}>
+                                <Text style={actions_styles.action_button_text}>
+                                    View Creators
+                                </Text>
+                                <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
                             </TouchableOpacity>
-                            <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.viewParticipants();}}>
-                                <View style={actions_styles.action_button_inner}>
-                                    <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
-                                    <Text style={actions_styles.action_button_text}>
-                                        View Participants
-                                    </Text>
-                                </View>
+                            <View style={main_styles.horizontal_bar} />   
+                            <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.viewParticipants();}}>
+                                <Text style={actions_styles.action_button_text}>
+                                    View Participants
+                                </Text>
+                                <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -608,19 +586,6 @@ export class OtherActivityScreen extends React.Component {
                 return;
             }
         }
-    }
-
-    //get rid of any null entries
-    cleanImages() {
-        var cleaned_images = [];
-
-        for (var i = 0; i <= this.state.activity_images.length; i++) {
-            if (this.state.activity_images[i] != null && this.state.activity_images[i] != "") {
-                cleaned_images.push(this.state.activity_images[i]);
-            }
-        }
-
-        this.state.activity_images = cleaned_images;
     }
 
     async joinOtherActivity() {
@@ -737,13 +702,4 @@ const HeaderTitle = (props) => {
 
 FilterSnap.defaultProps = {
     color: GlobalValues.ORANGE_COLOR,
-}
-
-function handleImageURI(uri) {
-    if (uri == undefined) {
-        return(require("../../../images/default_image.png"));
-    }
-    else {
-        return({uri: uri});
-    }
 }

@@ -681,7 +681,7 @@ export class YourProfileScreen extends React.Component {
         console.log(value);
         this.state.date = value;
 
-        this.state.updateBody["birthdate"] = this.state.date.getDate() + "/" + this.state.date.getMonth() + "/" + this.state.date.getFullYear();
+        this.state.updateBody["birthdate"] = this.state.date.getDate() + "/" + (this.state.date.getMonth() + 1) + "/" + this.state.date.getFullYear();
         
         this.updateUpdateMade(true);
     }

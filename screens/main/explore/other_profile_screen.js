@@ -1,20 +1,23 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Image, ScrollView, Dimensions, TouchableOpacity, Alert} from 'react-native';
+import {StyleSheet, View, Text, TextInput, Image, ScrollView, Dimensions, TouchableOpacity, Alert, FlatList} from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { SliderBox } from "react-native-image-slider-box";
-import { AntDesign, Feather, MaterialCommunityIcons, Entypo} from '@expo/vector-icons'; 
+import { AntDesign, Feather, MaterialCommunityIcons, Entypo, FontAwesome} from '@expo/vector-icons'; 
 import { GlobalProperties, GlobalValues } from '../../../global/global_properties';
 import { GlobalEndpoints } from '../../../global/global_endpoints';
 import { LoadingScreen } from '../../misc/loading_screen';
 
 const ImageStack = createMaterialTopTabNavigator();
 
+
 const main_styles = StyleSheet.create(
     {
         page: {
-            backgroundColor: GlobalValues.DARKER_WHITE, //#FFEDE7
-            height: '100%',
+            backgroundColor: GlobalValues.DARKER_WHITE,
+            height: '50%',
             width: '100%',
+            flexDirection: "column",
+            flex: 1,
         },
         sections: {
             flexDirection: "column",
@@ -25,11 +28,16 @@ const main_styles = StyleSheet.create(
         },
         title_text: {
             alignSelf: 'center',
-            fontSize: 24,
+            fontSize: 22,
             color: 'black',
             padding: 5,
-            marginBottom: 5,
         }, 
+        horizontal_bar: {
+            width: '94%',
+            alignSelf: 'center',
+            borderBottomWidth: 1,
+            borderColor: GlobalValues.DARKER_OUTLINE
+        },
         name_text: {
             alignSelf: 'center',
             fontSize: 20,
@@ -39,112 +47,143 @@ const main_styles = StyleSheet.create(
         name_view: {
             flexDirection: 'row',
             justifyContent: 'center',
+            marginTop: 16
         },
         scroll_view: {
-            backgroundColor: GlobalValues.DARKER_WHITE,
+            backgroundColor: "white",
         },
-    }
-);
-
-const image_styles = StyleSheet.create(
-    {
-        container: {
-            width: 254,
-            height: 250,
-            marginTop: '10%',
-            marginBottom: 5,
-            alignSelf: 'center',
-        },
-        box: {
-            width: 254,
-            height: 250,
-            borderWidth: 2,
-            borderColor: 'gray',
-            borderRadius: 2,
-        },
-        image: {
-            width: 250,
-            height: 250,
-        },
-    }
-);
-
-const info_styles = StyleSheet.create(
-    {
-        body: {
-            backgroundColor: "white", //#FFCDCD
-            borderRadius: 5,
-            padding: 8,
-            marginVertical: "2%",
-            marginHorizontal: '2%'
-        },
-        title_text: {
-            color: 'black',
-            fontSize: 16,
-            marginLeft: 5,
+        no_images_buffer: {
+            height: 30,
         }, 
-        inner_text: {
-            color: 'gray',
-            fontSize: 14,
-            marginLeft: 5,
-            marginVertical: 4,
-        },
-        horizontal_bar: {
-            width: '100%',
-            alignSelf: 'center',
-            borderBottomWidth: 1,
-            borderColor: GlobalValues.DARKER_OUTLINE,
-            marginTop: 8,
-            marginBottom: 4,
-        }
     }
 );
 
-const actions_styles = StyleSheet.create(
-    {
-        actions_view: {
-
-        },
-        actions_button:  {
-            borderRadius: 3,
-            borderWidth: 4,
-            backgroundColor: GlobalValues.ORANGE_COLOR,//'#ff4576'
-            borderColor: GlobalValues.ORANGE_COLOR,
-            padding: 3,
-            paddingVertical: 3,
-            alignSelf: 'center',
-            width: "100%",
-            marginTop: 10,
-        },
-        action_button_inner: {
-            flexDirection: "row",
-            alignSelf: 'center',
-        },
-        action_button_icon: {
-            marginRight: 5,
-            alignSelf: 'center',
-        },
-        action_button_text: {
-            color: 'white',
-            fontSize: 18,
-            alignSelf: 'center',
-        }
+const section_styles = StyleSheet.create({
+    body: {
+        marginTop: "10%",
+        backgroundColor: GlobalValues.DARKER_WHITE,
+    },
+    gap: {
+        height: 30,
     }
-);
+});
+
+const info_styles = StyleSheet.create({
+    body: {
+        backgroundColor: 'white', //#FFCDCD
+        marginHorizontal: 8,
+        borderRadius: 4,
+        marginVertical: 16
+    }
+});
+
+const attribute_styles = StyleSheet.create({
+    body: {
+        backgroundColor: 'white',
+        flexDirection: "column",
+        paddingHorizontal: 10,
+        paddingVertical: 2,
+    },
+    input_text_view: {
+        flexDirection:  'row',
+        paddingVertical: 6
+    },
+    multiline_input_text: {
+        fontSize: 14, 
+        maxHeight: "96px", 
+        textAlignVertical: "top",
+    },
+    title_text: {
+        alignSelf: 'flex-start',
+        fontSize: 16,
+        color: 'black',
+        marginBottom: 2,
+    },
+    text_input: {
+        textAlignVertical: "top",
+        flex: 1,
+        maxHeight: 95,
+        marginLeft: 2,
+        borderRadius: 8,
+    },
+    inner_text: {
+        color: 'gray',
+        fontSize: 14,
+        marginHorizontal: 4
+    },
+    slider: {
+        alignSelf: 'center',
+    },
+    title_with_value: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    title_value: {
+        fontSize: 14,
+        alignSelf: 'center'
+    }
+});
+
+const inline_attribute_styles = StyleSheet.create({
+    body: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+    },
+    title_view: {
+        flexDirection: 'row',
+    },
+    text_view: {
+        paddingVertical: 4
+    },
+    title_text: {
+        alignSelf: 'flex-start',
+        alignSelf: 'center',
+        fontSize: 16,
+        color: 'black',
+    },
+    input_text_view: {
+        flexDirection:  'row',
+        width: "70%",
+    },
+    text_input: {
+        textAlignVertical: "center",
+        paddingHorizontal: 4,
+        width: '100%',
+        textAlign: 'right',
+        borderRadius: 4,
+        fontSize: 16, 
+    },
+    drop_down_selector: {
+        marginRight: -10
+    },
+    drop_down_selector_gap: {
+        height: 100,
+    },
+    date_picker: {
+        width: 200,
+    }
+});
 
 const filter_snaps_styles = StyleSheet.create(
     {
-        profile_container: {
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignSelf: 'center',
-            marginBottom: 10,
-            flexWrap: 'wrap',
-            width: '80%',
-        },
         inner_text: {
             borderRadius: 5,
-            borderWidth: 1,
+            borderWidth: 2,
+            paddingHorizontal: 3,
+            paddingVertical: 1,
+            fontSize: 16,
+            color: 'white', 
+            fontWeight: 'bold',
+            alignSelf: 'flex-start',
+            marginHorizontal: 2,
+            marginBottom: 8,
+            textAlign: 'center',
+        },
+        tag_inner_text: {
+            borderRadius: 5,
+            borderWidth: 2,
             paddingHorizontal: 3,
             paddingVertical: 1,
             fontSize: 16,
@@ -153,45 +192,76 @@ const filter_snaps_styles = StyleSheet.create(
             alignSelf: 'flex-start',
             marginHorizontal: 2,
             marginVertical: 2,
+            textAlign: 'center',
             flexDirection: 'row',
-        },
-        icon: {
-            alignSelf: 'center',
-            marginRight: 4
+            justifyContent: 'center',
+            alignSelf: 'center'
         },
         container: {
             flexDirection: 'row',
             flexWrap: 'wrap',
-            marginVertical: 4,
+            alignItems: 'center',
+            backgroundColor: 'white',
+            marginHorizontal: 8
+        },
+        profile_container: {
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignSelf: 'center',
+            marginBottom: 10,
+            flexWrap: 'wrap',
+            width: '80%',
+        },
+        icon: {
+            alignSelf: 'center'
         }
     }
 );
 
-const point_styles = StyleSheet.create(
+const actions_styles = StyleSheet.create(
     {
         body: {
-            borderColor: GlobalValues.ORANGE_COLOR,
-            borderTopWidth: 3,
-            borderBottomWidth: 3,
-        },
-        container: {
 
         },
-        text: {
+        actions_button:  {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginVertical: 10,
+            paddingHorizontal: 10,
+        },
+        action_button_inner: {
+        },
+        action_button_icon: {
+        },
+        action_button_text: {
+            color: 'black',
             fontSize: 16,
-            alignSelf: 'center',
-        },
-        image: {
-            marginTop: 10,
-            width: Math.trunc(Dimensions.get('window').width * 0.90),
-            height: Math.trunc(Dimensions.get('window').width * 0.90), 
-        },
-        trash_icon: {
-            flexDirection: 'row-reverse',
         }
     }
 );
 
+const image_styles = StyleSheet.create(
+    {
+        container: {
+            width: 204,
+            height: 200,
+            marginTop: '10%',
+            marginBottom: 5,
+            alignSelf: 'center',
+        },
+        box: {
+            width: 204,
+            height: 200,
+            borderWidth: 2,
+            borderColor: 'gray',
+            borderRadius: 2,
+        },
+        image: {
+            width: 200,
+            height: 200,
+        },
+    }
+);
 const HeaderTitle = (title) => {
     return(
         <Text style={{fontSize: 24, color: 'black'}}>
@@ -324,8 +394,6 @@ export class OtherProfileScreen extends React.Component {
                     this.state.profile_images = [require("../../../images/default_image.png")];
                 }
 
-                this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={this.state.name}/>});
-
                 this.state.loading = false;
             }
             else {
@@ -379,119 +447,117 @@ export class OtherProfileScreen extends React.Component {
         }
         else {
             var genderRender = {};
+            var descriptionRender = {};
 
-            if (this.state.gender == "male") {
-                genderRender = (
-                    <View style={[filter_snaps_styles.inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>
-                        <MaterialCommunityIcons name="gender-male" size={18} color={GlobalValues.MALE_COLOR} style={filter_snaps_styles.icon}/>
-                        <Text style={{color: 'black', fontSize: 18}}>
-                            Male
+        if (this.state.description.length > 0) {
+            descriptionRender = (
+                <View>
+                    <View style={main_styles.horizontal_bar}/>
+                    <View style={attribute_styles.body}>
+                        <Text style={attribute_styles.title_text}>
+                            Description
+                        </Text>     
+                        <View style={attribute_styles.input_text_view}>
+                            <Text style={attribute_styles.text_input}>
+                                {this.state.description}
+                            </Text>
+                        </View>                   
+                    </View>  
+                </View>
+            );
+        }
+        else {
+            descriptionRender = (
+                <View />
+            );
+        }
+
+        if (this.state.gender == "male") {
+            genderRender = (
+                <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
+                    <MaterialCommunityIcons name="gender-male" size={14} color={GlobalValues.MALE_COLOR} style={filter_snaps_styles.icon}/>
+                    <Text style={{color: 'black', fontSize: 14}}>
+                        Male
+                    </Text>
+                </View>
+            );
+        }
+        else if (this.state.gender == "female") {
+            genderRender = (
+                <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
+                    <MaterialCommunityIcons name="gender-female" size={14} color={GlobalValues.FEMALE_COLOR} style={filter_snaps_styles.icon}/>
+                    <Text style={{color: 'black', fontSize: 14}}>
+                        Female
+                    </Text>
+                </View>
+            );
+        }
+        else {
+            genderRender = (
+                <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
+                    <MaterialCommunityIcons name="gender-non-binary" size={14} color="black" style={filter_snaps_styles.icon}/>
+                    <Text style={{color: 'black', fontSize: 14}}>
+                        {this.state.gender}
+                    </Text>
+                </View>
+            );
+        }
+
+        var inviteActions = {};
+
+        if (this.state.type == "none") {
+            inviteActions = (
+                <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.inviteTo();}}>
+                    <Text style={actions_styles.action_button_text}>
+                        Invite
+                    </Text>
+                    <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
+                </TouchableOpacity>
+            );
+        }
+        else if (this.state.type == "activity" && this.state.viewing == "participants") {
+            inviteActions = ( 
+                <View>
+                    <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.promoteToAdmin();}}>
+                        <Text style={actions_styles.action_button_text}>
+                            Promote to Admin
                         </Text>
-                    </View>
-                );
-            }
-            else if (this.state.gender == "female") {
-                genderRender = (
-                    <View style={[filter_snaps_styles.inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>
-                        <MaterialCommunityIcons name="gender-female" size={18} color={GlobalValues.FEMALE_COLOR} style={filter_snaps_styles.icon}/>
-                        <Text style={{color: 'black', fontSize: 18}}>
-                            Female
+                        <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
+                    </TouchableOpacity>
+                    <View style={main_styles.horizontal_bar} />   
+                    <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.inviteTo();}}>
+                        <Text style={actions_styles.action_button_text}>
+                            Invite
                         </Text>
+                        <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
+                    </TouchableOpacity>
+                </View>
+            );
+        }
+        else if (this.state.type == "activity" && this.state.viewing == "admins") {
+            inviteActions = (
+                <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.inviteTo();}}>
+                    <Text style={actions_styles.action_button_text}>
+                        Invite
+                    </Text>
+                    <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
+                </TouchableOpacity>
+            );
+        }
+
+        //<FontAwesome name="road" size={12} color="gray" style={filter_snaps_styles.icon}/>
+
+        const renderComponent = () => {
+            if (this.state.loading == true) {
+                return (
+                    <View>
+                        <LoadingScreen tryAgain={this.fetchActivityInformation} reload={this.state.reload}/>
                     </View>
                 );
             }
             else {
-                genderRender = (
-                    <View style={[filter_snaps_styles.inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>
-                        <MaterialCommunityIcons name="gender-non-binary" size={18} color="black" style={filter_snaps_styles.icon}/>
-                        <Text style={{color: 'black', fontSize: 18}}>
-                            Other
-                        </Text>
-                    </View>
-                );
-            }
-
-            var inviteActions = {};
-
-            if (this.state.type == "none") {
-                inviteActions = (
-                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.inviteTo()}}>
-                        <View style={actions_styles.action_button_inner}>
-                            <Text style={actions_styles.action_button_text}>
-                                Invite
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                );
-            }
-            else if (this.state.type == "activity" && this.state.viewing == "participants") {
-                inviteActions = ( 
+                return (
                     <View>
-                        <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.promoteToAdmin()}}>
-                            <View style={actions_styles.action_button_inner}>
-                                <Text style={actions_styles.action_button_text}>
-                                    Promote to Admin
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.inviteTo()}}>
-                            <View style={actions_styles.action_button_inner}>
-                                <Text style={actions_styles.action_button_text}>
-                                    Invite
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                );
-            }
-            else if (this.state.type == "activity" && this.state.viewing == "admins") {
-                inviteActions = (
-                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.inviteTo()}}>
-                        <View style={actions_styles.action_button_inner}>
-                            <Text style={actions_styles.action_button_text}>
-                                Invite
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                );
-            }
-
-            var distanceRender = {};
-
-            if (this.state.type == "none") {
-                distanceRender = (
-                    <View style={[filter_snaps_styles.inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>
-                        <Entypo name="location-pin" size={24} color="red" style={filter_snaps_styles.icon}/>
-                        <Text style={{color: 'black', fontSize: 18}}>
-                            {this.state.distance + " mi"}
-                        </Text>
-                    </View>
-                );
-            }
-            else if (this.state.type == "activity") {
-                distanceRender = (
-                    <View style={[filter_snaps_styles.inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>
-                        <Entypo name="location-pin" size={24} color="red" style={filter_snaps_styles.icon}/>
-                        <Text style={{color: 'black', fontSize: 18}}>
-                            {this.state.distance + " mi"}
-                        </Text>
-                    </View>
-                );
-            }
-            else if (this.state.type == "group") {
-                distanceRender = (
-                    <View style={[filter_snaps_styles.inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>
-                        <Entypo name="location-pin" size={24} color="red" style={filter_snaps_styles.icon}/>
-                        <Text style={{color: 'black', fontSize: 18}}>
-                            {this.state.distance + " mi"}
-                        </Text>
-                    </View>
-                );
-            }
-
-            return (
-                <View style={main_styles.page}>
-                    <ScrollView style={main_styles.scroll_view}>
                         <View style={image_styles.container}>
                             <SliderBox
                             images={this.state.profile_images.map(uri => {
@@ -511,65 +577,70 @@ export class OtherProfileScreen extends React.Component {
                         </View>
                         <View style={filter_snaps_styles.profile_container}>
                             {genderRender}
-                            <View style={[filter_snaps_styles.inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>
-                                <MaterialCommunityIcons name="baby" size={18} color="lightskyblue" style={filter_snaps_styles.icon}/>
-                                <Text style={{color: 'black', fontSize: 18}}>
+                            <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
+                                <MaterialCommunityIcons name="baby"  size={12} color="gray" style={filter_snaps_styles.icon}/>
+                                <Text style={{color: 'black', fontSize: 14}}>
                                     {this.state.age}
                                 </Text>
                             </View>
-                            <View style={[filter_snaps_styles.inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>
-                                <Feather name="target" size={18} color="green" style={filter_snaps_styles.icon}/>
-                                <Text style={{color: 'black', fontSize: 18}}>
+                            <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
+                                <Feather name="target" size={12} color="gray" style={filter_snaps_styles.icon}/>
+                                <Text style={{color: 'black', fontSize: 14}}>
                                     {" " + "4m ago"}
                                 </Text>
                             </View>
-                            {distanceRender}
+                            <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
+                                <FontAwesome name="road" size={12} color="gray" style={filter_snaps_styles.icon}/>
+                                <Text style={{color: 'black', fontSize: 14}}>
+                                    {this.state.distance + " mi"}
+                                </Text>
+                            </View>
                         </View>
-
                         <View style={info_styles.body}>
-                            <Text style={info_styles.title_text}>
-                                Description
-                            </Text>
-                            <Text style={info_styles.inner_text}>
-                                This is the section about the info and i dont know if this is going to wrap but it should around the edge dammit this should fit
-                            </Text>
-                            <View style={info_styles.horizontal_bar}/>
-                            <Text style={info_styles.title_text}>
-                                Attributes
-                            </Text>
+                            {descriptionRender}
+                            <View style={main_styles.horizontal_bar}/>
+                            <View style={inline_attribute_styles.body}>
+                                <Text style={inline_attribute_styles.title_text}>
+                                    It's about
+                                </Text>
+                            </View>
                             <View style={filter_snaps_styles.container}> 
                                 {this.state.attributes.map((data, key) => {
                                     return (
-                                        <FilterSnap key={key} innerText={data} />
+                                        <FilterSnap key={key} parent={this} innerText={data} data={this.state.attributes} id={key}/>
                                     );
                                 })}
                             </View>
                         </View>
                         <View style={info_styles.body}>
-                            <Text style={info_styles.title_text}>
-                                Actions
-                            </Text>
                             <View style={actions_styles.actions_view}> 
-                                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.sendMessage()}}>
-                                    <View style={actions_styles.action_button_inner}>
-                                        <AntDesign name="message1" size={20} color="white" style={actions_styles.action_button_icon}/>
-                                        <Text style={actions_styles.action_button_text}>
-                                            Send Message
-                                        </Text>
-                                    </View>
+                                <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.sendMessage();}}>
+                                    <Text style={actions_styles.action_button_text}>
+                                        Send Message
+                                    </Text>
+                                    <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
                                 </TouchableOpacity>
+                                <View style={main_styles.horizontal_bar} />
                                 {inviteActions}
-                                <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.block()}}>
-                                    <View style={actions_styles.action_button_inner}>
-                                        <MaterialCommunityIcons name="block-helper" size={20} color="white" style={actions_styles.action_button_icon}/>
-                                        <Text style={actions_styles.action_button_text}>
-                                            Block
-                                        </Text>
-                                    </View>
+                                <View style={main_styles.horizontal_bar} />
+                                <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.block();}}>
+                                    <Text style={actions_styles.action_button_text}>
+                                        Block
+                                    </Text>
+                                    <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
                                 </TouchableOpacity>
                             </View>
                         </View>
-                    </ScrollView>
+                    </View>
+                );
+            }
+        }
+
+            return (
+                <View style={main_styles.page}>
+                    
+                    <FlatList data={[{id: 1}]} keyExtractor={() => "dummy"} listEmptyComponent={null} renderItem={renderComponent} style={[main_styles.page, {zIndex: 99, flex: 1}]}/>
+                    
                 </View>
             );
         }

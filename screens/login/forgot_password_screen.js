@@ -226,7 +226,7 @@ export class ForgotPasswordScreen extends React.Component {
         this.state.error_message = "";
 
         var body = {
-            "birthdate": this.state.date.getDate() + "/" + this.state.date.getMonth() + "/" + this.state.date.getFullYear(),
+            "birthdate": this.state.date.getDate() + "/" + (this.state.date.getMonth() + 1) + "/" + this.state.date.getFullYear(),
             "gender": this.state.gender_dropdown_value,
             "first_name": this.state.first_name,
             "last_name": this.state.last_name,

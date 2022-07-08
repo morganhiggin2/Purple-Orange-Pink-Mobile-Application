@@ -1072,7 +1072,7 @@ export class ActivityCreationScreen extends React.Component {
         //add elements
 
         //get date string
-        var dateString = this.state.date.getDate() + "/" + this.state.date.getMonth() + "/" + this.state.date.getFullYear() + " " + this.state.date.getHours() + ":" + this.state.date.getMinutes();
+        var dateString = this.state.date.getDate() + "/" + (this.state.date.getMonth() + 1) + "/" + this.state.date.getFullYear() + " " + this.state.date.getHours() + ":" + this.state.date.getMinutes();
 
         //make body with requried elements
         var body = {
@@ -1161,6 +1161,7 @@ export class ActivityCreationScreen extends React.Component {
             }
             else if (result.response.status == 400 && result.response.data) {
                 Alert.alert(JSON.stringify(result.response.data));
+                console.log(result.response.data);
                 return;
             }
             //handle not found case
@@ -1208,12 +1209,12 @@ export class ActivityCreationScreen extends React.Component {
         if (this.state.is_physical_event) {
             if (this.state.target_address != "") {
                 //validate address
-                var result = await this.getGeoLocationFromAddress(this.state.address);
+                /*var result = await this.getGeoLocationFromAddress(this.state.address);
 
                 if (!result) {
                     this.showError("invalid address");
                     return false;
-                }
+                }*/
             }
         }
 

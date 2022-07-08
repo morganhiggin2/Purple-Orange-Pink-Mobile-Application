@@ -19,6 +19,7 @@ const HeaderRecordSchema = {
 	primaryKey: "_id",
     properties: {
 		_id: "uuid",
+		user_id: "string", //string of the user id that the message belongs to
         type: "int", //index of type in types array
         title: "string", //for direct message, person who sent it. for conversation, conversation name. 
         body: "string", //body of message to be displayed in messages feed
@@ -168,7 +169,7 @@ export class MessageHandler {
 
 		if (message.type == "direct") { 
 			//get header row
-			headerRow = await this.masterRealm.objects("Messages_Header_Record").filtered("type_id = '" + message.other_user_id + "' AND type = 0");
+			headerRow = await this.masterRealm.objects("Messages_Header_Record").filtered("type_id = '" + message.other_user_id + "' AND type = 0 AND user_id = " + GlobalProperties.user_id);
 
 			//check if we found it
 			found = headerRow.length > 0;
@@ -216,6 +217,7 @@ export class MessageHandler {
 					//create master header record
 					this.masterRealm.create("Messages_Header_Record", {
 						_id: parentHeaderId,
+						user_id: GlobalProperties.user_id,
 						type_id: message.other_user_id, 
 						sub_header_id: subHeaderId,
 						type: 0,
@@ -251,7 +253,7 @@ export class MessageHandler {
 		}
 		else if (message.type == "conversation") {
 			//get header row
-			headerRow = await this.masterRealm.objects("Messages_Header_Record").filtered("type_id = '" + message.conversation_id + "' AND type = 1");
+			headerRow = await this.masterRealm.objects("Messages_Header_Record").filtered("type_id = '" + message.conversation_id + "' AND type = 1 AND user_id = " + GlobalProperties.user_id);
 
 			//check if we found it
 			found = headerRow.length > 0;
@@ -298,6 +300,7 @@ export class MessageHandler {
 					//create master header record
 					this.masterRealm.create("Messages_Header_Record", {
 						_id: parentHeaderId,
+						user_id: GlobalProperties.user_id,
 						type_id: message.conversation_id, 
 						sub_header_id: subHeaderId,
 						type: 1,
@@ -332,7 +335,7 @@ export class MessageHandler {
 		}
 		else if (message.type == "invitation") {
 			//get header row
-			headerRow = await this.masterRealm.objects("Messages_Header_Record").filtered("type_id = '" + message.other_user_id + "' AND type = 2");
+			headerRow = await this.masterRealm.objects("Messages_Header_Record").filtered("type_id = '" + message.other_user_id + "' AND type = 2 AND user_id = " + GlobalProperties.user_id);
 
 			//check if we found it
 			found = headerRow.length > 0;
@@ -361,6 +364,7 @@ export class MessageHandler {
 				//create master header record
 				this.masterRealm.create("Messages_Header_Record", {
 					_id: parentHeaderId,
+					user_id: GlobalProperties.user_id,
 					type_id: message.invitation_id, 
 					sub_header_id: subHeaderId,
 					type: 2,
@@ -391,6 +395,7 @@ export class MessageHandler {
 				//create master header record
 				this.masterRealm.create("Messages_Header_Record", {
 					_id: parentHeaderId,
+					user_id: GlobalProperties.user_id,
 					type_id: "", 
 					sub_header_id: subHeaderId,
 					type: 3,
@@ -429,26 +434,22 @@ export class MessageHandler {
 
 	//query for messages for your messages screen
 	async getMessageHeaders() {
-		/*this.masterRealm.write(() => {
-			this.masterRealm.deleteAll();
-		});*/
-
 		var messageHeaders = null;
 
 		if (GlobalProperties.messages_filter_type == "all") {
-			messageHeaders = await this.masterRealm.objects("Messages_Header_Record").sorted('last_timestamp', true);
+			messageHeaders = await this.masterRealm.objects("Messages_Header_Record").filtered("user_id = " + GlobalProperties.user_id).sorted('last_timestamp', true);
 		}
 		else if (GlobalProperties.messages_filter_type == "direct messages") {
-			messageHeaders = await this.masterRealm.objects("Messages_Header_Record").filtered("type = 0").sorted('last_timestamp', true);
+			messageHeaders = await this.masterRealm.objects("Messages_Header_Record").filtered("type = 0 AND user_id = " + GlobalProperties.user_id).sorted('last_timestamp', true);
 		}
 		else if (GlobalProperties.messages_filter_type == "conversations") {
-			messageHeaders = await this.masterRealm.objects("Messages_Header_Record").filtered("type = 1").sorted('last_timestamp', true);
+			messageHeaders = await this.masterRealm.objects("Messages_Header_Record").filtered("type = 1 AND user_id = " + GlobalProperties.user_id).sorted('last_timestamp', true);
 		}
 		else if (GlobalProperties.messages_filter_type == "invitations") {
-			messageHeaders = await this.masterRealm.objects("Messages_Header_Record").filtered("type = 2").sorted('last_timestamp', true);
+			messageHeaders = await this.masterRealm.objects("Messages_Header_Record").filtered("type = 2 AND user_id = " + GlobalProperties.user_id).sorted('last_timestamp', true);
 		}
 		else if (GlobalProperties.messages_filter_type == "announcements") {
-			messageHeaders = await this.masterRealm.objects("Messages_Header_Record").filtered("type = 3").sorted('last_timestamp', true);
+			messageHeaders = await this.masterRealm.objects("Messages_Header_Record").filtered("type = 3 AND user_id = " + GlobalProperties.user_id).sorted('last_timestamp', true);
 		}
 
 		return messageHeaders;
@@ -475,6 +476,7 @@ export class MessageHandler {
 			//create master header record
 			this.masterRealm.create("Messages_Header_Record", {
 				_id: parentHeaderId,
+				user_id: GlobalProperties.user_id,
 				type_id: type_id, 
 				sub_header_id: subHeaderId,
 				type: 0,
@@ -524,6 +526,7 @@ export class MessageHandler {
 			//create master header record
 			this.masterRealm.create("Messages_Header_Record", {
 				_id: parentHeaderId,
+				user_id: GlobalProperties.user_id,
 				type_id: type_id, 
 				sub_header_id: subHeaderId,
 				type: 1,
@@ -620,29 +623,13 @@ export class MessageHandler {
 			}
 
 		}
-
-		/*
-		if (message.type == "direct message") {
-		//get sub header
-		//delete sub header
-		//delete record header
-		}
-		else if (message.type == "conversation") {
-		//get sub header
-		//delete sub header
-		//delete record header
-		}
-		else if (message.type == "announcement") {
-		//get sub header
-		//delete sub header
-		//delete record header
-		}
-		else if (message.type == "invitation") {
-		//get sub header
-		//delete sub header
-		//delete record header
-		}*/
     }
+
+	async deleteAll() {
+		this.masterRealm.write(() => {
+			this.masterRealm.deleteAll();
+		});
+	}
 }
 
 //PROBLEM making primary keys

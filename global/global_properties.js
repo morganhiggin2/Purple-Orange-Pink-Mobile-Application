@@ -71,6 +71,9 @@ export class GlobalProperties {
     static user_name = "";
     static user_id = "";
 
+    //used for both explore screens
+    static currentExploreScreenSearchUpdate = () => {};
+
     //global search filters for maps and explore
     static search_attributes = [];
     static search_minAge = 18;
@@ -80,9 +83,6 @@ export class GlobalProperties {
     static search_radius = 5;
     static use_map_settings = false;
     //blank is no preference
-
-    //for the map
-    static map_search_radius = 5;
 
     static map_params = null;
     static default_map_params = {

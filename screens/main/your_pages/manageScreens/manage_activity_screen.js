@@ -255,9 +255,6 @@ export class ManageActivityScreen extends React.Component {
             is_admin: false,
             is_participant: false,
 
-            //images
-            activity_images: [],
-
             //address
             address: "",
 
@@ -391,6 +388,7 @@ export class ManageActivityScreen extends React.Component {
         //once done, lazy update
         this.lazyUpdate();
     }
+
     render() {
         var distanceRender;
         var addressTitle;
@@ -407,6 +405,9 @@ export class ManageActivityScreen extends React.Component {
                     </Text>
                 </View>
             );
+        }
+        else {
+            distanceRender = (<View />);
         }
 
         if (this.state.is_physical) {
