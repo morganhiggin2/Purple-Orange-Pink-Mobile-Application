@@ -70,7 +70,7 @@ const attribute_styles = StyleSheet.create({
     },
     input_text_view: {
         flexDirection:  'row',
-        paddingVertical: 6
+        marginBottom: 4,
     },
     multiline_input_text: {
         fontSize: 14, 
@@ -82,12 +82,10 @@ const attribute_styles = StyleSheet.create({
         fontSize: 16,
         color: 'black',
         marginBottom: 2,
-    },
-    text_input: {
+    },    text_input: {
         textAlignVertical: "top",
         flex: 1,
         maxHeight: 95,
-        marginLeft: 2,
         borderRadius: 8,
     },
     inner_text: {
@@ -940,7 +938,7 @@ export class EditActivityScreen extends React.Component {
                                 We are going to 
                             </Text>
                             <View style={inline_attribute_styles.input_text_view}>
-                                <TextInput style={inline_attribute_styles.text_input} placeholder={"play videogames"} placeholderTextColor="gray" editable={true} maxLength={160} onChangeText={(value) => {this.updateTitle(value);}} onEndEditing={() => {this.updateUpdateMade(false);}}/>
+                                <TextInput style={inline_attribute_styles.text_input} placeholder={"play videogames"} placeholderTextColor="gray" autoCorrect={false} editable={true} maxLength={160} onChangeText={(value) => {this.updateTitle(value);}} onEndEditing={() => {this.updateUpdateMade(false);}}/>
                             </View>
                         </View>
                         <View style={main_styles.horizontal_bar}/>

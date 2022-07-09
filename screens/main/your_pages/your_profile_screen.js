@@ -71,7 +71,7 @@ const attribute_styles = StyleSheet.create({
     },
     input_text_view: {
         flexDirection:  'row',
-        paddingVertical: 6
+        marginBottom: 4,
     },
     multiline_input_text: {
         fontSize: 14, 
@@ -88,7 +88,6 @@ const attribute_styles = StyleSheet.create({
         textAlignVertical: "top",
         flex: 1,
         maxHeight: 95,
-        marginLeft: 2,
         borderRadius: 8,
     },
     inner_text: {
@@ -475,7 +474,7 @@ export class YourProfileScreen extends React.Component {
                                 Name
                             </Text>
                             <View style={inline_attribute_styles.input_text_view}>
-                                <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="gray" placeholder={"Name"} editable={true} maxLength={160} defaultValue={this.state.name} onChangeText={(value) => {this.updateFirstName(value);}} onEndEditing={(value) => {this.updateUpdateMade(false)}}/>
+                                <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="gray" placeholder={"Name"} autoCorrect={false} editable={true} maxLength={160} defaultValue={this.state.name} onChangeText={(value) => {this.updateName(value);}} onEndEditing={(value) => {this.updateUpdateMade(false)}}/>
                             </View>
                         </View>
                         <View style={main_styles.horizontal_bar}/>

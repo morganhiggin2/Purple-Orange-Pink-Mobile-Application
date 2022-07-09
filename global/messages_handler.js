@@ -169,7 +169,7 @@ export class MessageHandler {
 
 		if (message.type == "direct") { 
 			//get header row
-			headerRow = await this.masterRealm.objects("Messages_Header_Record").filtered("type_id = '" + message.other_user_id + "' AND type = 0 AND user_id = " + GlobalProperties.user_id);
+			headerRow = await this.masterRealm.objects("Messages_Header_Record").filtered("type_id = '" + message.other_user_id + "' AND type = 0 AND user_id = '" + GlobalProperties.user_id + "'");
 
 			//check if we found it
 			found = headerRow.length > 0;
@@ -253,7 +253,7 @@ export class MessageHandler {
 		}
 		else if (message.type == "conversation") {
 			//get header row
-			headerRow = await this.masterRealm.objects("Messages_Header_Record").filtered("type_id = '" + message.conversation_id + "' AND type = 1 AND user_id = " + GlobalProperties.user_id);
+			headerRow = await this.masterRealm.objects("Messages_Header_Record").filtered("type_id = '" + message.conversation_id + "' AND type = 1 AND user_id = '" + GlobalProperties.user_id + "'");
 
 			//check if we found it
 			found = headerRow.length > 0;
@@ -335,7 +335,7 @@ export class MessageHandler {
 		}
 		else if (message.type == "invitation") {
 			//get header row
-			headerRow = await this.masterRealm.objects("Messages_Header_Record").filtered("type_id = '" + message.other_user_id + "' AND type = 2 AND user_id = " + GlobalProperties.user_id);
+			headerRow = await this.masterRealm.objects("Messages_Header_Record").filtered("type_id = '" + message.other_user_id + "' AND type = 2 AND user_id = '" + GlobalProperties.user_id + "'");
 
 			//check if we found it
 			found = headerRow.length > 0;
@@ -437,19 +437,19 @@ export class MessageHandler {
 		var messageHeaders = null;
 
 		if (GlobalProperties.messages_filter_type == "all") {
-			messageHeaders = await this.masterRealm.objects("Messages_Header_Record").filtered("user_id = " + GlobalProperties.user_id).sorted('last_timestamp', true);
+			messageHeaders = await this.masterRealm.objects("Messages_Header_Record").filtered("user_id = '" + GlobalProperties.user_id + "'").sorted('last_timestamp', true);
 		}
 		else if (GlobalProperties.messages_filter_type == "direct messages") {
-			messageHeaders = await this.masterRealm.objects("Messages_Header_Record").filtered("type = 0 AND user_id = " + GlobalProperties.user_id).sorted('last_timestamp', true);
+			messageHeaders = await this.masterRealm.objects("Messages_Header_Record").filtered("type = 0 AND user_id = '" + GlobalProperties.user_id + "'").sorted('last_timestamp', true);
 		}
 		else if (GlobalProperties.messages_filter_type == "conversations") {
-			messageHeaders = await this.masterRealm.objects("Messages_Header_Record").filtered("type = 1 AND user_id = " + GlobalProperties.user_id).sorted('last_timestamp', true);
+			messageHeaders = await this.masterRealm.objects("Messages_Header_Record").filtered("type = 1 AND user_id = '" + GlobalProperties.user_id + "'").sorted('last_timestamp', true);
 		}
 		else if (GlobalProperties.messages_filter_type == "invitations") {
-			messageHeaders = await this.masterRealm.objects("Messages_Header_Record").filtered("type = 2 AND user_id = " + GlobalProperties.user_id).sorted('last_timestamp', true);
+			messageHeaders = await this.masterRealm.objects("Messages_Header_Record").filtered("type = 2 AND user_id = '" + GlobalProperties.user_id + "'").sorted('last_timestamp', true);
 		}
 		else if (GlobalProperties.messages_filter_type == "announcements") {
-			messageHeaders = await this.masterRealm.objects("Messages_Header_Record").filtered("type = 3 AND user_id = " + GlobalProperties.user_id).sorted('last_timestamp', true);
+			messageHeaders = await this.masterRealm.objects("Messages_Header_Record").filtered("type = 3 AND user_id = '" + GlobalProperties.user_id + "'").sorted('last_timestamp', true);
 		}
 
 		return messageHeaders;

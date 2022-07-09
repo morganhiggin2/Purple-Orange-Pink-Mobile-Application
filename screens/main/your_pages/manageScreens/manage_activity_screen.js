@@ -86,7 +86,7 @@ const attribute_styles = StyleSheet.create({
     },
     input_text_view: {
         flexDirection:  'row',
-        paddingVertical: 6
+        marginBottom: 4,
     },
     multiline_input_text: {
         fontSize: 14, 
@@ -98,12 +98,10 @@ const attribute_styles = StyleSheet.create({
         fontSize: 16,
         color: 'black',
         marginBottom: 2,
-    },
-    text_input: {
+    },    text_input: {
         textAlignVertical: "top",
         flex: 1,
         maxHeight: 95,
-        marginLeft: 2,
         borderRadius: 8,
     },
     inner_text: {

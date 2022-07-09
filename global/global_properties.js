@@ -60,6 +60,9 @@ export const GlobalValues = {
   SEARCH_LOCATION_IS_ACTIVITY_LOCATION_INFORMATION: "The location in which people can find your activity is the same as the location of your activity.",
   ADDRESS_INFORMATION: "Only people who join you activity are able to see this",
 
+  //search page size
+  SEARCH_PAGE_SIZE: 50,
+
   //messages
   MESSAGES_PAGE_AMOUNT: 40,
 }
@@ -82,6 +85,7 @@ export class GlobalProperties {
     static search_type = "activities";
     static search_radius = 5;
     static use_map_settings = false;
+    static medium = "";
     //blank is no preference
 
     static map_params = null;
@@ -178,7 +182,6 @@ export class GlobalProperties {
               return null;
             }
           } catch (error) {
-            console.log(error);
             return null;
           }
     }

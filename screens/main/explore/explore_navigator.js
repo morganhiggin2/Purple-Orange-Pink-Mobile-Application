@@ -143,7 +143,23 @@ export class ListScreen extends React.Component {
     }
 
     componentDidMount() {
+        //check if first startup
+        GlobalProperties.get_key_value_pair("First_Startup")
+        .then((value) => {
+            //first startup
+            if (value == null) {
+                GlobalProperties.put_key_value_pair("First_Startup", "");
 
+                //first startup
+                Alert.alert("Join or create an activity to do something with someone new!"); // Make friends by going hiking, swimming, partying, anything you want to do with new people!
+            }
+        })
+        .catch(() => {
+            GlobalProperties.put_key_value_pair("First_Startup", "");
+
+            //first startup
+            Alert.alert("Join or create an activity to do something with someone new!");
+        });
     }
 
     /**

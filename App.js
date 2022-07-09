@@ -22,6 +22,7 @@ import { Alert, LogBox } from 'react-native';
 import { LoadingScreen } from './screens/misc/loading_screen.js';
 import { MessageHandler } from './global/messages_handler.js';
 import 'react-native-get-random-values';
+import * as Font from 'expo-font';
 
 //expo
 Notifications.setNotificationHandler({
@@ -65,7 +66,7 @@ export class App extends React.Component {
       GlobalProperties.user_name = JSON.parse(value);
     })
     .catch(() => {
-      GlobalProperties.put_key_value_pair("User_Username");
+      GlobalProperties.put_key_value_pair("User_Username", "");
     });
 
     //add notification listeners
@@ -101,6 +102,17 @@ export class App extends React.Component {
     });
 
     this.connect();
+
+    Font.loadAsync({
+      // Load a font `Montserrat` from a static resource
+      Roboto: require('./assets/fonts/Roboto-Regular.ttf'),
+    })
+    .then(() => {
+
+    }).
+    catch(() => {
+      Alert.alert("Could not load font");
+    });
   
     //Alert.alert("There seems to be a network connection issue.\nCheck your internet.");
 
@@ -209,7 +221,7 @@ export class App extends React.Component {
               });
             })
             .catch((exception) => {
-              GlobalProperties.put_key_value_pair("User_PurpleOrangePink_Api_Token");
+              GlobalProperties.put_key_value_pair("User_PurpleOrangePink_Api_Token", "");
         
               //token does not exist, assume never logged in before and move on
             });

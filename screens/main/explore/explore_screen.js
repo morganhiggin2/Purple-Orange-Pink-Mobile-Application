@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Image, SafeAreaView, ScrollView, Dimensions, FlatList, ImageBackground, Alert, RefreshControl, TouchableOpacity} from 'react-native';
+import {StyleSheet, View, Text, TextInput, Image, SafeAreaView, ScrollView, Dimensions, FlatList, ImageBackground, Alert, RefreshControl, TouchableOpacity, TouchableWithoutFeedbackBase} from 'react-native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { AntDesign, Feather, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons'; 
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -60,15 +60,18 @@ const frame_styles = StyleSheet.create(
             fontSize: 14,
             marginRight: 15,
             color: 'black',
+            fontFamily: "Roboto",
         },
         description_text: {
             fontSize: 14,
             marginRight: 16,
             color: 'gray',
+            fontFamily: "Roboto",
         },
         name_text: {
             fontSize: 18,
             color: 'black',
+            fontFamily: "Roboto",
         },
     }
 );
@@ -97,29 +100,6 @@ const post_styles = StyleSheet.create(
     }
 );*/
 
-const post_styles = StyleSheet.create(
-    {
-        post_button: {
-            flexDirection: "row",
-            padding: 3,
-            paddingVertical: 0,
-            alignSelf: 'center',
-            backgroundColor: GlobalValues.ORANGE_COLOR,
-            borderColor: GlobalValues.ORANGE_COLOR,
-            minWidth: 50,
-            minHeight: 50,
-            top: 10,
-            left: 50,
-            position: 'absolute'
-        },
-        post_button_text: {
-            color: 'white',
-            fontSize: 18,
-            alignSelf: 'center',
-        }
-    }
-);
-
 const main_styles = StyleSheet.create(
     {
         page: {
@@ -140,7 +120,7 @@ const main_styles = StyleSheet.create(
             padding: 0,
             margin: 0,
             borderWidth: 0,
-            fontSize: 20,
+            fontSize: 14,
             color: 'black',
             width: Math.trunc(Dimensions.get('window').width * 0.85) - 30 - 5 - 14,
             marginLeft: 5,
@@ -174,6 +154,7 @@ const filter_snaps_styles = StyleSheet.create(
             paddingHorizontal: 3,
             paddingVertical: 1,
             fontSize: 14,
+            fontFamily: "Roboto",
             color: 'white', 
             fontWeight: 'bold',
             alignSelf: 'flex-start',
@@ -431,12 +412,16 @@ export class ExploreScreen extends React.Component {
             //frames
             frames: [],
 
+            //page num
+            page_number: 1,
+
             frameComponents: [],
             global_props: null,
         };
 
         this.validateAttributes = this.validateAttributes.bind(this);
         this.ScrollViewIsCloseToBottom = this.ScrollViewIsCloseToBottom.bind(this);
+        this.reloadResults = this.reloadResults.bind(this);
         
         this.updateSearch = this.updateSearch.bind(this);
         this.updateUsers = this.updateUsers.bind(this);
@@ -458,6 +443,8 @@ export class ExploreScreen extends React.Component {
                 this.state.reload = false;
 
                 this.lazyUpdate();
+
+                this.state.page_number = 1;
 
                 this.updateSearch();
 
@@ -633,6 +620,7 @@ export class ExploreScreen extends React.Component {
                     "latitude": GlobalProperties.map_params.latitude,
                     "longitude": GlobalProperties.map_params.longitude,
                 },
+                "medium": GlobalProperties.medium,
                 "page_number": 1,
                 "page_size": 20,
             };
@@ -746,7 +734,7 @@ export class ExploreScreen extends React.Component {
                             <ScrollView 
                                 contentContainerStyle={{alignItems: 'center'}}
                                 refreshControl={<RefreshControl refreshing={false} 
-                                onRefresh={() => {this.state.loading = true; this.updateSearch();}}/>}
+                                onRefresh={() => {this.reloadResults;}}/>}
                                 onScroll={({nativeEvent}) => {
                                     if (this.ScrollViewIsCloseToBottom(nativeEvent)) {
                                         console.log("at bottom");
@@ -765,6 +753,13 @@ export class ExploreScreen extends React.Component {
         );
     }
 
+    //reload results
+    reloadResults() {
+        this.state.page_number = 1;
+        this.state.loading = true;
+        this.updateSearch();
+    }
+
 /**
                                  
                         <TouchableHighlight style={post_styles.post_button} underlayColor="white" onPress={() => {this.props.navigation.navigate("Activity Creation Screen")}} onHideUnderlay={() => {}} onShowUnderlay={() => {}}>         
@@ -777,6 +772,12 @@ export class ExploreScreen extends React.Component {
 
 
     ScrollViewIsCloseToBottom(layoutMeasurement, contentOffset, contentSize) {
+        //if we are at max
+        if (this.state.frames.length == GlobalValues.SEARCH_PAGE_SIZE * this.state.page_number) {
+            //then load more
+            this.state.page_number++;
+            this.updateSearch();
+        }
         //const paddingToBottom = 20;
         //return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
     }

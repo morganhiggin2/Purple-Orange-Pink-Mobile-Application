@@ -190,16 +190,14 @@ export class MainSettingsScreen extends React.Component {
                         </TouchableHighlight>
                     </View>
                     <View style={section_styles.body}> 
-                        <View style={actions_styles.body}>
-                            <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {deleteAccountAlert(this.deleteAccount)}}>
-                                <View style={actions_styles.action_button_inner}>
-                                    <Feather name="edit" size={20} color="white" style={actions_styles.action_button_icon}/>
-                                    <Text style={actions_styles.action_button_text}>
-                                        Delete Account
-                                    </Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
+                        <TouchableHighlight underlayColor={"#b8b8b8"} onPress = {() => {deleteAccountAlert(this.deleteAccount);}}>
+                            <View style={selector_styles.body}>
+                                <Text style={selector_styles.title_text}>
+                                    Delete Account
+                                </Text>
+                                <MaterialIcons name="keyboard-arrow-right" size={28} color="black" style={selector_styles.arrow}/>
+                            </View>
+                        </TouchableHighlight>
                     </View>
                 </View>
             );

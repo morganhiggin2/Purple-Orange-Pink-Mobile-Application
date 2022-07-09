@@ -74,12 +74,10 @@ const attribute_styles = StyleSheet.create({
         fontSize: 16,
         color: 'black',
         marginBottom: 2,
-    },
-    text_input: {
+    },    text_input: {
         textAlignVertical: "top",
         flex: 1,
         maxHeight: 95,
-        marginLeft: 2,
         borderRadius: 8,
     },
     inner_text: {
@@ -159,11 +157,15 @@ export class ExploreFiltersScreen extends React.Component {
 
             //age range values
             age_range_values: [18, 100],
+
+            //medium
+            medium: GlobalProperties.medium,
         }
 
         this.updateTypeDropDownValue = this.updateTypeDropDownValue.bind(this);
         this.updateGenderDropDownValue = this.updateGenderDropDownValue.bind(this);
         this.updateAgeRangeValues = this.updateAgeRangeValues.bind(this);
+        this.updateMedium = this.updateMedium.bind(this);
 
         this.lazyUpdate = this.lazyUpdate.bind(this);
         
@@ -201,7 +203,7 @@ export class ExploreFiltersScreen extends React.Component {
                             <View style={inline_attribute_styles.drop_down_selector}>
                                 <DropDown 
                                     style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
-                                    items={[{label: 'All', value: ''}, {label: 'Male', value: 'male'}, {label: 'Female', value: 'female', }, {label: "Other", value: "other"}]}
+                                    items={[{label: 'All', value: ''}, {label: 'Male', value: 'male'}, {label: 'Female', value: 'female'}, {label: "Other", value: "other"}]}
                                     onChangeValue = {this.updateGenderDropDownValue}
                                     currentValue = {this.state.gender_dropdown_value}
                                     width = {110}
@@ -213,8 +215,20 @@ export class ExploreFiltersScreen extends React.Component {
             }
             else if (GlobalProperties.search_type == "activities") {
                 typeSpecificFilters = (
-                    <View>
-                    </View>
+                    <View style={inline_attribute_styles.body}>
+                            <Text style={inline_attribute_styles.title_text}>
+                                Medium
+                            </Text>
+                            <View style={inline_attribute_styles.drop_down_selector}>
+                                <DropDown 
+                                    style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
+                                    items={[{label: 'Both', value: ''}, {label: 'Physical', value: 'physical'}, {label: 'Virtual', value: 'virtual'}]}
+                                    onChangeValue = {this.updateMedium}
+                                    currentValue = {this.state.medium}
+                                    width = {110}
+                                    />
+                            </View>
+                        </View>
                 );
             }
             else if (GlobalProperties.search_type == "groups") {
@@ -288,6 +302,7 @@ export class ExploreFiltersScreen extends React.Component {
         this.state.gender_dropdown_value = value;
     }
 
+    //update the age range of the people
     updateAgeRangeValues(value) {
         GlobalProperties.search_filters_updated = true;
         GlobalProperties.map_filters_updated = true;
@@ -297,6 +312,16 @@ export class ExploreFiltersScreen extends React.Component {
 
         this.state.age_range_values = value;
         this.lazyUpdate();
+    }
+
+    //update the medium of the activity
+    updateMedium(value) {
+        GlobalProperties.search_filters_updated = true;
+        GlobalProperties.map_filters_updated = true;
+
+        GlobalProperties.medium = value;
+
+        this.state.medium = value;
     }
 }
 

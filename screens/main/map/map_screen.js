@@ -133,6 +133,7 @@ export class MapScreen extends React.Component {
         this.renderMarkers = this.renderMarkers.bind(this);
 
         this.onRegionChange = this.onRegionChange.bind(this);
+        this.onRegionChangeComplete = this.onRegionChangeComplete.bind(this);
         this.isOutsideBoundary = this.isOutsideBoundary.bind(this);
         
         this.updateGroups = this.updateGroups.bind(this);
@@ -156,7 +157,7 @@ export class MapScreen extends React.Component {
         }
 
         //set search radius
-        GlobalProperties.search_radius = GlobalProperties.get_haversine_distance(this.state.initialRegion.latitude, this.state.initialRegion.longitude, this.state.initialRegion.latitudeDelta, this.state.initialRegion.longitudeDelta);
+        GlobalProperties.search_radius = GlobalProperties.get_haversine_distance(this.state.initialRegion.latitude, this.state.initialRegion.longitude, this.state.initialRegion.latitudeDelta, this.state.initialRegion.longitudeDelta) / 2;
 
         //call on updating
         GlobalProperties.map_filters_updated = true;
@@ -253,7 +254,8 @@ export class MapScreen extends React.Component {
                 "location": {
                     "latitude": GlobalProperties.map_params.latitude,
                     "longitude": GlobalProperties.map_params.longitude,
-                }
+                },
+                "medium": GlobalProperties.medium
             };
 
             if (GlobalProperties.search_gender != "") {
@@ -493,10 +495,17 @@ export class MapScreen extends React.Component {
     onRegionChangeComplete(region) {
         //update global values
         GlobalProperties.map_params = region;
-        GlobalProperties.search_radius = GlobalProperties.get_haversine_distance(region.latitude, region.longitude, region.latitudeDelta, region.longitudeDelta);
+        GlobalProperties.search_radius = GlobalProperties.get_haversine_distance(region.latitude, region.longitude, region.latitudeDelta, region.longitudeDelta) / 2;
 
         //call on updating markers
         GlobalProperties.map_filters_updated = true;
+        
+        //make usable the reset location button
+        if (this.state.grayout_reset_location_button) {
+            this.state.grayout_reset_location_button = false;
+
+            this.lazyUpdate();
+        }
     }
 
     updateGroups(groups) {
