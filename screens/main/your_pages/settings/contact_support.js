@@ -227,11 +227,16 @@ export class ContactSupportScreen extends React.Component {
 
             error_message: "",
 
+            feedback: "",
+            feedback_input_handler: null,
+
             updateMade: false,
         }
+
+        this.updatefeedback= this.updatefeedback.bind(this);
         this.updateUpdateMade = this.updateUpdateMade.bind(this);
         this.validateFields =this.validateFields.bind(this);
-        this.syncUpdates = this.syncUpdates.bind(this);
+        this.sendFeedback = this.sendFeedback.bind(this);
         this.lazyUpdate = this.lazyUpdate.bind(this);
     }
 
@@ -247,10 +252,10 @@ export class ContactSupportScreen extends React.Component {
                     <View style={info_styles.body}>
                         <View style={attribute_styles.body}>
                             <Text style={attribute_styles.title_text}>
-                                Description
+                                feedback
                             </Text>     
                             <View style={attribute_styles.input_text_view}>
-                                <TextInput style={attribute_styles.text_input} multiline={true} editable={true} maxLength={160} numberOfLines={4} scrollEnables={true} defaultValue={this.state.description} onChangeText={(value) => {this.updateDescription(value);}} onEndEditing={(value) => {this.updateUpdateMade(false)}}/>
+                                <TextInput style={attribute_styles.text_input} multiline={true} editable={true} maxLength={160} ref={(input) => {this.state.feedback_input_handler = input}}  numberOfLines={4} scrollEnables={true} defaultValue={this.state.feedback} onChangeText={(value) => {this.updatefeedback(value);}} onEndEditing={(value) => {this.updateUpdateMade(false)}}/>
                             </View>                   
                         </View> 
                     </View>
@@ -266,7 +271,7 @@ export class ContactSupportScreen extends React.Component {
                 <FlatList data={[{id: 1}]} keyExtractor={() => "dummy"} listEmptyComponent={null} renderItem={renderComponent} style={{zIndex: 99, flex: 1}}/>
                 <View style={post_button_styles.button_view}>
                     {this.state.updateMade ? (
-                        <TouchableHighlight style={post_button_styles.button} underlayColor={'#ff6e6e'} onPress={() => {this.syncUpdates()}}>
+                        <TouchableHighlight style={post_button_styles.button} underlayColor={'#ff6e6e'} onPress={() => {this.sendFeedback()}}>
                             <Text style={post_button_styles.button_text}>
                                 Send Feedback
                             </Text>
@@ -302,6 +307,10 @@ export class ContactSupportScreen extends React.Component {
         return true;
     }
 
+    updatefeedback(value) {
+        this.state.feedback = value;
+    }
+
     updateUpdateMade(mustUpdate) {
         if (!this.state.updateMade || mustUpdate) {
             this.state.updateMade = true;
@@ -317,36 +326,19 @@ export class ContactSupportScreen extends React.Component {
         this.forceUpdate();
     }
 
-    async syncUpdates() {
-        var updatedPassword = (this.state.oldPassword != "" || this.state.newPassword != "" || this.state.confirmNewPassword != "");
-
-        //if no updates were made
-        if (!updatedPassword) {
-                //set return screen values
-                GlobalProperties.screen_props = null;
-                GlobalProperties.return_screen = "Reset Password Screen";
-
-                //once done, go back
-                this.props.navigation.pop(1);
-        }
-
-        if (!(await this.validateFields(updatedPassword))) {
-            Alert.alert(this.state.error_message);
-            return;
-        }
+    async sendFeedback() {
 
         //add elements
         //make body with requried elements
         var body = {
-            old_password: this.state.oldPassword,
-            new_password: this.state.newPassword
+            feedback: this.state.feedback
         };    
 
         //if request was successful
         var successful = false;
 
         //make request        
-        var result = await GlobalEndpoints.makePostRequest(true, "/api/AccountManager/ResetPassword", body)
+        var result = await GlobalEndpoints.makePostRequest(true, "/api/User/Generic/SendFeedback", body)
         .then((result) => {
             if (result == undefined) {
                 successful = false;
@@ -367,9 +359,7 @@ export class ContactSupportScreen extends React.Component {
 
             //if result status is ok
             if (result.request.status ==  200) {
-                //set return screen values
-                GlobalProperties.screen_props = null;
-                GlobalProperties.return_screen = "Account Info Screen";
+                this.state.feedback_input_handler.clear();
 
                 //once done, go back
                 this.props.navigation.pop(1);

@@ -25,6 +25,8 @@ import { ValidateResetEmailScreen } from './settings/validate_email_screen.js';
 import { ContactSupportScreen } from './settings/contact_support.js';
 import { AboutScreen } from './settings/about.js';
 import { ViewMapScreen } from './view_map_screen.js';
+import { OtherActivityScreen } from '../explore/other_activity_screen.js';
+import { OtherProfileScreen } from '../explore/other_profile_screen.js';
 
 const Stack = createStackNavigator();
 const FeedStack = createMaterialTopTabNavigator();
@@ -120,7 +122,8 @@ export class YourPagesNavigator extends React.Component {
 
                 <Stack.Screen name="View Admins Screen" component={ViewAdminsScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"View Admins"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
                 <Stack.Screen name="View Participants Screen" component={ViewParticipantsScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"View Participants"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
-
+                <Stack.Screen name="Other Profile Screen" component={OtherProfileScreen} options={{ headerTitle: () => <EmptyTitle />, headerBackTitle: "back", headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, headerShown: true}} />
+                <Stack.Screen name="Other Activity Screen" component={OtherActivityScreen} options={{ headerTitle: () => <EmptyTitle />, headerBackTitle: "back", headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, headerShown: true}} />
 
                 <Stack.Screen name="Reset Password Screen" component={ResetPasswordScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"Reset Password"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
                 <Stack.Screen name="Reset Email Screen" component={ResetEmailScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"Reset Email"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>

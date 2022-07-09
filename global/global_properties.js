@@ -109,7 +109,7 @@ export class GlobalProperties {
     static app_connect = null;
 
     //handlers for the filters going back to their modified screens
-    static map_filters_updated = false;
+    static map_filters_updated = true;
     static search_filters_updated = false;
 
     //for messages page

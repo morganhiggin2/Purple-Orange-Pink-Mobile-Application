@@ -243,7 +243,34 @@ class FrameComponent extends React.Component{
             </TouchableHighlight>
         );*/
 
-        var windowWidth = Math.trunc(Dimensions.get('window').width);
+        var renderDescription = {};
+
+        if (this.props.description != null || this.props.description != "") {
+            if (this.props.type == "person") {
+                renderDescription = (
+                    <View style={[frame_styles.inner_text_container, {maxHight: 50}]}>
+                        <Text numberOfLines={4} style={[frame_styles.description_text, {flex: 1, flexWrap: 'wrap'}]}>
+                            {this.props.description}
+                        </Text>
+                    </View>
+                );
+            }
+            else if (this.props.type == "activity") {
+                renderDescription = (
+                    <View style={[frame_styles.inner_text_container, {maxHight: 50}]}>
+                        <Text numberOfLines={3} style={[frame_styles.description_text, {flex: 1, flexWrap: 'wrap'}]}>
+                            {this.props.description}
+                        </Text>
+                    </View>
+                );
+            }
+            else {
+                renderDescription = (<View />);
+            }
+        }
+        else {
+            renderDescription = (<View />);
+        }
 
         if (this.props.type == "person") {
             return (
@@ -269,11 +296,7 @@ class FrameComponent extends React.Component{
                                         {" " + this.props.age + " y.o."}
                                     </Text>
                                 </View>
-                                <View style={[frame_styles.inner_text_container, {maxHight: 50}]}>
-                                    <Text numberOfLines={4} style={[frame_styles.description_text, {flex: 1, flexWrap: 'wrap'}]}>
-                                        {this.props.description}
-                                    </Text>
-                                </View>
+                                {renderDescription}
                             </View>
                         </View>
                     </TouchableHighlight>
@@ -303,6 +326,7 @@ class FrameComponent extends React.Component{
                                         {" " + this.props.date_time}
                                     </Text> 
                                 </View>
+                                {renderDescription}
                             </View>
                         </View>
                     </TouchableHighlight>
@@ -434,22 +458,10 @@ export class ExploreScreen extends React.Component {
 
     componentDidMount() {
         GlobalProperties.currentExploreScreenSearchUpdate = this.updateSearch;
+        
         this.props.navigation.addListener('focus', () => {
             //update lazy update method for current explore screen
             GlobalProperties.currentExploreScreenSearchUpdate = this.updateSearch;
-
-            if (GlobalProperties.search_filters_updated) {
-                this.state.loading = true;
-                this.state.reload = false;
-
-                this.lazyUpdate();
-
-                this.state.page_number = 1;
-
-                this.updateSearch();
-
-                GlobalProperties.search_filters_updated = false;
-            }
 
             if (GlobalProperties.return_screen == "Other Profile Screen" && GlobalProperties.screen_props != null) {
                 if (GlobalProperties.screen_props.action = "remove") {
@@ -480,15 +492,31 @@ export class ExploreScreen extends React.Component {
                 }
             }
 
+            if (GlobalProperties.search_filters_updated) {
+                this.state.loading = true;
+                this.state.reload = false;
+
+                this.state.region = GlobalProperties.map_params;
+
+                this.lazyUpdate();
+
+                this.state.page_number = 1;
+
+                this.updateSearch();
+
+                GlobalProperties.search_filters_updated = false;
+            }
+
             GlobalProperties.screenActivated();
         });
+
+        this.updateSearch();
 
 
         /*for(i = 0; i < 17; i++) {
             this.addFrameComponent("", i);
         }*/
         //fetch search
-        this.updateSearch();
     }
 
     updateUsers() {
@@ -586,6 +614,9 @@ export class ExploreScreen extends React.Component {
                     latitudeDelta: GlobalProperties.default_map_params.latitudeDelta,
                     longitudeDelta: GlobalProperties.default_map_params.longitudeDelta
                 }
+
+                //set to deafult region
+                GlobalProperties.default_map_params = GlobalProperties.map_params;
             }
         }
 
@@ -734,7 +765,7 @@ export class ExploreScreen extends React.Component {
                             <ScrollView 
                                 contentContainerStyle={{alignItems: 'center'}}
                                 refreshControl={<RefreshControl refreshing={false} 
-                                onRefresh={() => {this.reloadResults;}}/>}
+                                onRefresh={() => {this.reloadResults();}}/>}
                                 onScroll={({nativeEvent}) => {
                                     if (this.ScrollViewIsCloseToBottom(nativeEvent)) {
                                         console.log("at bottom");

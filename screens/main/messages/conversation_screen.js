@@ -282,14 +282,14 @@ export class ConversationScreen extends React.Component {
 
         if (this.state.name.length > 20) {
             this.state.name = this.state.name.substring(0, 17) + "...";
-        }*/
+        }*/        
+        
+        this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={this.state.title}/>});
 
         this.fetchMessages = this.fetchMessages.bind(this);
         this.onChangeMessage = this.onChangeMessage.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
         this.lazyUpdate = this.lazyUpdate.bind(this);
-
-        this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={this.state.title}/>});
     }
     
     componentDidMount() {

@@ -211,7 +211,8 @@ const filter_snaps_styles = StyleSheet.create(
             width: '80%',
         },
         icon: {
-            alignSelf: 'center'
+            alignSelf: 'center',
+            marginRight: 4
         }
     }
 );
@@ -579,12 +580,6 @@ export class OtherProfileScreen extends React.Component {
                                 <MaterialCommunityIcons name="baby"  size={12} color="gray" style={filter_snaps_styles.icon}/>
                                 <Text style={{color: 'black', fontSize: 14}}>
                                     {this.state.age}
-                                </Text>
-                            </View>
-                            <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
-                                <Feather name="target" size={12} color="gray" style={filter_snaps_styles.icon}/>
-                                <Text style={{color: 'black', fontSize: 14}}>
-                                    {" " + "4m ago"}
                                 </Text>
                             </View>
                             <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>

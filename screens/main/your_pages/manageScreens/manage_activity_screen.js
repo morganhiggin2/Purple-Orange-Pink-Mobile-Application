@@ -277,7 +277,6 @@ export class ManageActivityScreen extends React.Component {
         this.leaveAlert = this.leaveAlert.bind(this);
 
         this.lazyUpdate = this.lazyUpdate.bind(this);
-        this.cleanImages = this.cleanImages.bind(this);
     }
 
     componentDidMount() {
@@ -291,7 +290,6 @@ export class ManageActivityScreen extends React.Component {
         //gets the images from the response
         //...
         //clean images
-        this.cleanImages();
 
         GlobalProperties.return_screen = "Manage Activity Screen";
 
@@ -612,19 +610,6 @@ export class ManageActivityScreen extends React.Component {
 
     lazyUpdate() {
         this.forceUpdate();
-    }
-
-    //get rid of any null entries
-    cleanImages() {
-        var cleaned_images = [];
-
-        for (var i = 0; i <= this.state.activity_images.length; i++) {
-            if (this.state.activity_images[i] != null && this.state.activity_images[i] != "") {
-                cleaned_images.push(this.state.activity_images[i]);
-            }
-        }
-
-        this.state.activity_images = cleaned_images;
     }
 
     viewInvitations() {

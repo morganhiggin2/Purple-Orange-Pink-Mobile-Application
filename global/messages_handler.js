@@ -106,6 +106,8 @@ const MessageRecord = {
     }
 }
 
+//deleteRealmIfMigrationNeeded: true
+
 export class MessageHandler {
     constructor() {
         
@@ -128,7 +130,6 @@ export class MessageHandler {
 				path: "friend_messages_realm_database",
 				schemaVersion: 1.0,
 				schema: [HeaderRecordSchema, SubHeaderDirectMessageRecord, SubHeaderConversationRecord, SubHeaderInvitationRecord, SubHeaderAnnouncementRecord, MessageRecord],
-				deleteRealmIfMigrationNeeded: true
 			  });
 
 			this.open = true;
@@ -469,6 +470,13 @@ export class MessageHandler {
 	//create direct message conversation
 	//return parent header id
 	async createDirectMessage(type_id, name) {
+		//check if already exists
+		var headerRow = await this.masterRealm.objects("Messages_Header_Record").filtered("type_id = '" + type_id + "' AND type = 0 AND user_id = '" + GlobalProperties.user_id + "'");
+
+		if (headerRow.length > 0) {
+			return headerRow[0]._id;
+		}
+
 		var subHeaderId = new UUID();
 		var parentHeaderId = new UUID();
 
@@ -519,6 +527,13 @@ export class MessageHandler {
 	//create conversation
 	//return parent header id
 	async createConversation(type_id, name) {
+		//check if already exists
+		var headerRow = await this.masterRealm.objects("Messages_Header_Record").filtered("type_id = '" + type_id + "' AND type = 1 AND user_id = '" + GlobalProperties.user_id + "'");
+
+		if (headerRow.length > 0) {
+			return headerRow[0]._id;
+		}
+
 		var subHeaderId = new UUID();
 		var parentHeaderId = new UUID();
 

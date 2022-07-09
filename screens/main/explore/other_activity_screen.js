@@ -208,7 +208,8 @@ const filter_snaps_styles = StyleSheet.create(
             width: '80%',
         },
         icon: {
-            alignSelf: 'center'
+            alignSelf: 'center',
+            marginRight: 4
         }
     }
 );

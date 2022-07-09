@@ -149,15 +149,8 @@ export class MapScreen extends React.Component {
         this.state.boundary = null;
         this.state.region = null;
 
-        if (GlobalProperties.map_params == null) {
-            this.state.initialRegion = GlobalProperties.default_map_params;
-        }
-        else {
-            this.state.initialRegion = GlobalProperties.map_params;
-        }
-
         //set search radius
-        GlobalProperties.search_radius = GlobalProperties.get_haversine_distance(this.state.initialRegion.latitude, this.state.initialRegion.longitude, this.state.initialRegion.latitudeDelta, this.state.initialRegion.longitudeDelta) / 2;
+        GlobalProperties.search_radius = GlobalProperties.get_haversine_distance(GlobalProperties.default_map_params.latitude, GlobalProperties.default_map_params.longitude, GlobalProperties.default_map_params.latitudeDelta, GlobalProperties.default_map_params.longitudeDelta) / 2;
 
         //call on updating
         GlobalProperties.map_filters_updated = true;
@@ -173,13 +166,11 @@ export class MapScreen extends React.Component {
 
             if (GlobalProperties.map_filters_updated) {
                 //update map coordinates, as the map has not moved yet, so it won't have been calculated yet
-                this.onRegionChangeComplete(this.state.initialRegion);
+                //this.onRegionChangeComplete(GlobalProperties.default_map_params);
                 this.updateSearch();
                 GlobalProperties.map_filters_updated = false;
             }
         });
-
-        this.updateSearch();
     }
 
     async updateSearch() {
@@ -221,7 +212,8 @@ export class MapScreen extends React.Component {
             }
         }
 
-        this.state.initialRegion = GlobalProperties.map_params;
+        //set region
+        this.state.region = GlobalProperties.map_params;
         //update search
         /*var body = {
             "radius": search_radius,
@@ -343,7 +335,7 @@ export class MapScreen extends React.Component {
     }
 
     render() {
-        if (this.state.loading == true || this.state.loading == null) {
+        if (this.state.loading == true || this.state.loading == null || GlobalProperties.map_params == null) {
             return (
                 <LoadingScreen tryAgain={this.fetchUserData} reload={this.state.reload}/>
             );
@@ -354,7 +346,7 @@ export class MapScreen extends React.Component {
                     <View sytle={{flex: 1}}>
                         <MapView 
                             style={map_styles.body}
-                            initialRegion={this.state.initialRegion}
+                            initialRegion={GlobalProperties.default_map_params}
                             onRegionChangeComplete={this.onRegionChangeComplete}
                             ref={(ref) => {this.state.map_ref = ref;}}
                         >
@@ -494,11 +486,11 @@ export class MapScreen extends React.Component {
 
     onRegionChangeComplete(region) {
         //update global values
-        GlobalProperties.map_params = region;
         GlobalProperties.search_radius = GlobalProperties.get_haversine_distance(region.latitude, region.longitude, region.latitudeDelta, region.longitudeDelta) / 2;
 
         //call on updating markers
         GlobalProperties.map_filters_updated = true;
+        GlobalProperties.search_filters_updated = true;
         
         //make usable the reset location button
         if (this.state.grayout_reset_location_button) {
@@ -608,6 +600,9 @@ export class MapScreen extends React.Component {
                 latitudeDelta: GlobalProperties.map_params.latitudeDelta,
                 longitudeDelta: GlobalProperties.map_params.longitudeDelta,
             };
+
+            //set to current region
+            GlobalProperties.map_params = GlobalProperties.default_map_params;
 
             //update map
             this.lazyUpdate();

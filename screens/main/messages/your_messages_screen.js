@@ -281,7 +281,7 @@ export class YourMessagesScreen extends React.Component {
                 if (GlobalProperties.screen_props.sendMessage) {
                     //get header and navigate to conversation screen
                     GlobalProperties.messagesHandler.getHeaderRow(GlobalProperties.screen_props._id).then((header) => {
-                        this.props.navigation.navigate("Conversation Screen", {title: header.name, _id: header._id, last_timestamp: header.last_timestamp, sub_header_id: header.sub_header_id, type_id: header.type_id, type: header.type});
+                        this.props.navigation.navigate("Conversation Screen", {title: header.title, _id: header._id, last_timestamp: header.last_timestamp, sub_header_id: header.sub_header_id, type_id: header.type_id, type: header.type});
                     });             
                 }
             }
@@ -289,7 +289,7 @@ export class YourMessagesScreen extends React.Component {
                 if (GlobalProperties.screen_props.sendMessage) {
                     //get header and navigate to conversation screen
                     GlobalProperties.messagesHandler.getHeaderRow(GlobalProperties.screen_props._id).then((header) => {
-                        this.props.navigation.navigate("Conversation Screen", {title: header.name, _id: header._id, last_timestamp: header.last_timestamp, sub_header_id: header.sub_header_id, type_id: header.type_id, type: header.type});
+                        this.props.navigation.navigate("Conversation Screen", {title: header.title, _id: header._id, last_timestamp: header.last_timestamp, sub_header_id: header.sub_header_id, type_id: header.type_id, type: header.type});
                     });             
                 }
             }
