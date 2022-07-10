@@ -402,7 +402,6 @@ export class ConversationScreen extends React.Component {
 
         if (this.state.type == 0) {
             //send direct message
-
             url = "/api/User/Friends/Messages/SendDirectMessage";
             body = {
                 other_id: this.state.subHeader.other_user_id,

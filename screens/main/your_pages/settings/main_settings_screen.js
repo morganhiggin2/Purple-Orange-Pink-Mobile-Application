@@ -152,16 +152,6 @@ export class MainSettingsScreen extends React.Component {
                         </TouchableHighlight>
                     </View>
                     <View style={section_styles.body}>
-                        <TouchableHighlight underlayColor={"#b8b8b8"} onPress = {() => {signOutAlert(this.signOut);}}>
-                            <View style={selector_styles.body}>
-                                <Text style={selector_styles.title_text}>
-                                    Sign Out
-                                </Text>
-                                <MaterialIcons name="keyboard-arrow-right" size={28} color="black" style={selector_styles.arrow}/>
-                            </View>
-                        </TouchableHighlight>
-                    </View>
-                    <View style={section_styles.body}>
                         <TouchableHighlight underlayColor={"#b8b8b8"} onPress = {() => {this.props.navigation.navigate("Privacy Screen");}}>
                             <View style={selector_styles.body}>
                                 <Text style={selector_styles.title_text}>
@@ -188,12 +178,21 @@ export class MainSettingsScreen extends React.Component {
                                 <MaterialIcons name="keyboard-arrow-right" size={28} color="black" style={selector_styles.arrow}/>
                             </View>
                         </TouchableHighlight>
-                    </View>
-                    <View style={section_styles.body}> 
+                        <View style={main_styles.horizontal_bar}/>
                         <TouchableHighlight underlayColor={"#b8b8b8"} onPress = {() => {deleteAccountAlert(this.deleteAccount);}}>
                             <View style={selector_styles.body}>
                                 <Text style={selector_styles.title_text}>
                                     Delete Account
+                                </Text>
+                                <MaterialIcons name="keyboard-arrow-right" size={28} color="black" style={selector_styles.arrow}/>
+                            </View>
+                        </TouchableHighlight>
+                    </View>
+                    <View style={section_styles.body}> 
+                        <TouchableHighlight underlayColor={"#b8b8b8"} onPress = {() => {signOutAlert(this.signOut);}}>
+                            <View style={selector_styles.body}>
+                                <Text style={selector_styles.title_text}>
+                                    Sign Out
                                 </Text>
                                 <MaterialIcons name="keyboard-arrow-right" size={28} color="black" style={selector_styles.arrow}/>
                             </View>

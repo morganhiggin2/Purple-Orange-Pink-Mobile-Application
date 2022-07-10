@@ -315,6 +315,7 @@ export class YourMessagesScreen extends React.Component {
     }
 
     async fetchMessages() {
+        console.log(GlobalProperties.user_id);
         //set global property to false first (so if multiple notifications, they dont create many overlapping requests)
         GlobalProperties.reload_messages = false;
 

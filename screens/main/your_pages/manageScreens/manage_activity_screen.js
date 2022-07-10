@@ -328,6 +328,7 @@ export class ManageActivityScreen extends React.Component {
 
             //if result status is ok
             if (result.request.status ==  200) {
+                
                 //get request body
                 var activity_information = JSON.parse(result.request.response).activity_information;
  

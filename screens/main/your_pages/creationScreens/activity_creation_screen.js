@@ -1080,23 +1080,12 @@ export class ActivityCreationScreen extends React.Component {
             attributes: this.state.attributes,
             date_time: dateString,
             is_physical: this.state.is_physical_event,
-            address: this.state.target_address,
             invitation_method: this.state.invitation_type_dropdown_value,
             minimum_age: this.state.age_range_values[0],
-            maximum_age: this.state.age_range_values[1],
-            target_location: {
-                latitude: this.state.target_latitude,
-                longitude: this.state.target_longitude,
-            }
+            maximum_age: this.state.age_range_values[1]
         };
 
         //add variable elements
-        if (!this.state.setSearchLocationToTargetLocation) {
-            body["search_location"] = {
-                latitude: this.state.search_latitude,
-                longitude: this.state.search_longitude,
-            }
-        }
 
         if (this.state.setSearchRadiusToEnable || !this.state.setSearchLocationToTargetLocation) {
             body["search_radius"] = this.state.searchRadius;
@@ -1112,6 +1101,30 @@ export class ActivityCreationScreen extends React.Component {
 
         if (this.state.gender_dropdown_value != "all") {
             body["gender"] = this.state.gender_dropdown_value;
+        }
+
+        if (this.state.is_physical_event) {
+            body["target_location"] = {
+                latitude: this.state.target_latitude,
+                longitude: this.state.target_longitude,
+            };
+
+            body["address"] = this.state.target_address;
+                
+            if (!this.state.setSearchLocationToTargetLocation) {
+                body["search_location"] = {
+                    latitude: this.state.search_latitude,
+                    longitude: this.state.search_longitude,
+                }
+            }
+        }
+        else {
+            body["search_location"] = {
+                latitude: this.state.search_latitude,
+                longitude: this.state.search_longitude,
+            };
+
+            body["address"] = this.state.virtual_link;
         }
         
         //if request was successful
@@ -1160,7 +1173,6 @@ export class ActivityCreationScreen extends React.Component {
             }
             else if (result.response.status == 400 && result.response.data) {
                 Alert.alert(JSON.stringify(result.response.data));
-                console.log(result.response.data);
                 return;
             }
             //handle not found case
@@ -1218,10 +1230,12 @@ export class ActivityCreationScreen extends React.Component {
         }
 
         //validate activity location
-        if (this.state.target_latitude == null || this.state.target_longitude == null) {
+        if (this.state.is_physical_event && (this.state.target_latitude == null || this.state.target_longitude == null)) {
             this.showError("must set activity location by pin");
             return false;
         }
+
+        if (!this.state.is_physical_event && (this.state.search_latitude == null || this.state.search_longitude == null))
 
         //validate set search
         if (!this.state.setSearchLocationToTargetLocation && (this.state.search_latitude == null || this.state.search_longitude == null)) {
