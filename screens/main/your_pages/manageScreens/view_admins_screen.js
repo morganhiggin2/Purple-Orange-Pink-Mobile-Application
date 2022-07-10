@@ -121,6 +121,9 @@ export class ViewAdminsScreen extends React.Component {
             //from type
             type: this.props.route.params.type,
 
+            //from admin if there
+            is_admin: this.props.route.params.is_admin,
+
             //for loading screen
             loading: true,
             reload: false,

@@ -273,6 +273,7 @@ export class ManageActivityScreen extends React.Component {
         this.viewAdmins = this.viewAdmins.bind(this);
         this.viewParticipants = this.viewParticipants.bind(this);
         this.fetchActivityInformation = this.fetchActivityInformation.bind(this);
+        this.makeAnnouncement = this.makeAnnouncement.bind(this);
         this.leave = this.leave.bind(this);
         this.leaveAlert = this.leaveAlert.bind(this);
 
@@ -440,6 +441,13 @@ export class ManageActivityScreen extends React.Component {
         if (this.state.is_admin) {
             actionsRender = (
                 <View>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.makeAnnouncement();}}>
+                        <Text style={actions_styles.action_button_text}>
+                            Make Announcement
+                        </Text>
+                        <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
+                    </TouchableOpacity>     
+                    <View style={main_styles.horizontal_bar} />   
                     <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.createConversation("all");}}>
                         <Text style={actions_styles.action_button_text}>
                             Message Everyone
@@ -449,7 +457,7 @@ export class ManageActivityScreen extends React.Component {
                     <View style={main_styles.horizontal_bar} />  
                     <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.createConversation("admins");}}>
                         <Text style={actions_styles.action_button_text}>
-                            Message Admins
+                            Message Creators
                         </Text>
                         <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
                     </TouchableOpacity>     
@@ -578,7 +586,7 @@ export class ManageActivityScreen extends React.Component {
                             <View style={main_styles.horizontal_bar} />             
                             <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.viewAdmins();}}>
                                 <Text style={actions_styles.action_button_text}>
-                                    View Admins
+                                    View Creators
                                 </Text>
                                 <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
                             </TouchableOpacity>
@@ -633,11 +641,15 @@ export class ManageActivityScreen extends React.Component {
     }
 
     viewAdmins() {
-        this.props.navigation.navigate("View Admins Screen", {type: "activity", id: this.state.id});
+        this.props.navigation.navigate("View Admins Screen", {type: "activity", id: this.state.id, admin: this.state.is_admin});
     }
 
     viewParticipants() {
-        this.props.navigation.navigate("View Participants Screen", {type: "activity", id: this.state.id});
+        this.props.navigation.navigate("View Participants Screen", {type: "activity", id: this.state.id, participant: this.state.is_participant});
+    }
+
+    makeAnnouncement() {
+        this.props.navigation.navigate("Make Announcement Screen", {id: this.state.id});
     }
 
     async createConversation(type) {

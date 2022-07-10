@@ -326,6 +326,7 @@ export class OtherProfileScreen extends React.Component {
         this.blockFromUser = this.blockFromUser.bind(this);
         this.blockFromActivity = this.blockFromActivity.bind(this);
         this.block = this.block.bind(this);
+        this.kick = this.kick.bind(this);
 
         //once done, lazy update
         this.lazyUpdate = this.lazyUpdate.bind(this);
@@ -527,6 +528,13 @@ export class OtherProfileScreen extends React.Component {
                     <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.inviteTo();}}>
                         <Text style={actions_styles.action_button_text}>
                             Invite
+                        </Text>
+                        <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
+                    </TouchableOpacity>
+                    <View style={main_styles.horizontal_bar} />   
+                    <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.kick();}}>
+                        <Text style={actions_styles.action_button_text}>
+                            Kick
                         </Text>
                         <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
                     </TouchableOpacity>
@@ -819,6 +827,67 @@ export class OtherProfileScreen extends React.Component {
 
         //make request
         var result = await GlobalEndpoints.makeGetRequest(true, "/api/User/Friends/Block/ActivityUser?activity_id=" + this.state.activity_id + "&user_id=" + this.state.id)
+            .then((result) => {
+                if (result == undefined) {
+                    successful = false;
+                }
+                else {
+                    successful = true;
+                }
+                return(result);
+            })
+            .catch((error) => {
+                successful = false;
+                return(error);
+            });
+
+        //if there is no error message, request was good
+        if (successful) {
+            //if result status is ok
+            if (result.request.status ==  200) {
+                //go back, pass id of user to delete
+                GlobalProperties.return_screen = "Other Profile Screen"
+                GlobalProperties.screen_props = {
+                    action: "remove",
+                    id: this.state.id,
+                }
+
+                //then go back
+                this.props.navigation.goBack();
+            }
+            else {
+                //returned bad response, fetch server generated error message
+                //and set 
+                Alert.alert(result.data);
+                return;
+            }
+        }
+        else {
+            //invalid request
+            if (result == undefined) {            
+                return;
+            }
+            else if (result.response.status == 400 && result.response.data) {
+                Alert.alert(JSON.stringify(result.response.data));
+                return;
+            }
+            //handle not found case
+            else if (result.response.status == 404) {
+                GlobalEndpoints.handleNotFound(false);
+            }
+            else {
+                Alert.alert("There seems to be a network connection issue.\nCheck your internet.");
+                return;
+            }
+        }
+    }
+
+    async kick() {
+        //if request was successful
+        var successful = false;
+
+        //make request
+        var result = await GlobalEndpoints.makeGetRequest(true, "/api/User/Friends/RemoveUserActivity?activity_id=" + this.state.activity_id + "&user_id=" + this.state.id)
             .then((result) => {
                 if (result == undefined) {
                     successful = false;
