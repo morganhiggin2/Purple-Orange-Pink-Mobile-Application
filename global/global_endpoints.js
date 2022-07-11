@@ -39,6 +39,39 @@ export class GlobalEndpoints {
         return (Promise.race([timeoutPromise, axios(config)]));
     }
 
+    static makeDeleteRequest(auth, endpoint) {
+        var axios = require('axios');
+
+        if (auth) {
+            config = {
+                method: 'delete',
+                url: GlobalValues.HOST + endpoint,
+                headers: { 
+                    'Accept': '*/*', 
+                    'Content-Type': 'application/json', 
+                    'Cookie': '.AspNetCore.Identity.Application=' + GlobalProperties.auth_token,
+                },
+            };
+        }
+        else {
+            config = {
+                method: 'delete',
+                url: GlobalValues.HOST + endpoint,
+                headers: { 
+                    'Accept': '*/*', 
+                    'Content-Type': 'application/json', 
+                },
+            };
+        }
+
+        //timeout promise
+        var timeoutPromise = new Promise((resolve, reject) => {
+            setTimeout(resolve, GlobalValues.CONNECTION_RETRY_TIME);
+        });
+
+        return (Promise.race([timeoutPromise, axios(config)]));
+    }
+
     static makePostRequest(auth, endpoint, body) {
         var axios = require('axios');
 
@@ -223,6 +256,16 @@ export class GlobalEndpoints {
                     granted: true, 
                     location: result,
                 };
+  
+                //send location to server for friend user
+                var body = {
+                  location: {
+                    latitude: returnResult.location.coords.latitude,
+                    longitude: returnResult.location.coords.longitude,
+                  }
+                }
+      
+                GlobalEndpoints.makePostRequest(true, "/api/User/Friends/UpdateUserInformation", body);
             }          
         }
         else {

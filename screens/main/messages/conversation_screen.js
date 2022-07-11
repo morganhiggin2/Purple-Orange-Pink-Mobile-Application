@@ -284,12 +284,44 @@ export class ConversationScreen extends React.Component {
             this.state.name = this.state.name.substring(0, 17) + "...";
         }*/        
         
-        this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={this.state.title}/>});
+        this.props.navigation.setOptions({headerTitle: () => <this.HeaderTitle title={this.state.title}/>});
 
+        this.viewOtherProfile = this.viewOtherProfile.bind(this);
+        this.HeaderTitle = this.HeaderTitle.bind(this);
         this.fetchMessages = this.fetchMessages.bind(this);
         this.onChangeMessage = this.onChangeMessage.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
         this.lazyUpdate = this.lazyUpdate.bind(this);
+    }
+    
+    HeaderTitle(props) {
+        if (this.state.type == 0) {
+            return(
+                <TouchableOpacity activeOpacity={1.0} onPress={() => {this.viewOtherProfile(this.state.other_user_id);}} >
+                    <Text style={{fontSize: 24, color: 'black'}}>
+                        {props.title}
+                    </Text>
+                </TouchableOpacity>
+            );
+        }
+        else if (this.state.type == 1) {
+            return (
+                <Text style={{fontSize: 24, color: 'black'}}>
+                    {props.title}
+                </Text>
+                );
+        }
+        else {
+            return (
+            <Text style={{fontSize: 24, color: 'black'}}>
+                {props.title}
+            </Text>
+            );
+        }
+    }
+
+    viewOtherProfile() {
+        this.props.navigation.navigate("Other Explore Profile Screen", {id: this.state.type_id});
     }
     
     componentDidMount() {
@@ -567,14 +599,6 @@ function colorCode(isMe) {
     else {
         return("blue");
     }
-}
-
-const HeaderTitle = (props) => {
-    return(
-        <Text style={{fontSize: 24, color: 'black'}}>
-            {props.title}
-        </Text>
-    );
 }
 
 //getHorizontalPositionStyle(this.props.item.me)

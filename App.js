@@ -456,11 +456,14 @@ export class App extends React.Component {
   //expo
   //when a notification is recieved in the foreground
   handleNotification(notification) {
-    //set message page should reload when on focus to true
-    GlobalProperties.reload_messages = true;
+    GlobalProperties.reload_messages = false;
+
+    console.log("here");
 
     //reload messages when when not on the page
-    GlobalProperties.reloadMessages();
+    if (GlobalProperties.reloadMessages) {
+      GlobalProperties.reloadMessages();
+    }
   }
 
   //when notification is recieved in the background
@@ -482,9 +485,15 @@ export class App extends React.Component {
     //set messgage page should reload when open again to true
     GlobalProperties.reload_messages = true;
 
+    try {
+
     //go to messages page and load
-    if (this.props.navigation) {
-      this.props.navigation.navigate("Your Messages Navigator");
+      if (this.props.navigation) {
+        this.props.navigation.navigate("Your Messages Navigator");
+      }
+    }
+    catch {
+
     }
   }
 

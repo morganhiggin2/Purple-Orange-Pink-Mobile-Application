@@ -3,7 +3,7 @@ import { GlobalValues } from '../../../global/global_properties.js';
 
 import { NavigationContainer, StackActions, TabRouter,} from '@react-navigation/native';
 import { createStackNavigator, CardStyleInterpolators} from '@react-navigation/stack';
-import {Easing, Image, StyleSheet, Text} from 'react-native';
+import {Easing, Image, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 
 import { YourMessagesScreen } from './your_messages_screen.js';
@@ -11,6 +11,7 @@ import { ConversationScreen } from './conversation_screen.js';
 import { InviteeScreen } from './invitee_screen.js';
 import { AnnouncementScreen } from './announcement_screen.js';
 import { MessagesFiltersScreen } from './messages_filters_screen.js';
+import { OtherExploreProfileScreen } from '../explore/other_explore_profile_screen.js';
 
 const Stack = createStackNavigator();
 
@@ -37,6 +38,12 @@ const HeaderTitle = (props) => {
     );
 }
 
+const EmptyTitle = (props) => {
+    return(
+        <View style={{height: 0}}/>
+    )
+}
+
 //, headerTitle: <HeaderTitle title={route.params.name}/>
 
 //tabBarOptions={{showLabel: false}}
@@ -53,6 +60,7 @@ export class YourMessagesNavigator extends React.Component {
             <Stack.Screen component={InviteeScreen} name="Invitee Screen" options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"Invite Screen"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}}/>
             <Stack.Screen component={AnnouncementScreen} name="Announcement Screen" options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"Invitation"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}}/>
             <Stack.Screen component={MessagesFiltersScreen} name="Messages Filters Screen" options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title="Filters"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'vertical', cardStyleInterpolator:CardStyleInterpolators.forVerticalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}} />
+            <Stack.Screen name="Other Explore Profile Screen" component={OtherExploreProfileScreen} options={{ headerTitle: () => <EmptyTitle />, headerBackTitle: "back", headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, headerShown: true}} />
         </Stack.Navigator>
         );
 

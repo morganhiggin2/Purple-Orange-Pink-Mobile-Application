@@ -38,8 +38,8 @@ const main_styles = StyleSheet.create(
         },
         button: {
             borderRadius: 5,
-            backgroundColor: '#F3604D',
-            borderColor: '#F3604D',
+            backgroundColor: GlobalValues.ORANGE_COLOR,
+            borderColor: GlobalValues.ORANGE_COLOR,
             padding: 2,
             paddingVertical: 6,
             alignSelf: 'center',

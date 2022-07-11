@@ -1,13 +1,13 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Image, ScrollView, FlatList, Alert, Dimensions} from 'react-native';
-import { createStackNavigator, CardStyleInterpolators} from '@react-navigation/stack';
+import {StyleSheet, View, Text, TextInput, Image, ScrollView, Dimensions, TouchableOpacity, Alert, FlatList} from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import {TouchableHighlight, TouchableOpacity} from 'react-native-gesture-handler';
-import { AntDesign, Feather, Entypo, MaterialCommunityIcons, MaterialIcons, FontAwesome } from '@expo/vector-icons'; 
-
-import { GlobalValues, GlobalProperties } from '../../../global/global_properties';
+import { SliderBox } from "react-native-image-slider-box";
+import { AntDesign, Feather, MaterialCommunityIcons, Entypo, FontAwesome} from '@expo/vector-icons'; 
+import { GlobalProperties, GlobalValues } from '../../../global/global_properties';
 import { GlobalEndpoints } from '../../../global/global_endpoints';
 import { LoadingScreen } from '../../misc/loading_screen';
+
+const ImageStack = createMaterialTopTabNavigator();
 
 
 const main_styles = StyleSheet.create(
@@ -52,6 +52,9 @@ const main_styles = StyleSheet.create(
         scroll_view: {
             backgroundColor: "white",
         },
+        no_images_buffer: {
+            height: 30,
+        }, 
     }
 );
 
@@ -236,58 +239,101 @@ const actions_styles = StyleSheet.create(
     }
 );
 
-export class OtherActivityScreen extends React.Component {
+const image_styles = StyleSheet.create(
+    {
+        container: {
+            width: 204,
+            height: 200,
+            marginTop: '10%',
+            marginBottom: 5,
+            alignSelf: 'center',
+        },
+        box: {
+            width: 204,
+            height: 200,
+            borderWidth: 2,
+            borderColor: 'gray',
+            borderRadius: 2,
+        },
+        image: {
+            width: 200,
+            height: 200,
+        },
+    }
+);
+const HeaderTitle = (title) => {
+    return(
+        <Text style={{fontSize: 24, color: 'black'}}>
+            {title.title}
+        </Text>
+    );
+}
+
+class FilterSnap extends React.Component {
+    constructor(props) {
+        super(props)
+    }
+
+    render() {
+        return( 
+            <Text style={[filter_snaps_styles.inner_text, { backgroundColor: this.props.color, borderColor: this.props.color}]}>
+                {this.props.innerText}
+            </Text>
+        );
+    }
+}
+
+FilterSnap.defaultProps = {
+    color: GlobalValues.ORANGE_COLOR,
+}
+
+export class OtherExploreProfileScreen extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            //is loading
+            id: this.props.route.params.id,
+            name: "",
+            age: 0,
+            gender: "",
+            description: "",
+            distance: 0.0,
+
+            //for loading screen
             loading: true,
             reload: false,
 
-            description: "",
-            date: "",
-            invitation_type: "",
-            is_admin: false,
-            is_participant: false,
+            name: "",
 
-            //address
-            address: "",
+            profile_images: [],
 
-            //attributes
             attributes: [],
+        };
 
-            //is physical event
-            is_phiscal: true,
-
-            //name of activity
-            title: this.props.route.params.name,
-
-            //id of the activity
-            id: this.props.route.params.id,
-        }
-        
-        this.joinOtherActivity = this.joinOtherActivity.bind(this);
-        this.viewAdmins = this.viewAdmins.bind(this);
-        this.viewParticipants = this.viewParticipants.bind(this);
-        this.fetchActivityInformation = this.fetchActivityInformation.bind(this);
+        this.fetchUserData = this.fetchUserData.bind(this);
+        this.sendMessage = this.sendMessage.bind(this);
+        this.inviteTo = this.inviteTo.bind(this);
         this.blockFromUser = this.blockFromUser.bind(this);
-        this.block = this.block.bind(this);
 
+        //once done, lazy update
         this.lazyUpdate = this.lazyUpdate.bind(this);
+        this.cleanImages = this.cleanImages.bind(this);
+        this.handleImageURI = this.handleImageURI.bind(this);
     }
 
+    async log_in() {
+        
+    }
+    
     componentDidMount() {
-        this.props.navigation.addListener('focus', () => {
-            this.fetchActivityInformation();
-        });
+        //init
+        GlobalProperties.return_screen = "Other Explore Profile Screen";
 
-        this.fetchActivityInformation();
-
-        this.lazyUpdate();
+        //fetch data
+        this.fetchUserData();
     }
 
-    async fetchActivityInformation() {
+    async fetchUserData() {
         if (this.state.reload) {
             this.state.reload = false;
     
@@ -295,11 +341,10 @@ export class OtherActivityScreen extends React.Component {
             this.lazyUpdate();
         }
 
-        //if request was successful
         var successful = false;
 
         //make request
-        var result = await GlobalEndpoints.makeGetRequest(true, "/api/User/Friends/GetBasicActivityInformation?id=" + this.state.id)
+        var result = await GlobalEndpoints.makeGetRequest(true, ("/api/User/Friends/GetBasicUserInformation?id=" + this.state.id))
             .then((result) => {
                 if (result == undefined) {
                     successful = false;
@@ -320,24 +365,23 @@ export class OtherActivityScreen extends React.Component {
             //if result status is ok
             if (result.request.status ==  200) {
                 //get request body
-                var activity_information = JSON.parse(result.request.response).activity_information;
- 
-                this.state.title = activity_information.title;
-                this.state.attributes = activity_information.attributes;
-                this.state.date = activity_information.date;
-                this.state.is_physical = activity_information.is_physical;
-                this.state.description = activity_information.description;
-                this.state.invitation_type = activity_information.invitation_type;
-                this.state.num_members = activity_information.num_members;
-                this.state.distance = activity_information.distance;
-                this.state.is_admin = activity_information.is_admin;
-                this.state.is_participant = activity_information.is_participant;
-                this.state.is_in_activity = activity_information.is_in_activity;
-                this.state.location = activity_information.location;
+                var requestJson = JSON.parse(result.request.response);
+
+                //add user information
+                
+                this.state.name = requestJson.user_information.name;
+                this.state.age = requestJson.user_information.age;
+                this.state.gender = requestJson.user_information.gender;
+                this.state.description = requestJson.user_information.description;
+                this.state.distance = requestJson.user_information.distance;
+                this.state.attributes = requestJson.user_information.attributes;
+
+                //get images
+                if (this.state.profile_images.length == 0) {
+                    this.state.profile_images = [require("../../../images/default_image.png")];
+                }
 
                 this.state.loading = false;
-
-                this.lazyUpdate();
             }
             else {
                 //returned bad response, fetch server generated error message
@@ -347,7 +391,6 @@ export class OtherActivityScreen extends React.Component {
             }
         }
         else {
-
             //invalid request
             if (result == undefined) {
                 this.state.reload = true;
@@ -372,60 +415,26 @@ export class OtherActivityScreen extends React.Component {
             }
         }
 
+        //TODO this goes in fetch code for valid case
+        //gets the images from the response
+        //...
+        //clean images
+        this.cleanImages();
+
         //once done, lazy update
         this.lazyUpdate();
     }
 
     render() {
-        var distanceRender;
-        var joinRender;
-        var descriptionRender;
-
-        if (this.state.invitation_type == "anyone") {
-            joinRender = (
-                <View>
-                    <View style={main_styles.horizontal_bar} />
-                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.joinOtherActivity();}}>
-                        <Text style={actions_styles.action_button_text}>
-                            Join
-                        </Text>
-                        <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
-                    </TouchableOpacity>
-                    <View style={main_styles.horizontal_bar} />
-                </View>
-            );
-        }
-        else if (this.state.invitation_type == "invite_required") {
-            joinRender = (
-                <View>
-                    <View style={main_styles.horizontal_bar} />
-                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.joinOtherActivity();}}>
-                        <Text style={actions_styles.action_button_text}>
-                            Request to Join
-                        </Text>
-                        <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
-                    </TouchableOpacity>
-                    <View style={main_styles.horizontal_bar} />
-                </View>
+        
+        if (this.state.loading == true || this.state.loading == null) {
+            return (
+                <LoadingScreen tryAgain={this.fetchUserData} reload={this.state.reload}/>
             );
         }
         else {
-            joinRender = (<View />);
-        }
-
-        if (this.state.distance) {
-            distanceRender = (
-                <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
-                    <FontAwesome name="road" size={12} color="gray" style={filter_snaps_styles.icon}/>
-                    <Text style={{color: 'black', fontSize: 14}}>
-                        {this.state.distance + " mi"}
-                    </Text>
-                </View>
-            );
-        }
-        else {
-            distanceRender = (<View />);
-        }
+            var genderRender = {};
+            var descriptionRender = {};
 
         if (this.state.description.length > 0) {
             descriptionRender = (
@@ -449,7 +458,53 @@ export class OtherActivityScreen extends React.Component {
                 <View />
             );
         }
-        
+
+        if (this.state.gender == "male") {
+            genderRender = (
+                <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
+                    <MaterialCommunityIcons name="gender-male" size={14} color={GlobalValues.MALE_COLOR} style={filter_snaps_styles.icon}/>
+                    <Text style={{color: 'black', fontSize: 14}}>
+                        Male
+                    </Text>
+                </View>
+            );
+        }
+        else if (this.state.gender == "female") {
+            genderRender = (
+                <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
+                    <MaterialCommunityIcons name="gender-female" size={14} color={GlobalValues.FEMALE_COLOR} style={filter_snaps_styles.icon}/>
+                    <Text style={{color: 'black', fontSize: 14}}>
+                        Female
+                    </Text>
+                </View>
+            );
+        }
+        else {
+            genderRender = (
+                <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
+                    <MaterialCommunityIcons name="gender-non-binary" size={14} color="black" style={filter_snaps_styles.icon}/>
+                    <Text style={{color: 'black', fontSize: 14}}>
+                        {this.state.gender}
+                    </Text>
+                </View>
+            );
+        }
+
+        var inviteActions = {};
+
+        if (this.state.type == "none") {
+            inviteActions = (
+                <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.inviteTo();}}>
+                    <Text style={actions_styles.action_button_text}>
+                        Invite
+                    </Text>
+                    <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
+                </TouchableOpacity>
+            );
+        }
+
+        //<FontAwesome name="road" size={12} color="gray" style={filter_snaps_styles.icon}/>
+
         const renderComponent = () => {
             if (this.state.loading == true) {
                 return (
@@ -461,35 +516,41 @@ export class OtherActivityScreen extends React.Component {
             else {
                 return (
                     <View>
+                        <View style={image_styles.container}>
+                            <SliderBox
+                            images={this.state.profile_images.map(uri => {
+                                return(this.handleImageURI(uri));
+                            })}
+                            parentWidth={image_styles.image.width}
+                            sliderBoxHeight={image_styles.image.height}
+                            dotColor={GlobalValues.ORANGE_COLOR}
+                            inactiveDotColor={GlobalValues.DISTINCT_GRAY}
+                        />
+                        </View>
+
                         <View style={main_styles.name_view}>
                             <Text style={main_styles.title_text}>
-                                {this.state.title}
+                                {this.state.name}
                             </Text>
                         </View>
                         <View style={filter_snaps_styles.profile_container}>
-                            {distanceRender}
-                            <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>
+                            {genderRender}
+                            <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
+                                <MaterialCommunityIcons name="baby"  size={12} color="gray" style={filter_snaps_styles.icon}/>
                                 <Text style={{color: 'black', fontSize: 14}}>
-                                    {this.state.is_phiscal ? "Physical" : "Virtual"}
+                                    {this.state.age}
                                 </Text>
                             </View>
-                            <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>
-                                <MaterialIcons name="person" size={18} color="black" style={filter_snaps_styles.icon}/>
+                            <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
+                                <FontAwesome name="road" size={12} color="gray" style={filter_snaps_styles.icon}/>
                                 <Text style={{color: 'black', fontSize: 14}}>
-                                    {this.state.num_members}
+                                    {this.state.distance + " mi"}
                                 </Text>
                             </View>
                         </View>
                         <View style={info_styles.body}>
-                            <View style={inline_attribute_styles.body}>
-                                <Text style={inline_attribute_styles.title_text}>
-                                    <Text style={{color: "gray"}}>
-                                        {"It is on "} 
-                                    </Text>
-                                    {this.state.date}
-                                </Text>
-                            </View>
-                            <View style={main_styles.horizontal_bar} />  
+                            {descriptionRender}
+                            <View style={main_styles.horizontal_bar}/>
                             <View style={inline_attribute_styles.body}>
                                 <Text style={inline_attribute_styles.title_text}>
                                     It's about
@@ -502,53 +563,91 @@ export class OtherActivityScreen extends React.Component {
                                     );
                                 })}
                             </View>
-                            {descriptionRender}
                         </View>
-                        <View style={info_styles.body}> 
-                            {joinRender}
-                            <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("View Map Screen", {location: this.state.location})}}>
-                                <Text style={actions_styles.action_button_text}>
-                                    View Location
-                                </Text>
-                                <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
-                            </TouchableOpacity>     
-                            <View style={main_styles.horizontal_bar} />             
-                            <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.viewAdmins();}}>
-                                <Text style={actions_styles.action_button_text}>
-                                    View Creators
-                                </Text>
-                                <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
-                            </TouchableOpacity>
-                            <View style={main_styles.horizontal_bar} />   
-                            <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.viewParticipants();}}>
-                                <Text style={actions_styles.action_button_text}>
-                                    View Participants
-                                </Text>
-                                <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
-                            </TouchableOpacity>
+                        <View style={info_styles.body}>
+                            <View style={actions_styles.actions_view}> 
+                                <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.sendMessage();}}>
+                                    <Text style={actions_styles.action_button_text}>
+                                        Send Message
+                                    </Text>
+                                    <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
+                                </TouchableOpacity>
+                                <View style={main_styles.horizontal_bar} />
+                                <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.inviteTo();}}>
+                                    <Text style={actions_styles.action_button_text}>
+                                        Invite
+                                    </Text>
+                                    <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
+                                </TouchableOpacity>
+                                <View style={main_styles.horizontal_bar} />
+                                <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.blockFromUser();}}>
+                                    <Text style={actions_styles.action_button_text}>
+                                        Block
+                                    </Text>
+                                    <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
                 );
             }
+        }
+
+            return (
+                <View style={main_styles.page}>
+                    
+                    <FlatList data={[{id: 1}]} keyExtractor={() => "dummy"} listEmptyComponent={null} renderItem={renderComponent} style={[main_styles.page, {zIndex: 99, flex: 1}]}/>
+                    
+                </View>
+            );
+        }
+    }
+
+    //get rid of any null entries
+    cleanImages() {
+        var cleaned_images = [];
+
+        for (var i = 0; i <= this.state.profile_images.length; i++) {
+            if (this.state.profile_images[i] != null && this.state.profile_images[i] != "") {
+                cleaned_images.push(this.state.profile_images[i]);
+            }
+        }
+
+        this.state.profile_images = cleaned_images;
+    }
+
+    handleImageURI(uri) {
+        if (uri == undefined) {
+            return(require("../../../images/default_image.png"));
+        }
+        else {
+            return(uri);
+        }
+    }
+
+    async sendMessage() {
+        GlobalProperties.screen_props = {
+            sendMessage: true,
+            _id: "",
         };
 
-        return (
-            <View style={main_styles.page}>
-                
-                <FlatList data={[{id: 1}]} keyExtractor={() => "dummy"} listEmptyComponent={null} renderItem={renderComponent} style={[main_styles.page, {zIndex: 99, flex: 1}]}/>
-                
-            </View>
-        );
+        GlobalProperties.return_screen = "Manage Activity Screen";
+        GlobalProperties.reload_messages = true;
+
+        //open the realm
+        await GlobalProperties.messagesHandler.openRealm();
+
+        //create message
+        var header_id = await GlobalProperties.messagesHandler.createDirectMessage(this.state.id, this.state.name);
+
+        GlobalProperties.screen_props._id = header_id;
+
+        this.props.navigation.navigate("Your Messages Navigator", {screen: "Your Messages Screen"});
+        
     }
 
-    lazyUpdate() {
-        this.forceUpdate();
-    }
-
-    block() {
-        if (this.state.type == "none") {
-            this.blockFromUser();
-        }
+    inviteTo() {
+        this.props.navigation.navigate("Invite To Screen", {id: this.state.id});
     }
 
     async blockFromUser() {
@@ -556,7 +655,7 @@ export class OtherActivityScreen extends React.Component {
         var successful = false;
 
         //make request
-        var result = await GlobalEndpoints.makeGetRequest(true, "/api/User/Friends/Block/UserActivity?activity_id=" + this.state.id)
+        var result = await GlobalEndpoints.makeGetRequest(true, "/api/User/Friends/Block/User?user_id=" + this.state.id)
             .then((result) => {
                 if (result == undefined) {
                     successful = false;
@@ -576,7 +675,7 @@ export class OtherActivityScreen extends React.Component {
             //if result status is ok
             if (result.request.status ==  200) {
                 //go back, pass id of user to delete
-                GlobalProperties.return_screen = "Other Activity Screen"
+                GlobalProperties.return_screen = "Other Explore Profile Screen"
                 GlobalProperties.screen_props = {
                     action: "remove",
                     id: this.state.id,
@@ -612,87 +711,9 @@ export class OtherActivityScreen extends React.Component {
         }
     }
 
-    async joinOtherActivity() {
-        var requestUrl = "/api/User/Friends/RequestToJoinActivityAsParticipant?id=" + this.state.id;
-        
-
-        //if request was successful
-        var successful = false;
-
-        //make request
-        var result = await GlobalEndpoints.makeGetRequest(true, requestUrl)
-            .then((result) => {
-                if (result == undefined) {
-                    successful = false;
-                }
-                else {
-                    successful = true;
-                }
-                return(result);
-            })
-            .catch((error) => {
-                successful = false;
-                return(error);
-            });
-
-        //if there is no error message, request was good
-        if (successful) {
-
-            //if result status is ok
-            if (result.request.status ==  200) {
-                if (this.state.invitation_type == "invite_required") {
-                    //create alert
-                    invitationSentAlert();
-                }
-                else {
-                    //create alert
-                    joinedAlert();
-                }
-
-                //then go back
-                this.props.navigation.pop(1);
-            }
-            else {
-                //returned bad response, fetch server generated error message
-                //and set 
-                Alert.alert(result.data);
-                return;
-            }
-        }
-        else {
-            //invalid request
-            if (result == undefined) {
-                return;
-            }
-            else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(JSON.stringify(result.response.data));
-                return;
-            }
-            //handle not found case
-            else if (result.response.status == 404) {
-                GlobalEndpoints.handleNotFound(false);
-            }
-            else {
-                Alert.alert("There seems to be a network connection issue.\nCheck your internet.");
-                return;
-            }
-        }
+    lazyUpdate() {
+        this.forceUpdate();
     }
-
-    viewAdmins() {
-        this.props.navigation.navigate("View Admins Screen", {type: "activity", is_admin: false, id: this.state.id});
-    }
-
-    viewParticipants() {
-        this.props.navigation.navigate("View Participants Screen", {type: "activity", is_admin: false, id: this.state.id});
-    }
-}
-
-const joinedAlert = () => {
-    Alert.alert(
-        "Joined",
-        "Successfully joined!"
-    )
 }
 
 const invitationSentAlert = () => {
@@ -702,28 +723,24 @@ const invitationSentAlert = () => {
     )
 }
 
-class FilterSnap extends React.Component {
-    constructor(props) {
-        super(props);
+function handleImageURI(uri) {
+    if (uri == undefined) {
+        return(require("../../../images/default_image.png"));
     }
-
-    render() {
-        return( 
-            <Text style={[filter_snaps_styles.inner_text, { backgroundColor: this.props.color, borderColor: this.props.color}]}>
-                {this.props.innerText}
-            </Text>
-        );
+    else {
+        return({uri: uri});
     }
 }
 
-const HeaderTitle = (props) => {
-    return(
-        <Text style={{fontSize: 24, color: 'black'}}>
-            {props.title}
-        </Text>
-    );
-}
 
-FilterSnap.defaultProps = {
-    color: GlobalValues.ORANGE_COLOR,
-}
+//<View style={{ borderBottomColor: '#CCCCCC', borderBottomWidth: 2, width: '95%', alignSelf: 'center', marginBottom: 0,}}/>
+//<FilterSnap innerText="light" color="#9A39E2"/>
+/*
+
+<View style={frame_styles.box} onPress={() => {this.props.navigation.navigate("Other Explore Profile Screen")}}>
+                <Text style={frame_styles.main_text}>
+                    {this.props.id}
+                </Text>
+            </View>
+
+*/

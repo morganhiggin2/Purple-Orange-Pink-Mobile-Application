@@ -663,7 +663,7 @@ export class EditActivityScreen extends React.Component {
                             Participants Cap
                         </Text>
                         <View style={inline_attribute_styles.numeric_input_text_view}>
-                            <TextInput style={inline_attribute_styles.numeric_text_input} placeholderTextColor="black" keyboardType={'numeric'} editable={true} maxLength={9} placeholder={this.state.invite_cap_value.toString()} onChangeText={(value) => {this.updateParticipantsCap(value);}} onEndEditing={() => {this.updateUpdateMade(false);}}/>
+                            <TextInput style={inline_attribute_styles.numeric_text_input} placeholderTextColor="black" keyboardType={'numeric'} editable={true} maxLength={9} placeholder={this.state.participants_cap_value.toString()} onChangeText={(value) => {this.updateParticipantsCap(value);}} onEndEditing={() => {this.updateUpdateMade(false);}}/>
                         </View>
                     </View>
                 </View>
@@ -1212,7 +1212,7 @@ export class EditActivityScreen extends React.Component {
     }
     
     updateInvitationTypeValueOnRender(value) {
-        this.state.invitation_type_dropdown_value = parseInt(value);
+        this.state.invitation_type_dropdown_value = value;
         this.state.updateBody["invitation_method"] = this.state.invitation_type_dropdown_value;
         this.updateUpdateMade(false);
     }

@@ -277,7 +277,15 @@ export class YourMessagesScreen extends React.Component {
             if (GlobalProperties.return_screen == "Conversation Screen" && GlobalProperties.screen_props != null) {
                 GlobalProperties.messagesHandler.readMessage(GlobalProperties.screen_props._id);
             }
-            else if (GlobalProperties.return_screen == "Other Profile Screen" && GlobalProperties.screen_props != null) {
+            else if (GlobalProperties.return_screen == "Other Explore Profile Screen" && GlobalProperties.screen_props != null) {
+                if (GlobalProperties.screen_props.sendMessage) {
+                    //get header and navigate to conversation screen
+                    GlobalProperties.messagesHandler.getHeaderRow(GlobalProperties.screen_props._id).then((header) => {
+                        this.props.navigation.navigate("Conversation Screen", {title: header.title, _id: header._id, last_timestamp: header.last_timestamp, sub_header_id: header.sub_header_id, type_id: header.type_id, type: header.type});
+                    });             
+                }
+            }
+            else if (GlobalProperties.return_screen == "Other Activity Profile Screen" && GlobalProperties.screen_props != null) {
                 if (GlobalProperties.screen_props.sendMessage) {
                     //get header and navigate to conversation screen
                     GlobalProperties.messagesHandler.getHeaderRow(GlobalProperties.screen_props._id).then((header) => {
@@ -315,7 +323,6 @@ export class YourMessagesScreen extends React.Component {
     }
 
     async fetchMessages() {
-        console.log(GlobalProperties.user_id);
         //set global property to false first (so if multiple notifications, they dont create many overlapping requests)
         GlobalProperties.reload_messages = false;
 
@@ -348,6 +355,8 @@ export class YourMessagesScreen extends React.Component {
 
             //if result status is ok
             if (result.request.status ==  200) {
+                console.log(result.request.response);
+
                 //get messages from json
                 var messages = JSON.parse(result.request.response).messages;
 

@@ -2,6 +2,7 @@ import React from 'react';
 import {StyleSheet, View, Text, TextInput, Image} from 'react-native';
 import {TouchableHighlight} from 'react-native-gesture-handler';
 import { AntDesign } from '@expo/vector-icons'; 
+import { GlobalValues } from '../../global/global_properties';
 
 const main_styles = StyleSheet.create(
     {
@@ -33,8 +34,8 @@ const main_styles = StyleSheet.create(
         button: {
             borderRadius: 5,
             borderWidth: 4,
-            backgroundColor: '#FE3C3C',
-            borderColor: '#FE3C3C',
+            backgroundColor: GlobalValues.ORANGE_COLOR,
+            borderColor: GlobalValues.ORANGE_COLOR,
             padding: 2,
             paddingVertical: 6,
             alignSelf: 'center',

@@ -7,7 +7,7 @@ import { GlobalProperties, GlobalValues } from '../../../global/global_propertie
 import React from 'react';
 
 import {ExploreScreen} from './explore_screen.js';
-import {OtherProfileScreen} from './other_profile_screen.js'
+import { OtherExploreProfileScreen } from './other_explore_profile_screen.js';
 import {ExploreFiltersScreen} from './explore_filters_screen.js'
 import { InviteToScreen } from './invite_to_screen.js';
 import { OtherActivityScreen } from './other_activity_screen.js';
@@ -137,6 +137,8 @@ export class ListScreen extends React.Component {
         };
 
         this.lazyUpdate = this.lazyUpdate.bind(this);
+
+        GlobalProperties.messagesHandler.openRealm();
 
         //add navigation events
         
@@ -316,7 +318,7 @@ export class ExploreNavigator extends React.Component {
             <MainStack.Navigator initialRouteName="Explore Drawer">
                 <MainStack.Screen name="List Screen" component={ListScreen} options={{headerTitle: () => <EmptyTitle/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR, height: StatusBar.currentHeight}, headerShown: true, headerTitleAlign:'center'}}/> 
                 <MainStack.Screen name="Explore Filters Screen" component={ExploreFiltersScreen} options={{headerTitle: () => <HeaderTitle title="Filters"/>, headerBackTitle: "back", headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'vertical', cardStyleInterpolator:CardStyleInterpolators.forVerticalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}} />
-                <MainStack.Screen name="Other Profile Screen" component={OtherProfileScreen} options={{ headerTitle: () => <EmptyTitle />, headerBackTitle: "back", headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, headerShown: true}} />
+                <MainStack.Screen name="Other Explore Profile Screen" component={OtherExploreProfileScreen} options={{ headerTitle: () => <EmptyTitle />, headerBackTitle: "back", headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, headerShown: true}} />
                 <MainStack.Screen name="Other Activity Screen" component={OtherActivityScreen} options={{ headerTitle: () => <EmptyTitle />, headerBackTitle: "back", headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, headerShown: true}} />
 
                 <MainStack.Screen name="View Admins Screen" component={ViewAdminsScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"View Creators"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>

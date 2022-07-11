@@ -134,37 +134,12 @@ export class ViewAdminsScreen extends React.Component {
             //is group admins or activity admins?
             type: '',
 
-            //list of admins
-            admins: [{
-                username: "FraserMqdycDGweDx",
-                first_name: "Frasermcdas",
-                last_initial: "M",
-                distance: 8.0
-            },
-            {
-                username: "FraserMqdycDGweDx",
-                first_name: "Fra",
-                last_initial: "M",
-                distance: 8.0
-            },
-            {
-                username: "FraserMqdycDGweDx",
-                first_name: "Frasermcdas",
-                last_initial: "M",
-                distance: 8.0
-            },
-            {
-                username: "FraserMqdycDGweDx",
-                first_name: "Frasermcdas",
-                last_initial: "M",
-                distance: 8.0
-            }],
+            admins: [],
             adminComponents: [],
         };
 
         this.validateAttributes = this.validateAttributes.bind(this);
-        this.getType = this.getType.bind(this);
-        this.getId = this.getId.bind(this);
+        this.viewOtherProfile = this.viewOtherProfile.bind(this);
         
         this.updateSearch = this.updateSearch.bind(this);
         this.updateAdmins = this.updateAdmins.bind(this);
@@ -180,7 +155,7 @@ export class ViewAdminsScreen extends React.Component {
             this.state.global_props = GlobalProperties.screen_props;
             GlobalProperties.screenActivated();
 
-            if (GlobalProperties.return_screen == "Other Profile Screen" && GlobalProperties.screen_props != null) {
+            if (GlobalProperties.return_screen == "Other Activity Profile Screen" && GlobalProperties.screen_props != null) {
                 if (GlobalProperties.screen_props.action = "remove") {
                     //remove person
 
@@ -211,16 +186,12 @@ export class ViewAdminsScreen extends React.Component {
 
         for (var i = 0; i < this.state.admins.length; i++) { 
             var json = this.state.admins[i];
-            this.state.adminComponents.push(<FrameComponent key={i} id={json.id} name={json.name} distance={json.distance} getType={this.getType} getId={this.getId} navigation={this.props.navigation}/>);
+            this.state.adminComponents.push(<FrameComponent key={i} id={json.id} name={json.name} distance={json.distance} viewOtherProfile={this.viewOtherProfile}/>);
         }
     }
 
-    getType() {
-        return (this.state.type);
-    }
-
-    getId() {
-        return (this.state.id);
+    viewOtherProfile(id) {
+        this.props.navigation.navigate("Other Activity Profile Screen", {id: id, activity_id: this.state.id, is_admin: this.state.is_admin, viewing_admins: true})
     }
 
     //____>>>>>>>search bar creates attributes from even spaces, and adds them to the ones in the filter page
@@ -354,7 +325,8 @@ class FrameComponent extends React.Component{
         super (props);
 
         this.state = {
-            name: this.props.name
+            name: this.props.name,
+            id: this.props.id,
         }
 
         if (this.state.name.length > 13) {
@@ -363,27 +335,8 @@ class FrameComponent extends React.Component{
     }
 
     render() {
-        var passing_params = {id: this.props.id};
-        var parentType = this.props.getType();
-
-        //if type is activity, pass activity_id and set type to "participants of activity"
-        if (parentType == "activity") {
-            passing_params.type = "activity";
-            passing_params.viewing = "admins";
-            passing_params.activity_id = this.props.getId();
-        }
-        else if (parentType == "group") {
-            passing_params.type = "group";
-            passing_params.viewing = "admins";
-            passing_params.group_id = this.props.getId();
-        }
-        else if (parentType == "none") {
-            passing_params.type = "none";
-            passing_params.viewing = "admins";
-        }
-
         return(
-            <TouchableHighlight style={frame_styles.box} onPress={() => {this.props.navigation.navigate("Other Profile Screen", passing_params)}}>
+            <TouchableHighlight style={frame_styles.box} onPress={() => {this.props.viewOtherProfile(this.state.id);}}>
                 <ImageBackground style={frame_styles.background_image} source={require("../../../../images/default_image.png")}>
                     <View style={frame_styles.text_container}>   
                         <Text style={frame_styles.name_text}>

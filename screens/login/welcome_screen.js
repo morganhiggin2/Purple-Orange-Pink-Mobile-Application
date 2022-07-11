@@ -1,6 +1,7 @@
 import React from 'react';
 import {StyleSheet, View, Text, Image, ImageBackground} from 'react-native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
+import { GlobalProperties, GlobalValues } from '../../global/global_properties';
 
 //'#F3604D'
 
@@ -31,9 +32,9 @@ const main_styles = StyleSheet.create(
             alignSelf: 'center',
             alignItems: 'center',
             borderRadius: 5,
-            backgroundColor: '#F3604D',
+            backgroundColor: GlobalValues.ORANGE_COLOR,
             marginTop: 20,
-            borderColor: '#F3604D', 
+            borderColor: GlobalValues.ORANGE_COLOR, 
             justifyContent: 'center',
         },
         button_text: {

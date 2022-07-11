@@ -221,7 +221,7 @@ export class MainSettingsScreen extends React.Component {
         var successful = false;
 
         //make request
-        var result = await GlobalEndpoints.makeGetRequest(true, "/api/AccountManager/Remove")
+        var result = await GlobalEndpoints.makeDeleteRequest(true, "/api/AccountManager/Remove")
             .then((result) => {
                 if (result == undefined) {
                     successful = false;

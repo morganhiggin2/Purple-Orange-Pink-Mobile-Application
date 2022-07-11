@@ -1172,6 +1172,7 @@ export class ActivityCreationScreen extends React.Component {
                 return;
             }
             else if (result.response.status == 400 && result.response.data) {
+                console.log(result.response.data);
                 Alert.alert(JSON.stringify(result.response.data));
                 return;
             }
@@ -1235,7 +1236,10 @@ export class ActivityCreationScreen extends React.Component {
             return false;
         }
 
-        if (!this.state.is_physical_event && (this.state.search_latitude == null || this.state.search_longitude == null))
+        if (!this.state.is_physical_event && (this.state.search_latitude == null || this.state.search_longitude == null)) {
+            this.showError("must set activity location by pin");
+            return false;
+        }
 
         //validate set search
         if (!this.state.setSearchLocationToTargetLocation && (this.state.search_latitude == null || this.state.search_longitude == null)) {

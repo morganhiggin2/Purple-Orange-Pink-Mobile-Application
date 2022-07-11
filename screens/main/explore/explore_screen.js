@@ -244,8 +244,8 @@ class FrameComponent extends React.Component{
         );*/
 
         var renderDescription = {};
-
-        if (this.props.description != null || this.props.description != "") {
+        
+        if (this.props.description != null && this.props.description != "") {
             if (this.props.type == "person") {
                 renderDescription = (
                     <View style={[frame_styles.inner_text_container, {maxHight: 50}]}>
@@ -276,7 +276,7 @@ class FrameComponent extends React.Component{
             return (
                 <View style={frame_styles.box} >
                     <TouchableHighlight underlayColor={"white"} onPress={() => {
-                        this.props.navigation.navigate("Other Profile Screen", {id: this.props.id, type: "none", viewing:""});
+                        this.props.navigation.navigate("Other Explore Profile Screen", {id: this.props.id});
                     }}>
                         <View style={frame_styles.inner_box}>
                             <Image style={frame_styles.background_image} source={{uri: "https://image.cnbcfm.com/api/v1/image/106926992-1628885077267-elon.jpg"}}/>
@@ -463,7 +463,7 @@ export class ExploreScreen extends React.Component {
             //update lazy update method for current explore screen
             GlobalProperties.currentExploreScreenSearchUpdate = this.updateSearch;
 
-            if (GlobalProperties.return_screen == "Other Profile Screen" && GlobalProperties.screen_props != null) {
+            if (GlobalProperties.return_screen == "Other Explore Profile Screen" && GlobalProperties.screen_props != null) {
                 if (GlobalProperties.screen_props.action = "remove") {
                     //remove person
 

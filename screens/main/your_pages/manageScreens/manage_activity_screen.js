@@ -641,11 +641,11 @@ export class ManageActivityScreen extends React.Component {
     }
 
     viewAdmins() {
-        this.props.navigation.navigate("View Admins Screen", {type: "activity", id: this.state.id, admin: this.state.is_admin});
+        this.props.navigation.navigate("View Admins Screen", {type: "activity", id: this.state.id, is_admin: this.state.is_admin});
     }
 
     viewParticipants() {
-        this.props.navigation.navigate("View Participants Screen", {type: "activity", id: this.state.id, participant: this.state.is_participant});
+        this.props.navigation.navigate("View Participants Screen", {type: "activity", id: this.state.id, is_admin: this.state.is_admin});
     }
 
     makeAnnouncement() {

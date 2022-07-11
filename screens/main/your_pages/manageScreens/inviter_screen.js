@@ -227,7 +227,6 @@ export class InviterScreen extends React.Component {
             _id: this.props.route.params._id,
             sub_header_id: this.props.route.params.sub_header_id,
             invitation_id: this.props.route.params.invitation_id,
-            type: "",
             body: this.props.route.params.body,
 
             //for loading screen
@@ -396,13 +395,14 @@ export class InviterScreen extends React.Component {
                 </View>
             );
         }
+
         var renderViewOther = {};
 
-        if (this.state.type == "person")
+        if (this.state.other_type == "person")
         {
             renderViewOther = (
                 <View>
-                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("Other Profile Screen", {id: this.state.other_id, type: "none", viewing:""});}}>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("Other Explore Profile Screen", {id: this.state.other_id});}}>
                         <View style={actions_styles.action_button_inner}>
                             <Text style={actions_styles.action_button_text}>
                                 View Profile
@@ -412,10 +412,10 @@ export class InviterScreen extends React.Component {
                 </View>
             );
         }
-        else {
+        else if (this.state.other_type == "activity") {
             renderViewOther = (
                 <View>
-                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("Other Activity Screen", {id: this.state.other_id, type: "none", viewing:""});}}>
+                    <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("Other Activity Screen", {id: this.state.other_id});}}>
                         <View style={actions_styles.action_button_inner}>
                             <Text style={actions_styles.action_button_text}>
                                 View Activity
@@ -424,6 +424,9 @@ export class InviterScreen extends React.Component {
                     </TouchableOpacity>
                 </View>
             );
+        }
+        else {
+            renderViewOther = (<View />);
         }
         
         if (this.state.loading == true || this.state.loading == null) {

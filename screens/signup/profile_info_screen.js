@@ -52,8 +52,8 @@ const main_styles = StyleSheet.create(
         }, 
         button: {
             borderRadius: 5,
-            backgroundColor: '#F3604D',
-            borderColor: '#F3604D',
+            backgroundColor: GlobalValues.ORANGE_COLOR,
+            borderColor: GlobalValues.ORANGE_COLOR,
             padding: 2,
             paddingVertical: 6,
             alignSelf: 'center',
@@ -379,7 +379,7 @@ export class ProfileInfoScreen extends React.Component {
                             </View>   
                         </View>
                         {this.showDatePicker()}   
-                        <View style={inline_attribute_styles.body}>
+                        <View style={[inline_attribute_styles.body, {paddingBottom: 6}]}>
                             <Text style={inline_attribute_styles.title_text}>
                                 Gender
                             </Text>

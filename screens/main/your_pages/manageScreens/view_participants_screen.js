@@ -121,6 +121,8 @@ export class ViewParticipantsScreen extends React.Component {
             //from type
             type: this.props.route.params.type,
 
+            is_admin: this.props.route.params.is_admin,
+
             //for loading screen
             loading: true,
             reload: false,
@@ -132,36 +134,12 @@ export class ViewParticipantsScreen extends React.Component {
             type: '',
 
             //list of participants
-            participants: [{
-                username: "FraserMqdycDGweDx",
-                first_name: "Frasermcdas",
-                last_initial: "M",
-                distance: 8.0
-            },
-            {
-                username: "FraserMqdycDGweDx",
-                first_name: "Fra",
-                last_initial: "M",
-                distance: 8.0
-            },
-            {
-                username: "FraserMqdycDGweDx",
-                first_name: "Frasermcdas",
-                last_initial: "M",
-                distance: 8.0
-            },
-            {
-                username: "FraserMqdycDGweDx",
-                first_name: "Frasermcdas",
-                last_initial: "M",
-                distance: 8.0
-            }],
+            participants: [],
             participantComponents: [],
         };
 
         this.validateAttributes = this.validateAttributes.bind(this);
-        this.getType = this.getType.bind(this);
-        this.getId = this.getId.bind(this);
+        this.viewOtherProfile = this.viewOtherProfile.bind(this);
         
         this.updateSearch = this.updateSearch.bind(this);
         this.updateParticipants = this.updateParticipants.bind(this);
@@ -176,7 +154,7 @@ export class ViewParticipantsScreen extends React.Component {
         this.props.navigation.addListener('focus', () => {
             this.state.global_props = GlobalProperties.screen_props;
 
-            if (GlobalProperties.return_screen == "Other Profile Screen" && GlobalProperties.screen_props != null) {
+            if (GlobalProperties.return_screen == "Other Activity Profile Screen" && GlobalProperties.screen_props != null) {
                 if (GlobalProperties.screen_props.action = "remove") {
                     //remove person
 
@@ -209,16 +187,12 @@ export class ViewParticipantsScreen extends React.Component {
 
         for (var i = 0; i < this.state.participants.length; i++) { 
             var json = this.state.participants[i];
-            this.state.participantComponents.push(<FrameComponent key={i} id={json.id} name={json.name} distance={json.distance} getType={this.getType} getId={this.getId} navigation={this.props.navigation}/>);
+            this.state.participantComponents.push(<FrameComponent key={i} id={json.id} name={json.name} distance={json.distance} viewOtherProfile={this.viewOtherProfile}/>);
         }
     }
 
-    getType() {
-        return (this.state.type);
-    }
-
-    getId() {
-        return (this.state.id);
+    viewOtherProfile(id) {
+        this.props.navigation.navigate("Other Activity Profile Screen", {id: id, activity_id: this.state.id, is_admin: this.state.is_admin, viewing_admins: false})
     }
 
     //____>>>>>>>search bar creates attributes from even spaces, and adds them to the ones in the filter page
@@ -353,7 +327,8 @@ class FrameComponent extends React.Component{
         super (props);
 
         this.state = {
-            name: this.props.name
+            name: this.props.name,
+            id: this.props.id,
         }
 
         if (this.state.name.length > 13) {
@@ -362,27 +337,8 @@ class FrameComponent extends React.Component{
     }
 
     render() {
-        var passing_params = {id: this.props.id};
-        var parentType = this.props.getType();
-
-        //if type is activity, pass activity_id and set type to "participants of activity"
-        if (parentType == "activity") {
-            passing_params.type = "activity";
-            passing_params.viewing = "participants";
-            passing_params.activity_id = this.props.getId();
-        }
-        else if (parenttype == "group") {
-            passing_params.type = "group";
-            passing_params.viewing = "participants";
-            passing_params.group_id = this.props.getId();
-        }
-        else if (parenttype == "none") {
-            passing_params.type = "none";
-            passing_params.viewing = "participants";
-        }
-
         return(
-            <TouchableHighlight style={frame_styles.box} onPress={() => {this.props.navigation.navigate("Other Profile Screen", passing_params)}}>
+            <TouchableHighlight style={frame_styles.box} onPress={() => {this.props.viewOtherProfile(this.state.id);}}>
                 <ImageBackground style={frame_styles.background_image} source={require("../../../../images/default_image.png")}>
                     <View style={frame_styles.text_container}>   
                         <Text style={frame_styles.name_text}>
