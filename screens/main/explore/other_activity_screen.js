@@ -257,9 +257,6 @@ export class OtherActivityScreen extends React.Component {
             //attributes
             attributes: [],
 
-            //is physical event
-            is_phiscal: true,
-
             //name of activity
             title: this.props.route.params.name,
 
@@ -345,6 +342,8 @@ export class OtherActivityScreen extends React.Component {
                 Alert.alert(result.data);
                 return;
             }
+
+            console.log(this.state);
         }
         else {
 
@@ -470,7 +469,7 @@ export class OtherActivityScreen extends React.Component {
                             {distanceRender}
                             <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>
                                 <Text style={{color: 'black', fontSize: 14}}>
-                                    {this.state.is_phiscal ? "Physical" : "Virtual"}
+                                    {this.state.is_physical ? "Physical" : "Virtual"}
                                 </Text>
                             </View>
                             <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: "#d6d6d6"}]}>

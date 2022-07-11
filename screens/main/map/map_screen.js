@@ -234,7 +234,7 @@ export class MapScreen extends React.Component {
                 "maximum_age": GlobalProperties.search_maxAge,
                 "location": {
                     "latitude": GlobalProperties.map_params.latitude,
-                    "longitude": GlobalProperties.map_params.latitude,
+                    "longitude": GlobalProperties.map_params.longitude,
                 }
             };
 
@@ -335,6 +335,7 @@ export class MapScreen extends React.Component {
     }
 
     render() {
+        
         if (this.state.loading == true || this.state.loading == null || GlobalProperties.map_params == null) {
             return (
                 <LoadingScreen tryAgain={this.fetchUserData} reload={this.state.reload}/>
@@ -487,6 +488,7 @@ export class MapScreen extends React.Component {
     onRegionChangeComplete(region) {
         //update global values
         GlobalProperties.search_radius = GlobalProperties.get_haversine_distance(region.latitude, region.longitude, region.latitudeDelta, region.longitudeDelta) / 2;
+        GlobalProperties.map_params = region;
 
         //call on updating markers
         GlobalProperties.map_filters_updated = true;
@@ -534,7 +536,7 @@ export class MapScreen extends React.Component {
                         coordinate={{latitude: marker.latitude, longitude: marker.longitude}}
                         pinColor={GlobalValues.ACTIVITY_COLOR}
                     >
-                        <Text style={{color: 'white', fontWeight: 'bold', fontSize: 18, textAlign: 'center', backgroundColor: GlobalValues.ACTIVITY_COLOR, borderRadius: 12, padding: 3}}>
+                        <Text style={{color: 'white', fontWeight: 'bold', fontSize: 18, textAlign: 'center', backgroundColor: GlobalValues.PEOPLE_COLOR, borderRadius: 15, padding: 3, minWidth: 30, minHeight: 30}}>
                             {marker.count}
                         </Text>
                     </Marker>
