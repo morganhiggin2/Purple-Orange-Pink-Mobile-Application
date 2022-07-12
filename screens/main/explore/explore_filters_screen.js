@@ -156,7 +156,7 @@ export class ExploreFiltersScreen extends React.Component {
             gender_dropdown_value: GlobalProperties.search_gender,
 
             //age range values
-            age_range_values: [18, 100],
+            age_range_values: [GlobalProperties.search_minAge, GlobalProperties.search_maxAge],
 
             //medium
             medium: GlobalProperties.medium,
@@ -189,7 +189,6 @@ export class ExploreFiltersScreen extends React.Component {
                                 <Text style={attribute_styles.title_value}>
                                     {this.state.age_range_values[0] + " to " + this.state.age_range_values[1]}
                                 </Text>
-
                             </View>
                         </View>
                         <View style={attribute_styles.slider}>

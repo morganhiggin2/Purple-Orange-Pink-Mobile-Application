@@ -1068,7 +1068,7 @@ export class EditActivityScreen extends React.Component {
             partOfDay = "PM";
         }
 
-        hours = hours % 12;
+        hours = ((hours - 1) % 12 + 1);
 
         var minutes = this.state.date.getMinutes();
 
