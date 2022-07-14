@@ -266,6 +266,14 @@ export class GlobalEndpoints {
                 }
       
                 GlobalEndpoints.makePostRequest(true, "/api/User/Friends/UpdateUserInformation", body);
+
+                //set initial location
+                GlobalProperties.default_map_params = {
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude,
+                    latitudeDelta: GlobalProperties.default_map_params.latitudeDelta,
+                    longitudeDelta: GlobalProperties.default_map_params.longitudeDelta,
+                };
             }          
         }
         else {
@@ -283,6 +291,14 @@ export class GlobalEndpoints {
             }
   
             GlobalEndpoints.makePostRequest(true, "/api/User/Friends/UpdateUserInformation", body);
+
+            //set initial location
+            GlobalProperties.default_map_params = {
+                latitude: returnResult.location.coords.latitude,
+                longitude: returnResult.location.coords.longitude,
+                latitudeDelta: GlobalProperties.default_map_params.latitudeDelta,
+                longitudeDelta: GlobalProperties.default_map_params.longitudeDelta,
+            };
         }
   
         return (returnResult);

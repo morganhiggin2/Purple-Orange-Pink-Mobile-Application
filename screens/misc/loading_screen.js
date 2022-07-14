@@ -42,6 +42,7 @@ const post_styles = StyleSheet.create(
         },
         post_button_text: {
             color: 'white',
+            fontFamily: 'Roboto',
             fontSize: 18,
             alignSelf: 'center',
         }

@@ -37,18 +37,22 @@ const main_styles = StyleSheet.create(
             borderColor: 'gray'
         },
         title_text: {
+            fontFamily: 'Roboto',
             fontSize: 24,
             color: 'black',
             marginBottom: '0 %',
             marginLeft: '10%',
             padding: 5,
-            width: '100%'
+            width: '100%',
+            fontFamily: "Roboto",
         },
         title_text: {
             alignSelf: 'center',
+            fontFamily: 'Roboto',
             fontSize: 24,
             color: 'gray',
             padding: 5,
+            fontFamily: 'Roboto'
         }, 
         button: {
             borderRadius: 5,
@@ -63,11 +67,14 @@ const main_styles = StyleSheet.create(
         },
         button_text: {
             color: 'white',
+            fontFamily: 'Roboto',
             fontSize: 18,
             alignSelf: 'center',
+            fontFamily: "Roboto",
         },
         error_message: {
             color: 'red',
+            fontFamily: 'Roboto',
             fontSize: 12,
             alignSelf: 'center',
             marginTop: "5%",
@@ -122,6 +129,7 @@ const attribute_styles = StyleSheet.create({
         fontSize: 16,
         color: 'black',
         marginBottom: 6,
+        fontFamily: "Roboto",
     },
     text_input: {
         textAlignVertical: "top",
@@ -133,6 +141,7 @@ const attribute_styles = StyleSheet.create({
         borderColor: 'black',
         borderBottomWidth: 1,
         borderRadius: 4,
+        fontFamily: "Roboto",
     },
     slider: {
         alignSelf: 'center',
@@ -162,6 +171,7 @@ const inline_attribute_styles = StyleSheet.create({
         alignSelf: 'center',
         fontSize: 16,
         color: 'black',
+        fontFamily: 'Roboto'
     },
     input_text_view: {
         flexDirection:  'row',
@@ -177,7 +187,8 @@ const inline_attribute_styles = StyleSheet.create({
       backgroundColor: 'white',
       color: 'darkgray',
       borderBottomWidth: 1,
-      borderColor: 'black'
+      borderColor: 'black',
+      fontFamily: "Roboto",
     },
     drop_down_selector: {
         paddingHorizontal: 4,

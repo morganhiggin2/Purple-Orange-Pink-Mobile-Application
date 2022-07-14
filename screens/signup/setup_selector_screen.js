@@ -18,9 +18,11 @@ const main_styles = StyleSheet.create(
         },
         title_text: {
             alignSelf: 'center',
+            fontFamily: 'Roboto',
             fontSize: 24,
             color: 'gray',
             padding: 5,
+            fontFamily: 'Roboto'
         }, 
         sub_button: {
             alignSelf: 'center',
@@ -50,6 +52,7 @@ const main_styles = StyleSheet.create(
         },
         button_text: {
             color: 'white',
+            fontFamily: 'Roboto',
             fontSize: 18,
             marginLeft: '5%',
         },

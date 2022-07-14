@@ -1,6 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
 import { FileSystem } from 'expo-file-system';
 import * as SecureStore from 'expo-secure-store';
+import * as Device from 'expo-device';
 
 //static values
 export const GlobalValues = {
@@ -41,6 +42,10 @@ export const GlobalValues = {
   //map
   MARKER_IMAGE_PATHS: ["https://cpng.pikpng.com/pngl/s/43-430057_pixel-heart-pixel-heart-png-transparent-clipart.png", "path_from_base_image_2"],
   GAP_OVERLAP_REFRESH_RATIO: 0.25,
+
+  //map current location colors
+  MARKER_INSIDE_COLOR: "#186cf2",
+  MARKER_OUTSIDE_COLOR: "#c8dbfa",
 
   //your profile
   FRIENDS_NUM_PROFILE_IMAGES: 3,
@@ -94,7 +99,7 @@ export class GlobalProperties {
       longitude: -97.7431,
       latitudeDelta: 0.1,
       longitudeDelta: 0.1
-    }
+    };
 
     //the props for the currently passed screen
     static return_screen = "";
@@ -125,6 +130,9 @@ export class GlobalProperties {
 
     //user information
     static birthdate = new Date(Date.now());
+
+	//for adds
+
 
     //when navigating to the next screen, call this method
     //pass in the navigation variable, screen name, and params
@@ -222,6 +230,15 @@ export class GlobalProperties {
 
       return 7926.3812 * Math.asin(Math.sqrt(a));
     }
+
+    static showInterstitialAdd() {
+		const testID = 'google-test-id';
+		const productionID = 'my-id';
+
+		// Is a real device and running in production.
+		const adUnitID = Device.isDevice && !__DEV__ ? productionID : testID;
+		//https://docs.expo.dev/versions/latest/sdk/admob/#usage
+	}
 }
 
 //download default profile image and have path to it locally stored here

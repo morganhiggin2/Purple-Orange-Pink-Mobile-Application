@@ -34,12 +34,14 @@ const frame_styles = StyleSheet.create(
             paddingHorizontal: 2,
         },
         main_text: {
+            fontFamily: 'Roboto',
             fontSize: 14,
             marginLeft: 2,
             marginBottom: 2,
             color: 'black',
         },
         name_text: {
+            fontFamily: 'Roboto',
             fontSize: 14,
             marginLeft: 2,
             marginBottom: 2,
@@ -68,6 +70,7 @@ const main_styles = StyleSheet.create(
             padding: 0,
             margin: 0,
             borderWidth: 0,
+            fontFamily: 'Roboto',
             fontSize: 20,
             color: 'black',
             width: Math.trunc(Dimensions.get('window').width * 0.85) - 30 - 5 - 14,

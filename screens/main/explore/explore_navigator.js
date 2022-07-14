@@ -44,6 +44,7 @@ const main_styles = StyleSheet.create(
         text_input: {
             backgroundColor: '#DFDFDF', //#FECAB9
             color: 'darkgray',
+            fontFamily: 'Roboto',
             fontSize: 14,
             color: 'black',
             width: Math.trunc(Dimensions.get('window').width * 0.85) - 30 - 5 - 14,
@@ -86,6 +87,7 @@ const filter_snaps_styles = StyleSheet.create(
             borderWidth: 1,
             paddingHorizontal: 3,
             paddingVertical: 1,
+            fontFamily: 'Roboto',
             fontSize: 14,
             color: 'white', 
             fontWeight: 'bold',
@@ -112,7 +114,7 @@ const ActionBarIcon = (props) => {
 
 const HeaderTitle = (props) => {
     return(
-        <Text style={{fontSize: 24, color: 'black', height: 0}}>
+        <Text style={{fontSize: 24, fontFamily: 'Roboto', color: 'black', height: 0}}>
             {props.title}
         </Text>
     );

@@ -84,7 +84,7 @@ class FeedNavigator extends React.Component {
 
 const HeaderTitle = (props) => {
     return(
-        <Text style={{fontSize: 24, color: 'black'}}>
+        <Text style={{fontSize: 24, fontFamily: 'Roboto', color: 'black'}}>
             {props.title}
         </Text>
     );

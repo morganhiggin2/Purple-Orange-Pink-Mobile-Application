@@ -24,6 +24,7 @@ const main_styles = StyleSheet.create(
         },
         title_text: {
             alignSelf: 'center',
+            fontFamily: 'Roboto',
             fontSize: 24,
             color: 'black',
             padding: 5,
@@ -31,6 +32,7 @@ const main_styles = StyleSheet.create(
         }, 
         name_text: {
             alignSelf: 'center',
+            fontFamily: 'Roboto',
             fontSize: 20,
             color: 'black',
             marginTop: 10,
@@ -79,11 +81,13 @@ const info_styles = StyleSheet.create(
         },
         title_text: {
             color: 'black',
+            fontFamily: 'Roboto',
             fontSize: 16,
             marginLeft: 5,
         }, 
         inner_text: {
             color: 'gray',
+            fontFamily: 'Roboto',
             fontSize: 14,
             marginLeft: 5,
         },
@@ -124,6 +128,7 @@ const actions_styles = StyleSheet.create(
         },
         action_button_text: {
             color: 'white',
+            fontFamily: 'Roboto',
             fontSize: 18,
             alignSelf: 'center',
         }
@@ -145,6 +150,7 @@ const filter_snaps_styles = StyleSheet.create(
             borderWidth: 2,
             paddingHorizontal: 3,
             paddingVertical: 1,
+            fontFamily: 'Roboto',
             fontSize: 16,
             color: 'white', 
             fontWeight: 'bold',
@@ -204,7 +210,7 @@ const ACTIVITIES = [
 
 const HeaderTitle = (title) => {
     return(
-        <Text style={{fontSize: 24, color: 'black'}}>
+        <Text style={{fontSize: 24, fontFamily: 'Roboto', color: 'black'}}>
             {title.title}
         </Text>
     );

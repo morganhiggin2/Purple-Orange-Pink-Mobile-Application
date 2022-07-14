@@ -27,6 +27,7 @@ const main_styles = StyleSheet.create(
         },
         title_text: {
             alignSelf: 'center',
+            fontFamily: 'Roboto',
             fontSize: 22,
             color: 'black',
             padding: 5,
@@ -39,6 +40,7 @@ const main_styles = StyleSheet.create(
         },
         name_text: {
             alignSelf: 'center',
+            fontFamily: 'Roboto',
             fontSize: 20,
             color: 'black',
             marginTop: 10,
@@ -91,22 +93,26 @@ const attribute_styles = StyleSheet.create({
         fontSize: 14, 
         maxHeight: "96px", 
         textAlignVertical: "top",
+            fontFamily: 'Roboto'
     },
     title_text: {
         alignSelf: 'flex-start',
         fontSize: 16,
         color: 'black',
         marginBottom: 2,
-    },    text_input: {
+    },    
+    text_input: {
         textAlignVertical: "top",
         flex: 1,
         maxHeight: 95,
         borderRadius: 8,
+        fontFamily: 'Roboto'
     },
     inner_text: {
         color: 'gray',
         fontSize: 14,
-        marginHorizontal: 4
+        marginHorizontal: 4,
+        fontFamily: 'Roboto'
     },
     slider: {
         alignSelf: 'center',
@@ -117,7 +123,8 @@ const attribute_styles = StyleSheet.create({
     },
     title_value: {
         fontSize: 14,
-        alignSelf: 'center'
+        alignSelf: 'center',
+        fontFamily: 'Roboto'
     }
 });
 
@@ -139,6 +146,7 @@ const inline_attribute_styles = StyleSheet.create({
         alignSelf: 'center',
         fontSize: 16,
         color: 'black',
+        fontFamily: 'Roboto'
     },
     input_text_view: {
         flexDirection:  'row',
@@ -151,6 +159,7 @@ const inline_attribute_styles = StyleSheet.create({
         textAlign: 'right',
         borderRadius: 4,
         fontSize: 16, 
+        fontFamily: 'Roboto'
     },
     drop_down_selector: {
         marginRight: -10
@@ -170,6 +179,7 @@ const filter_snaps_styles = StyleSheet.create(
             borderWidth: 2,
             paddingHorizontal: 3,
             paddingVertical: 1,
+            fontFamily: 'Roboto',
             fontSize: 16,
             color: 'white', 
             fontWeight: 'bold',
@@ -183,6 +193,7 @@ const filter_snaps_styles = StyleSheet.create(
             borderWidth: 2,
             paddingHorizontal: 3,
             paddingVertical: 1,
+            fontFamily: 'Roboto',
             fontSize: 16,
             color: 'white', 
             fontWeight: 'bold',
@@ -233,6 +244,7 @@ const actions_styles = StyleSheet.create(
         },
         action_button_text: {
             color: 'black',
+            fontFamily: 'Roboto',
             fontSize: 16,
         }
     }
@@ -262,7 +274,7 @@ const image_styles = StyleSheet.create(
 );
 const HeaderTitle = (title) => {
     return(
-        <Text style={{fontSize: 24, color: 'black'}}>
+        <Text style={{fontSize: 24, fontFamily: 'Roboto', color: 'black'}}>
             {title.title}
         </Text>
     );

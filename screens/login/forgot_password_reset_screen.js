@@ -28,9 +28,11 @@ const main_styles = StyleSheet.create(
         },
         title_text: {
             alignSelf: 'center',
+            fontFamily: 'Roboto',
             fontSize: 24,
             color: 'gray',
             padding: 5,
+            fontFamily: "Roboto",
         }, 
         horizontal_bar: {
             width: '94%',
@@ -40,6 +42,7 @@ const main_styles = StyleSheet.create(
         },
         error_message: {
             color: 'red',
+            fontFamily: 'Roboto',
             fontSize: 12,
             alignSelf: 'center',
             marginTop: "5%",
@@ -84,12 +87,14 @@ const attribute_styles = StyleSheet.create({
         fontSize: 18, 
         maxHeight: "96px", 
         textAlignVertical: "top",
+        fontFamily: "Roboto",
     },
     title_text: {
         alignSelf: 'flex-start',
         fontSize: 16,
         color: 'black',
         marginBottom: 6,
+        fontFamily: "Roboto",
     },
     text_input: {
         textAlignVertical: "top",
@@ -101,6 +106,7 @@ const attribute_styles = StyleSheet.create({
         borderColor: 'black',
         borderBottomWidth: 1,
         borderRadius: 4,
+        fontFamily: "Roboto",
     },
     slider: {
         alignSelf: 'center',
@@ -133,6 +139,7 @@ const inline_attribute_styles = StyleSheet.create({
         fontSize: 14,
         color: 'gray',
         marginLeft: 3,
+        fontFamily: "Roboto",
     },
     input_text_view: {
         flexDirection:  'row',
@@ -148,7 +155,8 @@ const inline_attribute_styles = StyleSheet.create({
       backgroundColor: 'white',
       color: 'darkgray',
       borderBottomWidth: 1,
-      borderColor: 'black'
+      borderColor: 'black',
+      fontFamily: "Roboto",
     },
     drop_down_selector: {
         paddingHorizontal: 4,
@@ -190,8 +198,10 @@ const actions_styles = StyleSheet.create(
         },
         action_button_text: {
             color: 'white',
+            fontFamily: 'Roboto',
             fontSize: 18,
             alignSelf: 'center',
+            fontFamily: "Roboto",
         }
     }
 );

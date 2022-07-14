@@ -21,9 +21,11 @@ const main_styles = StyleSheet.create(
         },
         title_text: {
             alignSelf: 'center',
+            fontFamily: 'Roboto',
             fontSize: 24,
             color: 'gray',
             padding: 5,
+            fontFamily: 'Roboto'
         }, 
         horizontal_bar: {
             width: '94%',
@@ -157,7 +159,7 @@ export class EditActivityImagesScreen extends React.Component {
             if (status !== 'granted') 
             {
               //alert('Sorry, we need camera roll permissions to make this work!');
-              console.log("permission to camera roll not allowed!");
+              Alert.alert("Permission to camera roll not allowed!");
             }
         }
 
@@ -166,8 +168,10 @@ export class EditActivityImagesScreen extends React.Component {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [4, 4],
-            quality: 1,
+            quality: 0
         });
+
+        console.log(result.uri);
 
         //handle the result if an image is selected
         if(!result.cancelled) {

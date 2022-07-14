@@ -22,9 +22,11 @@ const main_styles = StyleSheet.create(
         },
         title_text: {
             alignSelf: 'center',
+            fontFamily: 'Roboto',
             fontSize: 24,
             color: 'gray',
             padding: 5,
+            fontFamily: 'Roboto'
         }, 
         horizontal_bar: {
             width: '94%',
@@ -68,22 +70,26 @@ const attribute_styles = StyleSheet.create({
         fontSize: 14, 
         maxHeight: "96px", 
         textAlignVertical: "top",
+        fontFamily: 'Roboto'
     },
     title_text: {
         alignSelf: 'flex-start',
         fontSize: 16,
         color: 'black',
         marginBottom: 2,
-    },    text_input: {
+    },    
+    text_input: {
         textAlignVertical: "top",
         flex: 1,
         maxHeight: 95,
         borderRadius: 8,
+        fontFamily: 'Roboto'
     },
     inner_text: {
         color: 'gray',
         fontSize: 14,
-        marginHorizontal: 4
+        marginHorizontal: 4,
+        fontFamily: 'Roboto'
     },
     slider: {
         alignSelf: 'center',
@@ -92,10 +98,6 @@ const attribute_styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
-    title_value: {
-        fontSize: 14,
-        alignSelf: 'center'
-    }
 });
 
 const inline_attribute_styles = StyleSheet.create({
@@ -116,6 +118,7 @@ const inline_attribute_styles = StyleSheet.create({
         alignSelf: 'center',
         fontSize: 16,
         color: 'black',
+        fontFamily: 'Roboto'
     },
     input_text_view: {
         flexDirection:  'row',
@@ -128,6 +131,7 @@ const inline_attribute_styles = StyleSheet.create({
         textAlign: 'right',
         borderRadius: 4,
         fontSize: 16, 
+        fontFamily: 'Roboto'
     },
     drop_down_selector: {
         marginRight: -10

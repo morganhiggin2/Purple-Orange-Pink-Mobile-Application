@@ -28,12 +28,14 @@ const main_styles = StyleSheet.create(
             borderColor: 'gray'
         },
         title_text: {
+            fontFamily: 'Roboto',
             fontSize: 24,
             color: 'black',
             marginBottom: '0 %',
             marginLeft: '10%',
             padding: 5,
-            width: '100%'
+            width: '100%',
+            fontFamily: "Roboto",
         },
         button: {
             borderRadius: 5,
@@ -48,11 +50,14 @@ const main_styles = StyleSheet.create(
         },
         button_text: {
             color: 'white',
+            fontFamily: 'Roboto',
             fontSize: 18,
             alignSelf: 'center',
+            fontFamily: "Roboto",
         },
         error_message: {
             color: 'red',
+            fontFamily: 'Roboto',
             fontSize: 12,
             alignSelf: 'center',
             marginTop: "5%",

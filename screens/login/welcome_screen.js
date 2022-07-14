@@ -18,9 +18,11 @@ const main_styles = StyleSheet.create(
             marginTop: '0%',
         },
         quote_text: {
+            fontFamily: 'Roboto',
             fontSize: 28,
             textAlign: 'center',
-            color: 'white'
+            color: 'white',
+            fontFamily: 'Roboto'
         },
         welcome_section: {
             marginTop: '25%',
@@ -39,9 +41,11 @@ const main_styles = StyleSheet.create(
         },
         button_text: {
             alignSelf: 'center',
+            fontFamily: 'Roboto',
             fontSize: 18,
             fontWeight: 'bold',
-            color: "white", //Helvetica Neue
+            color: "white", 
+            fontFamily: 'Roboto'
         },
         logo: {
             width: 200,

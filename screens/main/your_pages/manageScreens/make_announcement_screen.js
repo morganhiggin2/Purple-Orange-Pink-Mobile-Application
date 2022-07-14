@@ -28,9 +28,11 @@ const main_styles = StyleSheet.create(
         },
         title_text: {
             alignSelf: 'center',
+            fontFamily: 'Roboto',
             fontSize: 24,
             color: 'gray',
             padding: 5,
+            fontFamily: 'Roboto'
         }, 
         horizontal_bar: {
             width: '94%',
@@ -81,6 +83,7 @@ const attribute_styles = StyleSheet.create({
         fontSize: 16,
         color: 'black',
         marginBottom: 6,
+        fontFamily: "Roboto",
     },
     text_input: {
         textAlignVertical: "top",
@@ -131,6 +134,7 @@ const actions_styles = StyleSheet.create(
         },
         action_button_text: {
             color: 'white',
+            fontFamily: 'Roboto',
             fontSize: 18,
             alignSelf: 'center',
         }
@@ -149,6 +153,7 @@ const inline_attribute_styles = StyleSheet.create({
         alignSelf: 'center',
         fontSize: 16,
         color: 'black',
+        fontFamily: 'Roboto'
     },
     input_text_view: {
         flexDirection:  'row',

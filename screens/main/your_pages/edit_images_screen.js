@@ -1,11 +1,13 @@
 import React from 'react';
-import {StyleSheet, View, Text, Image, Alert, ScrollView,  Dimensions} from 'react-native';
+import {StyleSheet, View, Text, Image, Alert, ScrollView,  Dimensions, Platform} from 'react-native';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import * as ImagePicker from 'expo-image-picker';
 
 import {GlobalProperties, GlobalValues} from '../../../global/global_properties.js'
+import {GlobalEndpoints} from '../../../global/global_endpoints.js';
 import { readDirectoryAsync } from 'expo-file-system';
+import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 
 const main_styles = StyleSheet.create(
     {
@@ -21,9 +23,11 @@ const main_styles = StyleSheet.create(
         },
         title_text: {
             alignSelf: 'center',
+            fontFamily: 'Roboto',
             fontSize: 24,
             color: 'gray',
             padding: 5,
+            fontFamily: 'Roboto'
         }, 
         horizontal_bar: {
             width: '94%',
@@ -90,6 +94,7 @@ export class EditImagesScreen extends React.Component {
 
         this.chooseImage = this.chooseImage.bind(this);
         this.uploadImage = this.uploadImage.bind(this);
+        this.renderProfileImages = this.renderProfileImages.bind(this);
     }
 
     componentDidMount() {
@@ -117,13 +122,26 @@ export class EditImagesScreen extends React.Component {
         };
     }
 
+    renderProfileImages() {
+        var profileImages = [];
+
+        for (var i = 0; i < GlobalValues.FRIENDS_NUM_PROFILE_IMAGES; i++) {
+            if (i >= this.state.profile_images.length) {
+                profileImages.push(<ProfileImage key={i} chooseImage={this.chooseImage} id={i}/>);   
+            }
+            else {
+                profileImages.push(<ProfileImage key={i} chooseImage={this.chooseImage} uri={this.state.profile_images[i]} id={i}/>);  
+            }
+        }
+
+        return profileImages;
+    }
+
     render() {
         return (
             <View style={[main_styles.page, {flex: 1}]}>
                 <ScrollView contentContainerStyle={{flexDirection: "row", flexWrap: "wrap", flexGrow: 1}}>
-                    {this.state.profile_images.map((data, key) => (
-                        <ProfileImage key={key} chooseImage={this.chooseImage} uri={data} id={key}/>
-                    ))}
+                        {this.renderProfileImages()}
                     <EmptySpace key={0}/>
                 </ScrollView>
             </View>
@@ -154,7 +172,7 @@ export class EditImagesScreen extends React.Component {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [4, 4],
-            quality: 1,
+            quality: 0,
         });
 
         //handle the result if an image is selected
@@ -164,8 +182,32 @@ export class EditImagesScreen extends React.Component {
             //check if the pass function is null
             this.state.profile_images[id] = result.uri;
 
+            console.log(result);
+
+            //convert image to compressed jpg
+            const result_change = await manipulateAsync(
+                result.uri, [
+                    {resize: {width: 800, height: 800}}
+                ],
+                { compress: 1, format: SaveFormat.JPEG}
+            );
+
             //update global params
-            GlobalProperties.screen_props.profile_images[id] = result.uri;
+            GlobalProperties.screen_props.profile_images[id] = result_change.uri;
+
+            //upload to server
+
+            //either result.uri or result.localUri
+            var body = {
+                num: id,
+                image: {
+                    uri: Platform.OS === 'android' ? result_change.uri : result_change.uri.replace('file://', ''),
+                    name: "profile_image.jpg",
+                    type: result_change.type
+                }
+            }
+            
+            GlobalEndpoints.makePostRequest(true, "api/User/Friends/UploadProfileImage", body);
 
             this.lazyUpdate();
         }
@@ -222,6 +264,8 @@ const deleteAlert = (frameComponent, DATA, id) => {
 class ProfileImage extends React.Component {
     constructor(props) {
         super(props);
+
+        console.log("../../../assets/" + GlobalValues.DEFAULT_IMAGE);
     }
 
     render () {
@@ -236,12 +280,13 @@ class ProfileImage extends React.Component {
         else {
             return (
             <TouchableOpacity style={image_styles.box} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.chooseImage(this.props.id)}}>
-                <Image style={image_styles.image} source={{uri: "https://ichef.bbci.co.uk/news/976/cpsprodpb/EAB5/production/_121158006_gettyimages-1328227222.jpg"}}/>
+                <Image style={image_styles.image} source={require("../../../assets/default_image.jpg")}/>
             </TouchableOpacity>
             );
         }
     }
 }
+//source={{uri: "../../../assets/" + GlobalValues.DEFAULT_IMAGE}}
 
 //get the profile image for the profile images
 const ProfileImage_ = (props) => {

@@ -29,6 +29,7 @@ const frame_styles = StyleSheet.create(
             //width: '98%',
         },
         main_text: {
+            fontFamily: 'Roboto',
             fontSize: 14,
             marginLeft: 2,
             marginBottom: 2,
@@ -57,6 +58,7 @@ const main_styles = StyleSheet.create(
             padding: 0,
             margin: 0,
             borderWidth: 0,
+            fontFamily: 'Roboto',
             fontSize: 20,
             color: 'black',
             width: Math.trunc(Dimensions.get('window').width * 0.85) - 30 - 5 - 14,
@@ -91,11 +93,13 @@ const blip_styles = StyleSheet.create(
         },
         title_text: {
             color: 'black',
+            fontFamily: 'Roboto',
             fontSize: 16,
             marginLeft: 5,
         }, 
         inner_text: {
             color: 'gray',
+            fontFamily: 'Roboto',
             fontSize: 14,
             marginLeft: 5,
         },
@@ -107,6 +111,7 @@ const blip_styles = StyleSheet.create(
         },
         top_text: {
             color: 'black',
+            fontFamily: 'Roboto',
             fontSize: 16,
         },
         inner_top_bar_left: {
@@ -128,6 +133,7 @@ const inner_blip_styles = StyleSheet.create(
     {
         text: {
             color: 'gray',
+            fontFamily: 'Roboto',
             fontSize: 14,
             marginLeft: 5,
         }

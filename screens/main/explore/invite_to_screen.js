@@ -29,11 +29,13 @@ const blip_styles = StyleSheet.create(
         },
         title_text: {
             color: 'black',
+            fontFamily: 'Roboto',
             fontSize: 16,
             marginLeft: 5,
         }, 
         inner_text: {
             color: 'gray',
+            fontFamily: 'Roboto',
             fontSize: 14,
             marginLeft: 5,
         },
@@ -46,6 +48,7 @@ const blip_styles = StyleSheet.create(
         },
         top_text: {
             color: 'black',
+            fontFamily: 'Roboto',
             fontSize: 16,
             marginLeft: 4,
         },
@@ -73,11 +76,13 @@ const post_styles = StyleSheet.create(
         },
         title_text: {
             color: 'black',
+            fontFamily: 'Roboto',
             fontSize: 16,
             marginLeft: 5,
         }, 
         inner_text: {
             color: 'gray',
+            fontFamily: 'Roboto',
             fontSize: 14,
             marginLeft: 5,
         },
@@ -90,6 +95,7 @@ const post_styles = StyleSheet.create(
         },
         top_text: {
             color: 'black',
+            fontFamily: 'Roboto',
             fontSize: 16,
             marginLeft: 4,
         },
@@ -113,6 +119,7 @@ const post_styles = StyleSheet.create(
         },
         post_button_text: {
             color: 'white',
+            fontFamily: 'Roboto',
             fontSize: 18,
             alignSelf: 'center',
         }
@@ -123,6 +130,7 @@ const inner_blip_styles = StyleSheet.create(
     {
         text: {
             color: 'gray',
+            fontFamily: 'Roboto',
             fontSize: 14,
             marginLeft: 5,
         }
@@ -169,6 +177,7 @@ const title_styles = StyleSheet.create(
         },
         title_text: {
             alignSelf: 'center',
+            fontFamily: 'Roboto',
             fontSize: 24,
             color: 'gray',
             padding: 5,
@@ -176,6 +185,7 @@ const title_styles = StyleSheet.create(
         }, 
         name_text: {
             alignSelf: 'center',
+            fontFamily: 'Roboto',
             fontSize: 20,
             color: 'black',
             marginTop: 10,

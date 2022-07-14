@@ -36,6 +36,7 @@ const main_styles = StyleSheet.create(
             padding: 0,
             margin: 0,
             borderWidth: 0,
+            fontFamily: 'Roboto',
             fontSize: 20,
             color: 'black',
             width: Math.trunc(Dimensions.get('window').width * 0.85) - 30 - 5 - 14,
@@ -67,6 +68,7 @@ const main_styles = StyleSheet.create(
         },
         map_button_text: {
             color: 'white',
+            fontFamily: 'Roboto',
             fontSize: 18,
             alignSelf: 'center',
         },
@@ -91,6 +93,14 @@ const map_styles = StyleSheet.create(
             width: '100%',
             height: '100%',
         },
+        current_location_marker: {
+            minWidth: 20,
+            minHeight: 20,
+            backgroundColor: GlobalValues.MARKER_INSIDE_COLOR,
+            borderWidth: 3,
+            borderRadius: 10,
+            borderColor: GlobalValues.MARKER_OUTSIDE_COLOR
+        }
     }
 );
 
@@ -528,9 +538,21 @@ export class MapScreen extends React.Component {
 
     //render the markers on the map
     renderMarkers() {
-        var markers = this.state.markers.map((marker, index) => {
+        var markers = [];
+        
+        //add current user location marker
+        markers.push(
+            <Marker 
+                key={-1}
+                coordinate={{latitude: GlobalProperties.default_map_params.latitude, longitude:GlobalProperties.default_map_params.longitude}}
+            >
+                <View style={map_styles.current_location_marker}/>
+            </Marker>
+        );
+
+        this.state.markers.map((marker, index) => {
             if (marker.type == "people") {
-                return (
+                markers.push(
                     <Marker
                         key={index}
                         coordinate={{latitude: marker.latitude, longitude: marker.longitude}}
@@ -543,7 +565,7 @@ export class MapScreen extends React.Component {
                 );
             }
             else if (marker.type == "activity") {
-                return (
+                markers.push(
                     <Marker
                         key={index}
                         coordinate={{latitude: marker.latitude, longitude: marker.longitude}}

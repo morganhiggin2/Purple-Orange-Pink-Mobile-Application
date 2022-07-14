@@ -29,9 +29,11 @@ const main_styles = StyleSheet.create(
         },
         title_text: {
             alignSelf: 'center',
+            fontFamily: 'Roboto',
             fontSize: 24,
             color: 'gray',
             padding: 5,
+            fontFamily: 'Roboto'
         }, 
         horizontal_bar: {
             width: '94%',
@@ -76,6 +78,7 @@ const attribute_styles = StyleSheet.create({
         fontSize: 14, 
         maxHeight: "96px", 
         textAlignVertical: "top",
+            fontFamily: 'Roboto'
     },
     title_text: {
         alignSelf: 'flex-start',
@@ -92,7 +95,8 @@ const attribute_styles = StyleSheet.create({
     inner_text: {
         color: 'gray',
         fontSize: 14,
-        marginHorizontal: 4
+        marginHorizontal: 4,
+        fontFamily: 'Roboto'
     },
     slider: {
         alignSelf: 'center',
@@ -103,7 +107,8 @@ const attribute_styles = StyleSheet.create({
     },
     title_value: {
         fontSize: 14,
-        alignSelf: 'center'
+        alignSelf: 'center',
+        fontFamily: 'Roboto'
     }
 });
 
@@ -125,6 +130,7 @@ const inline_attribute_styles = StyleSheet.create({
         alignSelf: 'center',
         fontSize: 16,
         color: 'black',
+        fontFamily: 'Roboto'
     },
     input_text_view: {
         flexDirection:  'row',
@@ -140,6 +146,7 @@ const inline_attribute_styles = StyleSheet.create({
         textAlign: 'right',
         borderRadius: 4,
         fontSize: 16, 
+        fontFamily: 'Roboto'
     },
     text_input_continuation: {
         textAlignVertical: "center",
@@ -177,6 +184,7 @@ const actions_styles = StyleSheet.create(
         },
         action_button_text: {
             color: 'black',
+            fontFamily: 'Roboto',
             fontSize: 16,
         }
     }
@@ -213,6 +221,7 @@ const filter_snaps_styles = StyleSheet.create(
             borderWidth: 2,
             paddingHorizontal: 3,
             paddingVertical: 1,
+            fontFamily: 'Roboto',
             fontSize: 16,
             color: 'white', 
             fontWeight: 'bold',

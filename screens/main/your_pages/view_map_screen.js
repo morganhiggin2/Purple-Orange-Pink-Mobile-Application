@@ -28,6 +28,7 @@ const main_styles = StyleSheet.create(
             padding: 0,
             margin: 0,
             borderWidth: 0,
+            fontFamily: 'Roboto',
             fontSize: 20,
             color: 'black',
             width: Math.trunc(Dimensions.get('window').width * 0.85) - 30 - 5 - 14,
@@ -56,6 +57,7 @@ const main_styles = StyleSheet.create(
         },
         map_button_text: {
             color: 'white',
+            fontFamily: 'Roboto',
             fontSize: 18,
             alignSelf: 'center',
         },
@@ -71,6 +73,14 @@ const map_styles = StyleSheet.create(
             width: '100%',
             height: '100%',
         },
+        current_location_marker: {
+            minWidth: 20,
+            minHeight: 20,
+            backgroundColor: GlobalValues.MARKER_INSIDE_COLOR,
+            borderWidth: 3,
+            borderRadius: 10,
+            borderColor: GlobalValues.MARKER_OUTSIDE_COLOR
+        }
     }
 );
 
@@ -96,21 +106,11 @@ export class ViewMapScreen extends React.Component {
             reload: false,
             location: this.props.route.params.location,
             initialRegion: null,
-            region: null,
             markers: [],
 
             //map reference
             map_ref: null,
         };
-
-        this.state.initialRegion = {
-            latitude: this.state.location.latitude,
-            longitude: this.state.location.longitude,
-            latitudeDelta: 0.092200000,
-            longitudeDelta: 0.042100000,
-        };
-        
-        this.state.region = this.state.initialRegion;
         
         this.state.markers = [
             {
@@ -122,15 +122,17 @@ export class ViewMapScreen extends React.Component {
             }
         ];
 
+        this.state.initialRegion = {
+            latitude: this.state.location.latitude,
+            longitude: this.state.location.longitude,
+            latitudeDelta: GlobalProperties.default_map_params.latitudeDelta,
+            longitudeDelta: GlobalProperties.default_map_params.longitudeDelta,
+        };
+
         this.onRegionChange = this.onRegionChange.bind(this);
         this.renderMarkers = this.renderMarkers.bind(this);
 
         this.lazyUpdate = this.lazyUpdate.bind(this);
-
-        //must do calculations before rendering
-        this.state.boundary = null;
-        
-        this.state.region = this.state.initialRegion;
     }
     
     componentDidMount() {
@@ -153,7 +155,6 @@ export class ViewMapScreen extends React.Component {
                             <MapView 
                                 style={map_styles.body}
                                 initialRegion={this.state.initialRegion}
-                                onRegionChangeComplete={this.onRegionChange}
                                 ref={(ref) => {this.state.map_ref = ref;}}
                             >
                                 {this.renderMarkers()}
@@ -171,8 +172,22 @@ export class ViewMapScreen extends React.Component {
     }
 
     renderMarkers() {
-        var markers = this.state.markers.map((marker, index) => {
-            return (
+        var markers = [];
+        
+        //add current user location marker
+        markers.push(
+            <Marker 
+                key={-1}
+                coordinate={{latitude: GlobalProperties.default_map_params.latitude, longitude:GlobalProperties.default_map_params.longitude}}
+            >
+                <View style={map_styles.current_location_marker}/>
+            </Marker>
+        );
+
+
+        //add other markers
+        this.state.markers.map((marker, index) => {
+            markers.push(
                 <Marker
                     key={index}
                     coordinate={{latitude: marker.latitude, longitude: marker.longitude}}
@@ -182,7 +197,6 @@ export class ViewMapScreen extends React.Component {
                     onPress={() => {}}
                 />
             );
-            
         });
 
         return(markers);
@@ -211,8 +225,8 @@ export class ViewMapScreen extends React.Component {
         this.state.map_ref.animateToRegion({
             latitude: this.state.initialRegion.latitude,
             longitude: this.state.initialRegion.longitude,
-            latitudeDelta: 0.092200000,
-            longitudeDelta: 0.042100000,
+            latitudeDelta: GlobalProperties.default_map_params.latitudeDelta,
+            longitudeDelta: GlobalProperties.default_map_params.longitudeDelta,
         });
 
         //update map

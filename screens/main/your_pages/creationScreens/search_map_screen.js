@@ -29,6 +29,7 @@ const main_styles = StyleSheet.create(
             padding: 0,
             margin: 0,
             borderWidth: 0,
+            fontFamily: 'Roboto',
             fontSize: 20,
             color: 'black',
             width: Math.trunc(Dimensions.get('window').width * 0.85) - 30 - 5 - 14,
@@ -57,6 +58,7 @@ const main_styles = StyleSheet.create(
         },
         map_button_text: {
             color: 'white',
+            fontFamily: 'Roboto',
             fontSize: 18,
             alignSelf: 'center',
         },
@@ -72,6 +74,14 @@ const map_styles = StyleSheet.create(
             width: '100%',
             height: '100%',
         },
+        current_location_marker: {
+            minWidth: 20,
+            minHeight: 20,
+            backgroundColor: GlobalValues.MARKER_INSIDE_COLOR,
+            borderWidth: 3,
+            borderRadius: 10,
+            borderColor: GlobalValues.MARKER_OUTSIDE_COLOR
+        }
     }
 );
 
@@ -207,7 +217,6 @@ export class SearchMapScreen extends React.Component {
                             <MapView 
                                 style={map_styles.body}
                                 initialRegion={this.state.initialRegion}
-                                onRegionChangeComplete={this.onRegionChange}
                                 onPress={this.onPress}
                                 ref={(ref) => {this.state.map_ref = ref;}}
                             >
@@ -226,8 +235,22 @@ export class SearchMapScreen extends React.Component {
     }
 
     renderMarkers() {
-        var markers = this.state.markers.map((marker, index) => {
-            return (
+        var markers = [];
+        
+        //add current user location marker
+        markers.push(
+            <Marker 
+                key={-1}
+                coordinate={{latitude: GlobalProperties.default_map_params.latitude, longitude:GlobalProperties.default_map_params.longitude}}
+            >
+                <View style={map_styles.current_location_marker}/>
+            </Marker>
+        );
+
+
+        //add other markers
+        this.state.markers.map((marker, index) => {
+            markers.push(
                 <Marker
                     key={index}
                     coordinate={{latitude: marker.latitude, longitude: marker.longitude}}
@@ -237,15 +260,13 @@ export class SearchMapScreen extends React.Component {
                     onPress={() => {}}
                 />
             );
-            
         });
 
         return(markers);
     }
 
     //when the region on the map changes
-    onRegionChange(region) {
-        this.state.region = region;
+    onRegionChangeComplete(region) {
 
         if (this.state.region == null) {
             //skip
@@ -307,14 +328,6 @@ export class SearchMapScreen extends React.Component {
                 latitudeDelta: 0.092200000,
                 longitudeDelta: 0.042100000,
             });
-
-            //set the initial region
-            this.state.initialRegion = {
-                latitude: locationResult.location.coords.latitude,
-                longitude: locationResult.location.coords.longitude,
-                latitudeDelta: 0.092200000,
-                longitudeDelta: 0.042100000,
-            };
 
             //update map
             this.lazyUpdate();

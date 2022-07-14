@@ -57,18 +57,21 @@ const frame_styles = StyleSheet.create(
             flexDirection: 'row'
         },
         main_text: {
+            fontFamily: 'Roboto',
             fontSize: 14,
             marginRight: 15,
             color: 'black',
             fontFamily: "Roboto",
         },
         description_text: {
+            fontFamily: 'Roboto',
             fontSize: 14,
             marginRight: 16,
             color: 'gray',
             fontFamily: "Roboto",
         },
         name_text: {
+            fontFamily: 'Roboto',
             fontSize: 18,
             color: 'black',
             fontFamily: "Roboto",
@@ -94,6 +97,7 @@ const post_styles = StyleSheet.create(
         },
         post_button_text: {
             color: 'white',
+            fontFamily: 'Roboto',
             fontSize: 18,
             alignSelf: 'center',
         }
@@ -120,6 +124,7 @@ const main_styles = StyleSheet.create(
             padding: 0,
             margin: 0,
             borderWidth: 0,
+            fontFamily: 'Roboto',
             fontSize: 14,
             color: 'black',
             width: Math.trunc(Dimensions.get('window').width * 0.85) - 30 - 5 - 14,
@@ -153,6 +158,7 @@ const filter_snaps_styles = StyleSheet.create(
             borderWidth: 1,
             paddingHorizontal: 3,
             paddingVertical: 1,
+            fontFamily: 'Roboto',
             fontSize: 14,
             fontFamily: "Roboto",
             color: 'white', 
@@ -279,7 +285,7 @@ class FrameComponent extends React.Component{
                         this.props.navigation.navigate("Other Explore Profile Screen", {id: this.props.id});
                     }}>
                         <View style={frame_styles.inner_box}>
-                            <Image style={frame_styles.background_image} source={{uri: "https://image.cnbcfm.com/api/v1/image/106926992-1628885077267-elon.jpg"}}/>
+                            <Image style={frame_styles.background_image} source={handleImageURI(this.props.image_uri)}/>
                             <View style={[frame_styles.text_container, {width: '65%'}]}>
                                 <View style={frame_styles.inner_text_container}>
                                     <Text numberOfLines={1} style={frame_styles.name_text}>
@@ -392,7 +398,7 @@ class FrameComponent extends React.Component{
 //, {backgroundColor: borderColor(this.props.type), borderBottomWidth: 2, borderLeftWidth: 2, borderRightWidth: 2, borderColor: borderColor(this.props.type)}]
 
 function handleImageURI(uri) {
-    if (uri == undefined) {
+    if (uri == undefined || uri == "") {
         return({uri: "https://image.cnbcfm.com/api/v1/image/106926992-1628885077267-elon.jpg"});
        //return(require("../../../images/default_image.png"));
     }
@@ -527,7 +533,7 @@ export class ExploreScreen extends React.Component {
             var json = this.state.frames[i];
 
             if (json.type == "person") {
-                this.state.frameComponents.push(<FrameComponent key={json.id} id={json.id} type={json.type} name={json.name} description={json.description} age={json.age} distance={json.distance} navigation={this.props.navigation}/>);
+                this.state.frameComponents.push(<FrameComponent key={json.id} id={json.id} image_uri={json.profile_image_uri} type={json.type} name={json.name} description={json.description} age={json.age} distance={json.distance} navigation={this.props.navigation}/>);
             }
             else if (json.type == "activity") {
                 this.state.frameComponents.push(<FrameComponent key={json.id} id={json.id} type={json.type} name={json.name} description={json.description} date_time={json.date_time} distance={json.distance} navigation={this.props.navigation}/>);

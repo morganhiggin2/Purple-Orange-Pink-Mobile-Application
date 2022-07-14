@@ -20,6 +20,7 @@ const main_styles = StyleSheet.create(
         },
         title_text: {
             alignSelf: 'center',
+            fontFamily: 'Roboto',
             fontSize: 24,
             color: 'gray',
             padding: 5,
@@ -46,6 +47,7 @@ const selector_styles = StyleSheet.create({
         alignSelf: 'center',
         fontSize: 16,
         color: 'black',
+        fontFamily: 'Roboto'
     },
     arrow: {
         alignSelf: 'center'
@@ -76,6 +78,7 @@ const actions_styles = StyleSheet.create(
         },
         action_button_text: {
             color: 'white',
+            fontFamily: 'Roboto',
             fontSize: 18,
             alignSelf: 'center',
         }
