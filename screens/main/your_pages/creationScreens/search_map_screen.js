@@ -115,7 +115,6 @@ export class SearchMapScreen extends React.Component {
         };
 
         this.updateSearch = this.updateSearch.bind(this);
-        this.onRegionChange = this.onRegionChange.bind(this);
         this.onPress = this.onPress.bind(this);
         this.renderMakers = this.renderMarkers.bind(this);
 

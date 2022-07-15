@@ -390,8 +390,8 @@ export class ProfileInfoScreen extends React.Component {
                             </View>   
                         </View>
                         {this.showDatePicker()}   
-                        <View style={[inline_attribute_styles.body, {paddingBottom: 6}]}>
-                            <Text style={inline_attribute_styles.title_text}>
+                        <View style={[inline_attribute_styles.body, {paddingBottom: 40}]}>
+                            <Text style={[inline_attribute_styles.title_text, {alignSelf: 'flex-end'}]}>
                                 Gender
                             </Text>
                             <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {width: 120, alignSelf: 'flex-end'}]}>

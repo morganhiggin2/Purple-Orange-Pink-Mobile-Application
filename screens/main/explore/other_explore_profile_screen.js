@@ -1,21 +1,16 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Image, ScrollView, Dimensions, TouchableOpacity, Alert, FlatList} from 'react-native';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import {StyleSheet, View, Text, TouchableOpacity, Alert, FlatList} from 'react-native';
 import { SliderBox } from "react-native-image-slider-box";
-import { AntDesign, Feather, MaterialCommunityIcons, Entypo, FontAwesome} from '@expo/vector-icons'; 
+import { AntDesign, MaterialCommunityIcons, FontAwesome} from '@expo/vector-icons'; 
 import { GlobalProperties, GlobalValues } from '../../../global/global_properties';
 import { GlobalEndpoints } from '../../../global/global_endpoints';
 import { LoadingScreen } from '../../misc/loading_screen';
-
-const ImageStack = createMaterialTopTabNavigator();
-
 
 const main_styles = StyleSheet.create(
     {
         page: {
             backgroundColor: GlobalValues.DARKER_WHITE,
             height: '50%',
-            width: '100%',
             flexDirection: "column",
             flex: 1,
         },
@@ -60,16 +55,6 @@ const main_styles = StyleSheet.create(
     }
 );
 
-const section_styles = StyleSheet.create({
-    body: {
-        marginTop: "10%",
-        backgroundColor: GlobalValues.DARKER_WHITE,
-    },
-    gap: {
-        height: 30,
-    }
-});
-
 const info_styles = StyleSheet.create({
     body: {
         backgroundColor: 'white', //#FFCDCD
@@ -94,11 +79,12 @@ const attribute_styles = StyleSheet.create({
         fontSize: 14, 
         maxHeight: "96px", 
         textAlignVertical: "top",
-            fontFamily: 'Roboto'
+        fontFamily: 'Roboto'
     },
     title_text: {
         alignSelf: 'flex-start',
         fontSize: 16,
+        fontFamily: 'Roboto',
         color: 'black',
         marginBottom: 2,
     },    
@@ -318,7 +304,7 @@ export class OtherExploreProfileScreen extends React.Component {
 
             name: "",
 
-            profile_images: [],
+            profile_images: Array(3),
 
             attributes: [],
         };
@@ -330,8 +316,6 @@ export class OtherExploreProfileScreen extends React.Component {
 
         //once done, lazy update
         this.lazyUpdate = this.lazyUpdate.bind(this);
-        this.cleanImages = this.cleanImages.bind(this);
-        this.handleImageURI = this.handleImageURI.bind(this);
     }
 
     async log_in() {
@@ -388,13 +372,23 @@ export class OtherExploreProfileScreen extends React.Component {
                 this.state.description = requestJson.user_information.description;
                 this.state.distance = requestJson.user_information.distance;
                 this.state.attributes = requestJson.user_information.attributes;
+                var profile_images = requestJson.user_information.profile_image_uris;
 
-                //get images
-                if (this.state.profile_images.length == 0) {
-                    this.state.profile_images = [require("../../../images/default_image.png")];
+                //add default image if nessesary
+                if (profile_images.length < 3) {
+
+                    for (let i = 0; i < profile_images.length; i++) {
+                        this.state.profile_images[i] = profile_images[i];
+                    }
+                    for (let i = profile_images.length; i < 3; i++) {
+                        this.state.profile_images[i] = "";
+                    }
                 }
 
                 this.state.loading = false;
+
+                this.lazyUpdate();
+                return;
             }
             else {
                 //returned bad response, fetch server generated error message
@@ -420,6 +414,7 @@ export class OtherExploreProfileScreen extends React.Component {
                 this.state.reload = true;
                 this.lazyUpdate();
                 GlobalEndpoints.handleNotFound(false);
+                return;
             }
             else {
                 this.state.reload = true;
@@ -427,15 +422,6 @@ export class OtherExploreProfileScreen extends React.Component {
                 return;
             }
         }
-
-        //TODO this goes in fetch code for valid case
-        //gets the images from the response
-        //...
-        //clean images
-        this.cleanImages();
-
-        //once done, lazy update
-        this.lazyUpdate();
     }
 
     render() {
@@ -516,8 +502,6 @@ export class OtherExploreProfileScreen extends React.Component {
             );
         }
 
-        //<FontAwesome name="road" size={12} color="gray" style={filter_snaps_styles.icon}/>
-
         const renderComponent = () => {
             if (this.state.loading == true) {
                 return (
@@ -531,16 +515,16 @@ export class OtherExploreProfileScreen extends React.Component {
                     <View>
                         <View style={image_styles.container}>
                             <SliderBox
-                            images={this.state.profile_images.map(uri => {
-                                return(this.handleImageURI(uri));
-                            })}
-                            parentWidth={image_styles.image.width}
-                            sliderBoxHeight={image_styles.image.height}
-                            dotColor={GlobalValues.ORANGE_COLOR}
-                            inactiveDotColor={GlobalValues.DISTINCT_GRAY}
-                        />
+                                images={this.state.profile_images.map(uri => {
+                                    console.log("here");
+                                    return(handleImageURI(uri));
+                                })}
+                                parentWidth={image_styles.image.width}
+                                sliderBoxHeight={image_styles.image.height}
+                                dotColor={GlobalValues.ORANGE_COLOR}
+                                inactiveDotColor={GlobalValues.DISTINCT_GRAY}
+                            />
                         </View>
-
                         <View style={main_styles.name_view}>
                             <Text style={main_styles.title_text}>
                                 {this.state.name}
@@ -566,7 +550,7 @@ export class OtherExploreProfileScreen extends React.Component {
                             <View style={main_styles.horizontal_bar}/>
                             <View style={inline_attribute_styles.body}>
                                 <Text style={inline_attribute_styles.title_text}>
-                                    It's about
+                                    {"Interested in "}
                                 </Text>
                             </View>
                             <View style={filter_snaps_styles.container}> 
@@ -613,28 +597,6 @@ export class OtherExploreProfileScreen extends React.Component {
                     
                 </View>
             );
-        }
-    }
-
-    //get rid of any null entries
-    cleanImages() {
-        var cleaned_images = [];
-
-        for (var i = 0; i <= this.state.profile_images.length; i++) {
-            if (this.state.profile_images[i] != null && this.state.profile_images[i] != "") {
-                cleaned_images.push(this.state.profile_images[i]);
-            }
-        }
-
-        this.state.profile_images = cleaned_images;
-    }
-
-    handleImageURI(uri) {
-        if (uri == undefined) {
-            return(require("../../../images/default_image.png"));
-        }
-        else {
-            return(uri);
         }
     }
 
@@ -729,16 +691,9 @@ export class OtherExploreProfileScreen extends React.Component {
     }
 }
 
-const invitationSentAlert = () => {
-    Alert.alert(
-        "Invitation Sent",
-        "Invitation was successfully sent"
-    )
-}
-
 function handleImageURI(uri) {
-    if (uri == undefined) {
-        return(require("../../../images/default_image.png"));
+    if (uri == undefined || uri == "") {
+        return(require("../../../assets/images/default_image.png"));
     }
     else {
         return({uri: uri});

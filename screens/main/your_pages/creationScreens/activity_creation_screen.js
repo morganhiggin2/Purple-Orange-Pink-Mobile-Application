@@ -264,7 +264,7 @@ export class ActivityCreationScreen extends React.Component {
             title: "",
             description: "",
 
-            //images
+            //assets/images
             activity_images: [],
 
             //attributes
@@ -1274,7 +1274,7 @@ export class ActivityCreationScreen extends React.Component {
 
 function handleImageURI(uri) {
     if (uri == undefined) {
-        return(require("../../../../images/default_image.png"));
+        return(require("../../../../assets/images/default_image.png"));
     }
     else {
         return({uri: uri});

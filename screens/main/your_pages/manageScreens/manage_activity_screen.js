@@ -847,7 +847,7 @@ FilterSnap.defaultProps = {
 
 function handleImageURI(uri) {
     if (uri == undefined) {
-        return(require("../../../../images/default_image.png"));
+        return(require("../../../../assets/images/default_image.png"));
     }
     else {
         return({uri: uri});

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Image, Platform} from 'react-native';
-import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
+import {StyleSheet, View, Text, TextInput, Platform} from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { GlobalEndpoints } from '../../global/global_endpoints';
 import { GlobalValues, GlobalProperties } from '../../global/global_properties';
 
@@ -22,9 +22,7 @@ const main_styles = StyleSheet.create(
             width: "80%",
             backgroundColor: 'white',
             padding: 10,
-            paddingVertical: 10,
             marginVertical: 8,
-            color: 'darkgray',
             borderBottomWidth: 1,
             borderColor: 'gray'
         },
@@ -32,10 +30,8 @@ const main_styles = StyleSheet.create(
             fontFamily: 'Roboto',
             fontSize: 24,
             color: 'black',
-            marginBottom: '0 %',
             marginLeft: '10%',
             padding: 5,
-            width: '100%',
             fontFamily: "Roboto",
         },
         button: {
@@ -45,13 +41,11 @@ const main_styles = StyleSheet.create(
             padding: 2,
             paddingVertical: 6,
             alignSelf: 'center',
-            alignContent: 'center',
             width: '80%',
             marginTop: "5%",
         },
         button_text: {
             color: 'white',
-            fontFamily: 'Roboto',
             fontSize: 18,
             alignSelf: 'center',
             fontFamily: "Roboto",
@@ -65,8 +59,6 @@ const main_styles = StyleSheet.create(
         },
     }
 );
-
-//onChangeText={}
 
 export class LoginScreen extends React.Component {
     constructor(props) {

@@ -340,7 +340,7 @@ class FrameComponent extends React.Component{
     render() {
         return(
             <TouchableHighlight style={frame_styles.box} onPress={() => {this.props.viewOtherProfile(this.state.id);}}>
-                <ImageBackground style={frame_styles.background_image} source={require("../../../../images/default_image.png")}>
+                <ImageBackground style={frame_styles.background_image} source={require("../../../../assets/images/default_image.png")}>
                     <View style={frame_styles.text_container}>   
                         <Text style={frame_styles.name_text}>
                             {this.state.name}

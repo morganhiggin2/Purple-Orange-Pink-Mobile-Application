@@ -1,33 +1,21 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Image, SafeAreaView, ScrollView, Dimensions, FlatList, ImageBackground, Alert, RefreshControl, TouchableOpacity, TouchableWithoutFeedbackBase} from 'react-native';
+import {StyleSheet, View, Text, Image, ScrollView, Dimensions, Alert, RefreshControl, TouchableOpacity} from 'react-native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
-import { AntDesign, Feather, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons'; 
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import {Route} from '@react-navigation/native';
+import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons'; 
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import { render } from 'react-dom';
 import { GlobalProperties, GlobalValues } from '../../../global/global_properties.js';
 import { GlobalEndpoints } from '../../../global/global_endpoints.js';
-import * as Location from 'expo-location';
 import { LoadingScreen } from '../../misc/loading_screen.js';
-import { MapScreen } from '../map/map_screen.js';
 
 const frame_styles = StyleSheet.create(
     {
         box: {
             backgroundColor: 'white',
-            /*height: Math.trunc(Dimensions.get('window').width * 0.45),
-            width: Math.trunc(Dimensions.get('window').width * 0.45),
-            marginLeft: Math.trunc(Dimensions.get('window').width * 0.029),
-            marginBottom: Math.trunc(Dimensions.get('window').width * 0.029),*/
             width: Math.trunc(Dimensions.get('window').width * 0.96),
             marginTop: 10,
             borderRadius: 4,
             borderWidth: 5,
             borderColor: "white",
-            //alignItems: 'flex-end',
-            //justifyContent: 'flex-start',
-            //direction: 'inherit', 
         },
         inner_box: {
             flexDirection: 'row',
@@ -57,52 +45,24 @@ const frame_styles = StyleSheet.create(
             flexDirection: 'row'
         },
         main_text: {
-            fontFamily: 'Roboto',
             fontSize: 14,
             marginRight: 15,
             color: 'black',
             fontFamily: "Roboto",
         },
         description_text: {
-            fontFamily: 'Roboto',
             fontSize: 14,
             marginRight: 16,
             color: 'gray',
             fontFamily: "Roboto",
         },
         name_text: {
-            fontFamily: 'Roboto',
             fontSize: 18,
             color: 'black',
-            fontFamily: "Roboto",
+            fontFamily: 'Roboto',
         },
     }
 );
-
-/*
-const post_styles = StyleSheet.create(
-    {
-        post_button: {
-            flexDirection: "row",
-            position: 'absolute',
-            borderRadius: 3,
-            borderWidth: 4,
-            backgroundColor: GlobalValues.ORANGE_COLOR,
-            borderColor: GlobalValues.ORANGE_COLOR,
-            padding: 3,
-            paddingVertical: 0,
-            alignSelf: 'center',
-            alignContent: 'center',
-            marginBottom: 50,
-        },
-        post_button_text: {
-            color: 'white',
-            fontFamily: 'Roboto',
-            fontSize: 18,
-            alignSelf: 'center',
-        }
-    }
-);*/
 
 const main_styles = StyleSheet.create(
     {
@@ -119,11 +79,8 @@ const main_styles = StyleSheet.create(
             width: Math.trunc(Dimensions.get('window').width * 0.86),
         },
         text_input: {
-            backgroundColor: '#DFDFDF', //#FECAB9
+            backgroundColor: '#DFDFDF',
             color: 'darkgray',
-            padding: 0,
-            margin: 0,
-            borderWidth: 0,
             fontFamily: 'Roboto',
             fontSize: 14,
             color: 'black',
@@ -132,7 +89,7 @@ const main_styles = StyleSheet.create(
         },
         top_bar: {
             flexDirection: 'column',
-            backgroundColor: 'white', //#FFCDCD
+            backgroundColor: 'white',
             borderRadius: 5,
             padding: 8,
         },
@@ -160,7 +117,6 @@ const filter_snaps_styles = StyleSheet.create(
             paddingVertical: 1,
             fontFamily: 'Roboto',
             fontSize: 14,
-            fontFamily: "Roboto",
             color: 'white', 
             fontWeight: 'bold',
             alignSelf: 'flex-start',
@@ -178,7 +134,6 @@ const filter_snaps_styles = StyleSheet.create(
     }
 );
 
-
 class FrameComponent extends React.Component{
     constructor(props) {
         super (props);
@@ -187,68 +142,15 @@ class FrameComponent extends React.Component{
             //hasImage: true,
         };
 
-        //if they have an image
-        /*if (this.props.profile_image == null || this.props.profile_image == "") {
-            this.state.hasImage = false;
-        }*/
-
         if (this.props.type == "person") {
             this.state.name = this.props.name;
-        
-            //deal if name if too long to fit on screen
-            /*if (this.state.name.length > 25) {
-                this.state.name = this.state.name.substring(0, 22) + "...";
-            }*/
         }
         else if (this.props.type == "activity") {
             this.state.name = this.props.name;
-            
-            //deal if name if too long to fit on screen
-            /*if (this.state.name.length > 40) {
-                this.state.name = this.state.name.substring(0, 37) + "...";
-            }*/
         }
     }
 
     render() {
-        
-        //character limit for descriptions
-
-        /*return(
-            <TouchableHighlight style={frame_styles.box} onPress={() => {
-                    if (this.props.type == "person") {
-                        this.props.navigation.navigate("Other Profile Screen", {id: this.props.id, type: "none", viewing:""});
-                    }
-                    else if (this.props.type == "activity") {
-                        this.props.navigation.navigate("Other Activity Screen", {id: this.props.id, type: "none", viewing:""});
-                    }
-                }}>
-                <ImageBackground style={frame_styles.background_image} source={handleImageURI(this.props.profile_image)}>
-                    <View style={frame_styles.text_container}>   
-                        <Text style={frame_styles.name_text}>
-                            {this.state.name}
-                        </Text> 
-                        <Text style={frame_styles.main_text}>
-                            {this.props.distance + " mi"}
-                        </Text>
-                    </View>
-                </ImageBackground>
-                <View style={frame_styles.text_container}>
-                    <View>
-                        <Text style={frame_styles.name_text}>
-                            {this.state.name}
-                        </Text> 
-                    </View>
-                    <View style={{justifyContent: 'space-between', flexDirection: 'row'}}>
-                        <Text style={frame_styles.main_text}>
-                            {this.props.distance + " mi"}
-                        </Text>
-                        {renderAge}
-                    </View>
-                </View>
-            </TouchableHighlight>
-        );*/
-
         var renderDescription = {};
         
         if (this.props.description != null && this.props.description != "") {
@@ -350,74 +252,13 @@ class FrameComponent extends React.Component{
     }
 }
 
-/*
-class FrameComponent extends React.Component{
-    constructor(props) {
-        super (props);
-
-        this.state = {};
-
-        if (this.props.type == "person") {
-            this.state.name = this.props.firstName + " " + this.props.lastInitial;
-        }
-        else if (this.props.type == "activity") {
-            this.state.name = this.props.name;
-        }
-        
-        //deal if name if too long to fit on screen
-        if (this.state.name.length > 11) {
-            this.state.name = this.state.name.substring(0, 8) + "...";
-        }
-    }
-
-    render() {
-        return(
-            <TouchableHighlight style={frame_styles.box} onPress={() => {
-                    if (this.props.type == "person") {
-                        this.props.navigation.navigate("Other Profile Screen", {id: this.props.id, type: "none", viewing:""});
-                    }
-                    else if (this.props.type == "activity") {
-                        this.props.navigation.navigate("Other Activity Screen", {id: this.props.id, type: "none", viewing:""});
-                    }
-                }}>
-                <ImageBackground style={frame_styles.background_image} source={handleImageURI(this.props.profile_image)}>
-                    <View style={frame_styles.text_container}>   
-                        <Text style={frame_styles.name_text}>
-                            {this.state.name}
-                        </Text> 
-                        <Text style={frame_styles.main_text}>
-                            {this.props.distance + " mi"}
-                        </Text>
-                    </View>
-                </ImageBackground>
-            </TouchableHighlight>
-        )
-    }
-} */
-
-//, {backgroundColor: borderColor(this.props.type), borderBottomWidth: 2, borderLeftWidth: 2, borderRightWidth: 2, borderColor: borderColor(this.props.type)}]
-
 function handleImageURI(uri) {
+    console.log(uri);
     if (uri == undefined || uri == "") {
-        return({uri: "https://image.cnbcfm.com/api/v1/image/106926992-1628885077267-elon.jpg"});
-       //return(require("../../../images/default_image.png"));
+        return({uri: "../../../assets/images/default_image.png"});
     }
     else {
         return({uri: uri});
-    }
-}
-
-//borderColor: borderColor(this.props.type)
-
-function borderColor(type) {
-    if (type == "person") {
-        return (GlobalValues.PEOPLE_COLOR);
-    }
-    else if (type == "activity") {
-        return (GlobalValues.ACTIVITY_COLOR);
-    }
-    else if (type == "group") {
-        return (GlobalValues.GROUP_COLOR);
     }
 }
 
@@ -456,10 +297,7 @@ export class ExploreScreen extends React.Component {
         this.updateSearch = this.updateSearch.bind(this);
         this.updateUsers = this.updateUsers.bind(this);
 
-        this.lazyUpdate = this.lazyUpdate.bind(this);
-
-        //add navigation events
-        
+        this.lazyUpdate = this.lazyUpdate.bind(this);        
     }
 
     componentDidMount() {
@@ -517,12 +355,6 @@ export class ExploreScreen extends React.Component {
         });
 
         this.updateSearch();
-
-
-        /*for(i = 0; i < 17; i++) {
-            this.addFrameComponent("", i);
-        }*/
-        //fetch search
     }
 
     updateUsers() {
@@ -541,60 +373,7 @@ export class ExploreScreen extends React.Component {
         }
     }
 
-    //____>>>>>>>search bar creates attributes from even spaces, and adds them to the ones in the filter page
- 
-
-        /*var body = {
-            "radius": 10.0,
-            "pageSize": 20,
-            "pageNumber": 1,
-            "maximumAge": GlobalProperties.search_maxAge,
-            "minimumAge": GlobalProperties.search_minAge,
-            "attributes": ["kzli", "igyz"],
-        };*/
-
     async updateSearch() {
-        //make sure the attriutes are good
-        /*if (!this.validateAttributes()) {
-            return;
-        }*/
-
-        /*
-        //fetch user's location if not using map settings
-        if (!GlobalProperties.use_map_settings) {
-
-            var locationResult = await GlobalEndpoints.getLocation();
-
-            if (!locationResult.granted) {
-                Alert.alert("Permission to access location was denied.\nUsing map settings.");
-
-                //use map settings
-                GlobalProperties.use_map_settings = true;
-            }
-            else if (locationResult.location == null) {
-                Alert.alert("Location could not be determined.\nUsing map settings.");
-
-                //use map settings
-                GlobalProperties.use_map_settings = true;
-            }
-            else {
-                location = locationResult.location;
-            }
-        }
-
-        if (GlobalProperties.use_map_settings) {
-            location = {
-                latitude: GlobalProperties.map_latitude,
-                longitude: GlobalProperties.map_longitude,
-            };
-        }
-        else {
-            location = {
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude,
-            };
-        }*/
-
         //if map has not been set
         if (GlobalProperties.map_params == null) {
             //use user's location
@@ -724,7 +503,6 @@ export class ExploreScreen extends React.Component {
             }
         }
         else {
-
             //invalid request
             if (result == undefined) {
                 this.state.reload = true;
@@ -746,18 +524,6 @@ export class ExploreScreen extends React.Component {
         //once done, lazy update
         this.lazyUpdate();
     }
-
-    /*
-    async componentDidMount() {
-        try{
-            let response = await fetch("http://192.168.0.86:8000/stock/");
-            let json = await response.json();
-            this.createStockComponents(json);
-        } catch(error) {
-            console.error(error);
-        }
-    }
-    */
 
     render() {
         return (
@@ -797,17 +563,6 @@ export class ExploreScreen extends React.Component {
         this.updateSearch();
     }
 
-/**
-                                 
-                        <TouchableHighlight style={post_styles.post_button} underlayColor="white" onPress={() => {this.props.navigation.navigate("Activity Creation Screen")}} onHideUnderlay={() => {}} onShowUnderlay={() => {}}>         
-                                <Text style={post_styles.post_button_text}>
-                                    Create
-                                </Text>
-                        </TouchableHighlight>      */
-
-//                                <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="black" editable={true} maxLength={160} ref={(input) => {this.state.attributes_input_handler = input}} onEndEditing={(event) => {this.addFilter(event.nativeEvent.text)}}/>
-
-
     ScrollViewIsCloseToBottom(layoutMeasurement, contentOffset, contentSize) {
         //if we are at max
         if (this.state.frames.length == GlobalValues.SEARCH_PAGE_SIZE * this.state.page_number) {
@@ -815,28 +570,7 @@ export class ExploreScreen extends React.Component {
             this.state.page_number++;
             this.updateSearch();
         }
-        //const paddingToBottom = 20;
-        //return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
     }
-
-    /**
-     * 
-                            <View style={main_styles.search_bar}>
-                                <Feather name="search" size={30} color="gray" style={{alignSelf: 'center'}}/>
-                                <TextInput style={main_styles.text_input} placeholderTextColor="black"/>
-                            </View>
-
-                            
-                            <TouchableHighlight underlayColor="white" onPress={() => {this.props.navigation.navigate("Activity Creation Screen")}} onHideUnderlay={() => {}} onShowUnderlay={() => {}}>
-                                <View style={post_styles.post_button}>
-                                    <Text style={post_styles.post_button_text}>
-                                        Create
-                                    </Text>
-                                </View>
-                            </TouchableHighlight>
-     */
-
-    // contentContainerStyle={{flexDirection: "row", flexWrap: "wrap", flexGrow: 1}} 
 
     validateAttributes() {
         if (GlobalProperties.search_filters_updated && (typeof(GlobalProperties.search_attributes) == "undefined" || typeof(GlobalProperties.search_attributes) == "null" || GlobalProperties.search_attributes.length == 0)) {
@@ -934,21 +668,3 @@ const deleteAlertAttributes = (frameComponent, attr) => {
         }
     );
 }
-
-//<Feather name="search" size={30} color="gray" style={{alignSelf: 'center'}}/>
-//<View style={{ borderBottomColor: '#CCCCCC', borderBottomWidth: 2, width: '97%', alignSelf: 'center'}}/> 
-//#FFC2B5 was border color for underline
-
-//fix it not going into the slot
-
-/*
-<ScrollView contentContainerStyle={{flexDirection: "row", flexWrap: "wrap", flexGrow: 1}}>  
-                                {frames.map((component) => (component))}
-                            </ScrollView>
-*/
-
-//use flatlist to not reder all components at once? or just keep adding to it when reaching bottom, though this can create performance issues. {frames.map((component) => (component))}
-
-
-
-//find the real height of UseBottomTabBarHeight or set the height yourself

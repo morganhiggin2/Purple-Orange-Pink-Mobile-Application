@@ -118,8 +118,8 @@ export class EditImagesScreen extends React.Component {
 
         GlobalProperties.return_screen = "Edit Images Screen";
         GlobalProperties.screen_props = {
-            profile_images: this.state.profile_images
-        };
+            edit_image: false
+        }
     }
 
     renderProfileImages() {
@@ -182,8 +182,6 @@ export class EditImagesScreen extends React.Component {
             //check if the pass function is null
             this.state.profile_images[id] = result.uri;
 
-            console.log(result);
-
             //convert image to compressed jpg
             const result_change = await manipulateAsync(
                 result.uri, [
@@ -192,24 +190,113 @@ export class EditImagesScreen extends React.Component {
                 { compress: 1, format: SaveFormat.JPEG}
             );
 
-            //update global params
-            GlobalProperties.screen_props.profile_images[id] = result_change.uri;
+            var image_uri = Platform.OS === 'android' ? result_change.uri : result_change.uri.replace('file://', '');
+
+            console.log(result_change);
 
             //upload to server
+            var body = new FormData();
+            body.append('num', id);
+            body.append('image', {
+                uri: image_uri,
+                type: 'image/jpg',
+                name: 'photo.jpg'
+            });
 
-            //either result.uri or result.localUri
-            var body = {
-                num: id,
-                image: {
+            console.log(body);
+
+            /**{
                     uri: Platform.OS === 'android' ? result_change.uri : result_change.uri.replace('file://', ''),
                     name: "profile_image.jpg",
                     type: result_change.type
+                } */
+
+            //make post request to upload image
+            
+            /*var axios = require('axios');
+
+            axios({
+                method: 'post',
+                url: GlobalValues.HOST + "/api/User/Friends/UploadProfileImage",
+                headers: { 
+                    "content-type": "multipart/form-data",
+                    'Cookie': '.AspNetCore.Identity.Application=' + GlobalProperties.auth_token,
+                },
+                data : body
+            }).then((response, status) => {
+                console.log(response);
+                console.log(status);
+            })
+            .catch(function(error) {
+                console.log(error.message);
+            })*/
+
+            //if request was successful
+            var successful = false;
+
+            
+            //make request
+            result = await GlobalEndpoints.makePostRequestFormData(true, "/api/User/Friends/UploadProfileImage", body)
+                .then((result) => {
+                    console.log("finished");
+                    if (result == undefined) {
+                        successful = false;
+                    }
+                    else {
+                        successful = true;
+                    }
+                    return(result);
+                })
+                .catch((error) => {
+                    console.log(error);
+                    successful = false;
+                    return(error);
+                });
+
+            //if there is no error message, request was good
+            if (successful) {
+
+                //if result status is ok
+                if (result.request.status ==  200) {
+                    GlobalProperties.screen_props = {
+                        edit_image: true
+                    }
+
+                    this.lazyUpdate();
+                }
+                else {
+                    //returned bad response, fetch server generated error message
+                    //and set 
+                    Alert.alert(result.data);
+                    return;
                 }
             }
-            
-            GlobalEndpoints.makePostRequest(true, "api/User/Friends/UploadProfileImage", body);
+            else {
 
-            this.lazyUpdate();
+                //invalid request
+                if (result == undefined) {
+                    this.state.reload = true;
+                    this.lazyUpdate();
+                
+                    return;
+                }
+                else if (result.response.status == 400 && result.response.data) {
+                    Alert.alert(JSON.stringify(result.response.data));
+                    console.log(result.response.data);
+                    return;
+                }
+                //handle not found case
+                else if (result.response.status == 404) {
+                    this.state.reload = true;
+                    this.lazyUpdate();
+                    GlobalEndpoints.handleNotFound(false);
+                }
+                else {
+                    this.state.reload = true;
+                    this.lazyUpdate();
+                    return;
+                }
+            }
         }
     }
     
@@ -264,8 +351,6 @@ const deleteAlert = (frameComponent, DATA, id) => {
 class ProfileImage extends React.Component {
     constructor(props) {
         super(props);
-
-        console.log("../../../assets/" + GlobalValues.DEFAULT_IMAGE);
     }
 
     render () {
@@ -280,7 +365,7 @@ class ProfileImage extends React.Component {
         else {
             return (
             <TouchableOpacity style={image_styles.box} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.chooseImage(this.props.id)}}>
-                <Image style={image_styles.image} source={require("../../../assets/default_image.jpg")}/>
+                <Image style={image_styles.image} source={require("../../../assets/images/default_image.png")}/>
             </TouchableOpacity>
             );
         }

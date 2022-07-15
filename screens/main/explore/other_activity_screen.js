@@ -1,21 +1,17 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Image, ScrollView, FlatList, Alert, Dimensions} from 'react-native';
-import { createStackNavigator, CardStyleInterpolators} from '@react-navigation/stack';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import {TouchableHighlight, TouchableOpacity} from 'react-native-gesture-handler';
-import { AntDesign, Feather, Entypo, MaterialCommunityIcons, MaterialIcons, FontAwesome } from '@expo/vector-icons'; 
+import {StyleSheet, View, Text, FlatList, Alert} from 'react-native';
+import { TouchableOpacity} from 'react-native-gesture-handler';
+import { AntDesign, MaterialIcons, FontAwesome } from '@expo/vector-icons'; 
 
 import { GlobalValues, GlobalProperties } from '../../../global/global_properties';
 import { GlobalEndpoints } from '../../../global/global_endpoints';
 import { LoadingScreen } from '../../misc/loading_screen';
-
 
 const main_styles = StyleSheet.create(
     {
         page: {
             backgroundColor: GlobalValues.DARKER_WHITE,
             height: '50%',
-            width: '100%',
             flexDirection: "column",
             flex: 1,
         },
@@ -57,19 +53,9 @@ const main_styles = StyleSheet.create(
     }
 );
 
-const section_styles = StyleSheet.create({
-    body: {
-        marginTop: "10%",
-        backgroundColor: GlobalValues.DARKER_WHITE,
-    },
-    gap: {
-        height: 30,
-    }
-});
-
 const info_styles = StyleSheet.create({
     body: {
-        backgroundColor: 'white', //#FFCDCD
+        backgroundColor: 'white',
         marginHorizontal: 8,
         borderRadius: 4,
         marginVertical: 16
@@ -91,7 +77,7 @@ const attribute_styles = StyleSheet.create({
         fontSize: 14, 
         maxHeight: "96px", 
         textAlignVertical: "top",
-            fontFamily: 'Roboto'
+        fontFamily: 'Roboto'
     },
     title_text: {
         alignSelf: 'flex-start',
@@ -200,7 +186,6 @@ const filter_snaps_styles = StyleSheet.create(
             marginVertical: 2,
             textAlign: 'center',
             flexDirection: 'row',
-            justifyContent: 'center',
             alignSelf: 'center'
         },
         container: {
@@ -725,14 +710,6 @@ class FilterSnap extends React.Component {
             </Text>
         );
     }
-}
-
-const HeaderTitle = (props) => {
-    return(
-        <Text style={{fontSize: 24, fontFamily: 'Roboto', color: 'black'}}>
-            {props.title}
-        </Text>
-    );
 }
 
 FilterSnap.defaultProps = {

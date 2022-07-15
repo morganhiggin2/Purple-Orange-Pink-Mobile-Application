@@ -53,21 +53,33 @@ export class App extends React.Component {
 
     GlobalProperties.app_lazy_update = this.lazyUpdate;
     GlobalProperties.app_connect = this.connect;
+
+		this.load = this.load.bind(this);
   }
 
   componentDidMount() {
+    this.load().then(() => {
+			this.connect();
+		})
+		.catch(() => {
+
+		});
+  }
+
+  async load() {
+		
     //open realm
     GlobalProperties.messagesHandler = new MessageHandler();
-    GlobalProperties.messagesHandler.start();
 
     //get username
-    GlobalProperties.get_key_value_pair("User_Username")
-    .then((value) => {
-      GlobalProperties.user_name = JSON.parse(value);
-    })
-    .catch(() => {
-      GlobalProperties.put_key_value_pair("User_Username", "");
-    });
+    var result = await GlobalProperties.get_key_value_pair("User_Username");
+
+		if (result) {
+			GlobalProperties.user_name = JSON.parse(result);
+		}
+		else {
+      await GlobalProperties.put_key_value_pair("User_Username", "");
+		}
 
     //add notification listeners
     Notifications.addNotificationReceivedListener(this.handleNotification);
@@ -93,25 +105,15 @@ export class App extends React.Component {
     ]);
 
     //ask user permission to get location
-    let status = Location.requestForegroundPermissionsAsync()
-    .then(() => {
-      //successful, do nothing
-    })
-    .catch((error) => {
+    let status = await Location.requestForegroundPermissionsAsync();
+
+		if (status == null) {
       Alert.alert("Permission to access location was denied. Location is required to use this app");
-    });
+		}
 
-    this.connect();
-
-    Font.loadAsync({
+    await Font.loadAsync({
       // Load a font `Montserrat` from a static resource
       Roboto: require('./assets/fonts/Roboto-Regular.ttf'),
-    })
-    .then(() => {
-
-    }).
-    catch(() => {
-      Alert.alert("Could not load font");
     });
   
     //Alert.alert("There seems to be a network connection issue.\nCheck your internet.");
@@ -161,7 +163,51 @@ export class App extends React.Component {
       //else, not logged in*/
 
       //assumed auth token is still valid
-  }
+	}
+
+	/**
+    //open realm
+    GlobalProperties.messagesHandler = new MessageHandler();
+
+    //get username
+    GlobalProperties.get_key_value_pair("User_Username")
+    .then((value) => {
+      GlobalProperties.user_name = JSON.parse(value);
+    })
+    .catch(() => {
+      GlobalProperties.put_key_value_pair("User_Username", "");
+    });
+
+    //add notification listeners
+    Notifications.addNotificationReceivedListener(this.handleNotification);
+    Notifications.addNotificationResponseReceivedListener(this.handleNotificationResponse);
+    //Notifications.addPushTokenListener(registerDevicePushTokenAsync);
+    
+
+    LogBox.ignoreLogs([
+      'Non-serializable values were found in the navigation state',
+      'ViewPropTypes will be removed from React Native. Migrate to ViewPropTypes exported from \'deprecated-react-native-prop-types\'.'
+    ]);
+
+    //ask user permission to get location
+    let status = Location.requestForegroundPermissionsAsync()
+    .then(() => {
+      //successful, do nothing
+    })
+    .catch((error) => {
+      Alert.alert("Permission to access location was denied. Location is required to use this app");
+    });
+
+    Font.loadAsync({
+      // Load a font `Montserrat` from a static resource
+      R: require('./assets/fonts/Roboto-Light.ttf'),
+    })
+    .then(() => {
+
+    }).
+    catch(() => {
+      Alert.alert("Could not load font");
+    }); */
 
   async connect() {
     this.state.loading = true;
@@ -457,8 +503,6 @@ export class App extends React.Component {
   //when a notification is recieved in the foreground
   handleNotification(notification) {
     GlobalProperties.reload_messages = false;
-
-    console.log("here");
 
     //reload messages when when not on the page
     if (GlobalProperties.reloadMessages) {

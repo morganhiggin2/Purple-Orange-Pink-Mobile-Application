@@ -1,6 +1,6 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Alert, FlatList, Switch, Platform} from 'react-native';
-import {TouchableOpacity, TouchableHighlight} from 'react-native-gesture-handler';
+import {StyleSheet, View, Text, FlatList, Platform} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 import {AntDesign} from '@expo/vector-icons'; 
 import DropDownPicker from 'react-native-dropdown-picker';
 import { PickerIOS } from '@react-native-picker/picker';
@@ -13,7 +13,6 @@ const main_styles = StyleSheet.create(
         page: {
             backgroundColor: GlobalValues.DARKER_WHITE,
             height: '50%',
-            width: '100%',
             flexDirection: "column",
             flex: 1,
         },
@@ -22,7 +21,6 @@ const main_styles = StyleSheet.create(
         },
         title_text: {
             alignSelf: 'center',
-            fontFamily: 'Roboto',
             fontSize: 24,
             color: 'gray',
             padding: 5,
@@ -144,7 +142,6 @@ const inline_attribute_styles = StyleSheet.create({
     }
 });
 
-
 export class ExploreFiltersScreen extends React.Component {
     constructor(props) {
         super(props);
@@ -218,7 +215,9 @@ export class ExploreFiltersScreen extends React.Component {
             }
             else if (GlobalProperties.search_type == "activities") {
                 typeSpecificFilters = (
-                    <View style={inline_attribute_styles.body}>
+                    <View>
+                        <View style={main_styles.horizontal_bar} />
+                        <View style={inline_attribute_styles.body}>
                             <Text style={inline_attribute_styles.title_text}>
                                 Medium
                             </Text>
@@ -232,6 +231,7 @@ export class ExploreFiltersScreen extends React.Component {
                                     />
                             </View>
                         </View>
+                    </View>
                 );
             }
             else if (GlobalProperties.search_type == "groups") {
@@ -439,10 +439,6 @@ class DropDown extends React.Component {
       );
     }
 }
-
-/*
-                    style={{borderWidth: 0, borderRadius: 4, padding: 0, margin: 0}}
-                    dropDownContainerStyle={{borderWidth: 0, borderRadius: 4, backgroundColor: "orange", height: 10}}*/
 
 class Slider extends React.Component {
     constructor(props) {

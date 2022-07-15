@@ -284,7 +284,7 @@ export class YourProfileScreen extends React.Component {
             gender_dropdown_value: "other",
             
             //for profile images
-            profile_images: [],
+            profile_images: Array(3),
 
             //if update made
             updateMade: false,
@@ -334,11 +334,9 @@ export class YourProfileScreen extends React.Component {
             this.state.global_props = GlobalProperties.screen_props;
 
             if (GlobalProperties.return_screen == "Edit Images Screen" && GlobalProperties.screen_props != null) {
-                this.state.profile_images = GlobalProperties.screen_props.profile_images;
-
-                //TODO call async function to upload image to server, also add loading circle for app to prevent user from doing anything else while showing it's uploadwith with gif animation
-
-                this.lazyUpdate();
+                if (GlobalProperties.screen_props.edit_images) {
+                    this.fetchProfileInformation();
+                }
             }
 
             GlobalProperties.screenActivated();
@@ -346,6 +344,7 @@ export class YourProfileScreen extends React.Component {
     }
 
     async fetchProfileInformation() {
+        
         if (this.state.reload) {
             this.state.reload = false;
     
@@ -374,7 +373,6 @@ export class YourProfileScreen extends React.Component {
 
         //if there is no error message, request was good
         if (successful) {
-
             //if result status is ok
             if (result.request.status ==  200) {
                 //get request body
@@ -387,10 +385,23 @@ export class YourProfileScreen extends React.Component {
                 this.state.attributes = user_information.attributes;
                 this.state.date = new Date(Date.parse(user_information.birthdate, "dd/MM/yyyy"));
                 this.state.gender_dropdown_value = user_information.gender;
-                this.state.profile_images = user_information.profile_image_uris;
+                var profile_images = user_information.profile_image_uris;
                 this.state.loading = false;
 
+                //add default image if nessesary
+                if (profile_images.length < 3) {
+
+                    for (let i = 0; i < profile_images.length; i++) {
+                        this.state.profile_images[i] = profile_images[i];
+                    }
+                    for (let i = profile_images.length; i < 3; i++) {
+                        this.state.profile_images[i] = "";
+                    }
+                }
+
                 this.lazyUpdate();
+
+                return;
             }
             else {
                 //returned bad response, fetch server generated error message
@@ -424,9 +435,6 @@ export class YourProfileScreen extends React.Component {
                 return;
             }
         }
-
-        //once done, lazy update
-        this.lazyUpdate();
     }
 
     render() { 
@@ -442,7 +450,20 @@ export class YourProfileScreen extends React.Component {
                         return (
                             <Point key={data.id} index={key} data={data} parentLazyUpdate={() => {this.lazyUpdate();}} deleteAlert={this.deletePointAlert} pointsUpdatedImage={this.pointsUpdatedImage} pointsUpdatedCaption={this.pointsUpdatedCaption}/>
                         );
-                    })} */
+                    })} 
+                    
+                    
+                        <SliderBox
+                            images={this.state.profile_images.map(uri => {
+                                return(handleImageURI(uri));
+                            })}
+                            parentWidth={image_styles.image.width}
+                            sliderBoxHeight={image_styles.image.height}
+                            dotColor={GlobalValues.ORANGE_COLOR}
+                            inactiveDotColor={GlobalValues.DISTINCT_GRAY}
+                        />
+                    
+                    */
 
         const renderComponent = ({item}) => {
             return (
@@ -634,7 +655,7 @@ export class YourProfileScreen extends React.Component {
         }
 
         if (cleaned_images.length == 0) {
-            cleaned_images.push(require("../../../images/default_image.png"));
+            cleaned_images.push(require("../../../assets/images/default_image.png"));
         }
 
         this.state.profile_images = cleaned_images;
@@ -771,39 +792,9 @@ export class YourProfileScreen extends React.Component {
 
             //if result status is ok
             if (result.request.status ==  200) {
-                if (this.state.addNewPointsToUpdateBody) {
-                    //get new points
-                    var newPointIds = JSON.parse(result.request.response).new_point_ids;
-
-                    for (let [i, id] of newPointIds.entries()) {
-                        //set indexes
-                        var newPointIdIndex = 0;
-
-                        for (let [i, data] of this.state.points.entries()) {
-                            if (data.id.startsWith("new_point")) {
-                                this.state.points[i].id = newPointIds[newPointIdIndex];
-                                newPointIdIndex++;
-                            }
-                        }
-
-                        //call async method to upload images of new points
-                    }
-                }
-
-                if (this.state.addPointsToUpdateBody) {
-                    //upload images of points that were changed
-                    for (let [i, id] of this.state.new_point_images.entries()) {
-                        //get image uri (going to be local)
-                        var image_uri = this.state.points.find((p) => {return(p.id == id);}).image_uri;
-
-                        //uploadImageToServer(id, image_uri)
-                    }
-                }
 
                 //once done, clear updatebody and variables
                 this.state.updateBody = {};
-                this.state.addPointsToUpdateBody = false;
-                this.state.addNewPointsToUpdateBody = false;
                 this.state.updateMade = false;
 
                 this.lazyUpdate();
@@ -973,8 +964,8 @@ export class YourProfileScreen extends React.Component {
 }
 
 function handleImageURI(uri) {
-    if (uri == undefined) {
-        return(require("../../../images/default_image.png"));
+    if (uri == undefined || uri == "") {
+        return(require("../../../assets/images/default_image.png"));
     }
     else {
         return({uri: uri});
@@ -1120,7 +1111,7 @@ FilterSnap.defaultProps = {
                 <Text style={info_styles.title_text}>
                     {description}
                 </Text>
-                <FastImage style={point_styles.image} source={{uri: require("../../../images/default_image.png")}}/>
+                <FastImage style={point_styles.image} source={{uri: require("../../../assets/images/default_image.png")}}/>
             </View>*/
 
 // resizeMode={FastImage.resizeMode.contain}

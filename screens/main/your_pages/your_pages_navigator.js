@@ -49,7 +49,7 @@ const EmptyTitle = (props) => {
 
 const ActionBarIcon = (props) => {
     return(
-        <Image style={main_styles.logo} source={require("../../../images/fakelogo.png")} resizeMode='contain'/>
+        <Image style={main_styles.logo} source={require("../../../assets/images/fakelogo.png")} resizeMode='contain'/>
     );
 }
 

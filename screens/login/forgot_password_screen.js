@@ -1,22 +1,14 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Alert, FlatList, Switch} from 'react-native';
-import {TouchableOpacity, TouchableHighlight} from 'react-native-gesture-handler';
-import {} from '@expo/vector-icons'; 
-import DateTimePicker from '@react-native-community/datetimepicker';
-import DropDownPicker from 'react-native-dropdown-picker';
-import MultiSlider from '@ptomasroos/react-native-multi-slider';
+import {StyleSheet, View, Text, TextInput, Alert, FlatList} from 'react-native';
+import { TouchableHighlight } from 'react-native-gesture-handler';
 import { GlobalValues, GlobalProperties } from '../../global/global_properties';
 import { GlobalEndpoints } from '../../global/global_endpoints';
-import { NavigationContext } from '@react-navigation/native';
 
 const main_styles = StyleSheet.create(
     {
         page: {
             backgroundColor: 'white',
-            height: '50%',
-            width: '100%',
-            flexDirection: "column",
-            flex: 1,
+            height: '100%',
         },
         sub_section: {
             marginTop: '10%',
@@ -31,15 +23,12 @@ const main_styles = StyleSheet.create(
             width: "80%",
             backgroundColor: 'white',
             padding: 10,
-            paddingVertical: 10,
             marginVertical: 8,
-            color: 'darkgray',
             borderBottomWidth: 1,
-            borderColor: 'gray',
+            borderColor: GlobalValues.DARKER_WHITE,
         },
         title_text: {
             alignSelf: 'center',
-            fontFamily: 'Roboto',
             fontSize: 24,
             color: 'gray',
             padding: 5,
@@ -142,58 +131,9 @@ const attribute_styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     title_value: {
+        fontFamily: "Roboto",
         fontSize: 16,
         alignSelf: 'center'
-    }
-});
-
-const inline_attribute_styles = StyleSheet.create({
-    body: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: "80%",
-        alignSelf: 'center',
-        marginVertical: 8,
-        paddingVertical: 10,
-        borderColor: 'black',
-        borderBottomWidth: 1,
-        borderRadius: 4,
-    },
-    title_text: {
-        alignSelf: 'flex-start',
-        alignSelf: 'flex-end',
-        fontSize: 14,
-        color: 'gray',
-        marginLeft: 3,
-        fontFamily: "Roboto",
-    },
-    input_text_view: {
-        flexDirection:  'row',
-        width: "70%",
-    },
-    text_input: {
-      textAlignVertical: "center",
-      padding: 10,
-      paddingVertical: 10,
-      marginVertical: 8,
-      width: '100%',
-      textAlign: 'left',
-      backgroundColor: 'white',
-      color: 'darkgray',
-      borderBottomWidth: 1,
-      borderColor: 'black',
-      fontFamily: "Roboto",
-    },
-    drop_down_selector: {
-        paddingHorizontal: 4,
-        marginTop: 13,
-        alignSelf: 'flex-end',
-    },
-    drop_down_selector_gap: {
-        height: 100,
-    },
-    date_picker: {
-        width: 200,
     }
 });
 

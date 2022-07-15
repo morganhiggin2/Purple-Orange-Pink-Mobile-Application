@@ -63,25 +63,12 @@ const main_styles = StyleSheet.create(
 export class WelcomeScreen extends React.Component {
     constructor(props) {
         super(props);
-
-        this.state = {
-        };
     }
-
-    log_in() {
-
-    }
-
-    sign_up() {
-
-    }
-
-    //<ImageBackground style={{width: '100%', height: '100%'}} source={require("../../images/background.png")}>
 
     render() {
         return (
                 <View style={main_styles.page}>
-                    <Image style={main_styles.logo} source={require("../../images/fakelogo.png")} resizeMode='contain'/>
+                    <Image style={main_styles.logo} source={require("../../assets/images/fakelogo.png")} resizeMode='contain'/>
                     <View style={main_styles.quote_section}>
                         <Text style={main_styles.quote_text}>
                             This is an app, the best app, clearly ever made.

@@ -21,9 +21,6 @@
       "supportsTablet": true,
 	  "infoPlist": {
 		"UIBackgroundModes": "remote-notification"
-	  },
-	  "config": {
-		"googleMobileAdsAppId": "ca-app-pub-3940256099942544~1458002511"
 	  }
     },
     "android": {
@@ -31,22 +28,15 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-	  "config": {
-		"googleMobileAdsAppId": "ca-app-pub-3940256099942544~3347511713"
-	  },
       "package": "purpleorangepink.POP",
 	  "googleServicesFile": "./android/app/google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-	"plugins": [
-      [
-        "expo-ads-admob",
-        {
-          "userTrackingPermission": "This identifier will be used to deliver personalized ads to you."
-        }
-      ]
-    ]
+    }
+  },
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-4589296191079889~6156806437",
+    "ios_app_id": "ca-app-pub-4589296191079889~5676610078"
   }
 }

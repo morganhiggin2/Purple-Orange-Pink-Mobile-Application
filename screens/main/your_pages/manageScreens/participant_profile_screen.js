@@ -175,15 +175,15 @@ const filter_snaps_styles = StyleSheet.create(
 const PROFILE_IMAGES = [
     {
         id: 1,
-        image_url: "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+        image_url: "https://assets/images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
     }, 
     {
         id: 2,
-        image_url: "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+        image_url: "https://assets/images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
     }, 
     {
         id: 3,
-        image_url: "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+        image_url: "https://assets/images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
     }
 ];
 
@@ -245,9 +245,9 @@ export class ParticipantProfileScreen extends React.Component {
             gender: "male",
 
             profile_images: [
-                "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-                "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-                "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+                "https://assets/images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+                "https://assets/images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+                "https://assets/images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
             ],
 
             attributes: [
@@ -496,7 +496,7 @@ export class ParticipantProfileScreen extends React.Component {
     
     handleImageURI(uri) {
         if (uri == undefined) {
-            return(require("../../../images/default_image.png"));
+            return(require("../../../assets/images/default_image.png"));
         }
         else {
             return(uri);

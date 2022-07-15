@@ -266,7 +266,7 @@ export class EditActivityScreen extends React.Component {
             id: this.props.route.params.id,
             description: "",
 
-            //images
+            //assets/images
             activity_images: [],
 
             //attributes
@@ -1655,7 +1655,7 @@ class Slider extends React.Component {
 
 function handleImageURI(uri) {
     if (uri == undefined) {
-        return(require("../../../../images/default_image.png"));
+        return(require("../../../../assets/images/default_image.png"));
     }
     else {
         return({uri: uri});

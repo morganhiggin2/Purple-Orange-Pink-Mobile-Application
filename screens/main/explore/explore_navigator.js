@@ -2,7 +2,7 @@ import 'react-native-gesture-handler';
 import { createStackNavigator, CardStyleInterpolators} from '@react-navigation/stack';
 import {Easing, Image, StyleSheet, Text, StatusBar, View, Dimensions, TextInput, TouchableHighlight, ScrollView, TouchableOpacity, Alert, SafeAreaView} from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { AntDesign, Feather, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons'; 
+import { Feather} from '@expo/vector-icons'; 
 import { GlobalProperties, GlobalValues } from '../../../global/global_properties.js';
 import React from 'react';
 
@@ -15,7 +15,6 @@ import { ViewAdminsScreen } from '../your_pages/manageScreens/view_admins_screen
 import { ViewParticipantsScreen } from '../your_pages/manageScreens/view_participants_screen.js';
 import { ActivityCreationScreen } from '../your_pages/creationScreens/activity_creation_screen.js';
 import { ViewMapScreen } from '../your_pages/view_map_screen.js';
-import {ListNavigator} from '../explore/explore_screen';
 import { MapScreen } from '../map/map_screen.js';
 
 const MainStack = createStackNavigator();
@@ -42,7 +41,7 @@ const main_styles = StyleSheet.create(
             width: Math.trunc(Dimensions.get('window').width * 0.89),
         },
         text_input: {
-            backgroundColor: '#DFDFDF', //#FECAB9
+            backgroundColor: '#DFDFDF',
             color: 'darkgray',
             fontFamily: 'Roboto',
             fontSize: 14,
@@ -52,7 +51,7 @@ const main_styles = StyleSheet.create(
         },
         top_bar: {
             flexDirection: 'column',
-            backgroundColor: 'white', //#FFCDCD
+            backgroundColor: 'white',
             borderRadius: 5,
             marginHorizontal: 6,
             marginTop: 8,
@@ -106,12 +105,6 @@ const filter_snaps_styles = StyleSheet.create(
     }
 );
 
-const ActionBarIcon = (props) => {
-    return(
-        <Image style={main_styles.logo} source={require("../../../images/fakelogo.png")} resizeMode='contain'/>
-    );
-}
-
 const HeaderTitle = (props) => {
     return(
         <Text style={{fontSize: 24, fontFamily: 'Roboto', color: 'black', height: 0}}>
@@ -140,10 +133,7 @@ export class ListScreen extends React.Component {
 
         this.lazyUpdate = this.lazyUpdate.bind(this);
 
-        GlobalProperties.messagesHandler.openRealm();
-
-        //add navigation events
-        
+        GlobalProperties.messagesHandler.openRealm();        
     }
 
     componentDidMount() {
@@ -165,11 +155,6 @@ export class ListScreen extends React.Component {
             Alert.alert("Join or create an activity to do something with someone new!");
         });
     }
-
-    /**
-                        <TouchableHighlight underlayColor="black" onPress={() => {this.props.navigation.navigate("Explore Filters Screen");}}>
-                            <Feather name="search" size={20} color="gray"/>
-                        </TouchableHighlight> */
 
     render() {
         return (
@@ -204,10 +189,6 @@ export class ListScreen extends React.Component {
             </SafeAreaView>
         );
     }
-
-    //                <ExploreStack.Navigator style={{margin: 0, padding: 0, height: 20}} screenOptions={{tabBarStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR, margin: 0, padding: 0, height: 20}, tabBarItemStyle:{margin: 0, padding: 0, height: 20}, tabBarContentContainerStyle:{margin: 0, padding: 0, height: 20}, tabBarIconStyle: {margin: 0, padding: 0, height: 20}, tabBarLabelStyle:{margin: 0, padding: 0, height: 20}, tabBarIndicatorContainerStyle:{margin: 0, padding: 0, height: 20}, tabBarIndicatorStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}} initialRouteName="Explore Screen" >
-
-    //screenOptions={{swipeEnabled: false, tabBarStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, tabBarIndicatorStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}}
 
     //for the filters
     addFilter(input) {
@@ -304,16 +285,11 @@ const deleteAlertAttributes = (frameComponent, attr) => {
     );
 }
 
-//initialParams={{bottomTabBarHeight: 50}}
-
 export class ExploreNavigator extends React.Component {
 
     constructor(props) {
         super(props);
     }
-
-//gestureEnabled: true, gestureDirection: 'horizontal',
-                //screenOptions={{headerMode:"float", cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS, headerShown: true, headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}} animation="fade">
 
     render() {
         return (
@@ -333,29 +309,7 @@ export class ExploreNavigator extends React.Component {
             </MainStack.Navigator>
         );
     }
-
-    /**render() {
-        return (
-            <MainStack.Navigator initialRouteName="Explore Drawer"
-                screenOptions={{headerMode:"float", cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}} animation="fade">
-
-                <MainStack.Screen name="Explore Screen" component={ListNavigator} options={{headerTitle: () => <HeaderTitle title="Explore"/>, headerBackTitle: "back", headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}} initialParams={{bottomTabBarHeight: 50}}/>
-                <MainStack.Screen name="Explore Filters Screen" component={ExploreFiltersScreen} options={{headerTitle: () => <HeaderTitle title="Filters"/>, headerBackTitle: "back", headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'vertical', cardStyleInterpolator:CardStyleInterpolators.forVerticalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}} />
-                <MainStack.Screen name="Other Profile Screen" component={OtherProfileScreen} options={{ headerBackTitle: "back", headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}} />
-                <MainStack.Screen name="Other Activity Screen" component={OtherActivityScreen} options={{ headerBackTitle: "back", headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}} />
-
-                <MainStack.Screen name="View Admins Screen" component={ViewAdminsScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"View Admins"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
-                <MainStack.Screen name="View Participants Screen" component={ViewParticipantsScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"View Participants"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
-
-                <MainStack.Screen name="Invite To Screen" component={InviteToScreen} options={{ headerTitle: () => <HeaderTitle title="Invite To"/>, headerBackTitle: "back", headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}} />
-                <MainStack.Screen name="Activity Creation Screen" component={ActivityCreationScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title="Create Activity"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
-                <MainStack.Screen name="View Map Screen" component={ViewMapScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title="Create Activity"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
-
-            </MainStack.Navigator>
-        );
-    } */
 }
-
 
 const transition_config = {
     animation: 'timing',

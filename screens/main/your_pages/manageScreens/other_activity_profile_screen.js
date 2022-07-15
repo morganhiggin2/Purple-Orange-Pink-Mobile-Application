@@ -395,7 +395,7 @@ export class OtherActivityProfileScreen extends React.Component {
 
                 //get images
                 if (this.state.profile_images.length == 0) {
-                    this.state.profile_images = [require("../../../../images/default_image.png")];
+                    this.state.profile_images = [require("../../../../assets/images/default_image.png")];
                 }
 
                 this.state.loading = false;
@@ -675,7 +675,7 @@ export class OtherActivityProfileScreen extends React.Component {
 
     handleImageURI(uri) {
         if (uri == undefined) {
-            return(require("../../../../images/default_image.png"));
+            return(require("../../../../assets/images/default_image.png"));
         }
         else {
             return(uri);
@@ -961,7 +961,7 @@ const invitationSentAlert = () => {
 
 function handleImageURI(uri) {
     if (uri == undefined) {
-        return(require("../../../../images/default_image.png"));
+        return(require("../../../../assets/images/default_image.png"));
     }
     else {
         return({uri: uri});

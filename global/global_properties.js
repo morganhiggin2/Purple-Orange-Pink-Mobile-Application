@@ -1,4 +1,3 @@
-import {useNavigation} from '@react-navigation/native';
 import { FileSystem } from 'expo-file-system';
 import * as SecureStore from 'expo-secure-store';
 import * as Device from 'expo-device';
@@ -131,7 +130,7 @@ export class GlobalProperties {
     //user information
     static birthdate = new Date(Date.now());
 
-	//for adds
+	  //for adds
 
 
     //when navigating to the next screen, call this method
@@ -201,20 +200,6 @@ export class GlobalProperties {
 
         value = await GlobalProperties.get_key_value_pair(key).then(value => {return(value);});
 
-        /*setTimeout(() => {
-            console.log(GlobalProperties.get_key_value_pair(key).then(value => {return(value);}).result);
-        }, 200);*/
-
-        /*let promise = new Promise(resolve => {
-            setTimeout(function() {
-                console.log(GlobalProperties.get_key_value_pair(key).then(value => {return(value);}));
-            }, 2000);
-        });/*/
-
-        //value = new Promise(this.get_key_value_pair(key))
-
-        //console.log(value);
-
         //if none was returned, create the key value pair with a default blank image
         if (!value) {
             value = def;
@@ -240,32 +225,3 @@ export class GlobalProperties {
 		//https://docs.expo.dev/versions/latest/sdk/admob/#usage
 	}
 }
-
-//download default profile image and have path to it locally stored here
-
-/*
-onRegionChangeComplete={this.onRegionChange}
-
-
-<MapView.Callout
-            title={true}
-            width={210}
-            onPress={() => {
-              props.navigation.navigate("PlaceDetail", {
-                placeTitle: marker.title,
-                placeId: marker.id,
-              });
-            }}
-          ></MapView.Callout>
-          
-          <MapView.Marker
-                coordinate={marker.coordinate}
-                title={marker.title}
-                description={marker.description}
-                onPress={() => this.markerClick()}
-                //for IOS, it is rumoed to be onSelect instead of onPress
-              />
-
-            //to change color of default marker, choose pinColor prop
-
-          */
