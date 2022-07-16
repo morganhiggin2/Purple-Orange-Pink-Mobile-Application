@@ -1,13 +1,8 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Image, ScrollView, Dimensions, TouchableOpacity, Alert} from 'react-native';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { SliderBox } from "react-native-image-slider-box";
-import { AntDesign, Feather, MaterialCommunityIcons, Entypo } from '@expo/vector-icons'; 
+import {StyleSheet, View, Text, ScrollView, TouchableOpacity} from 'react-native';
+import { AntDesign} from '@expo/vector-icons'; 
 import { GlobalProperties, GlobalValues } from '../../../global/global_properties';
-import { GlobalEndpoints } from '../../../global/global_endpoints';
 import { LoadingScreen } from '../../misc/loading_screen';
-
-const ImageStack = createMaterialTopTabNavigator();
 
 const main_styles = StyleSheet.create(
     {
@@ -48,90 +43,105 @@ const main_styles = StyleSheet.create(
     }
 );
 
-const image_styles = StyleSheet.create(
-    {
-        container: {
-            width: 254,
-            height: 250,
-            marginTop: '10%',
-            marginBottom: 5,
-            alignSelf: 'center',
-        },
-        box: {
-            width: 254,
-            height: 250,
-            borderWidth: 2,
-            borderColor: 'gray',
-            borderRadius: 2,
-        },
-        image: {
-            width: 250,
-            height: 250,
-        },
+const info_styles = StyleSheet.create({
+    body: {
+        backgroundColor: 'white',
+        marginHorizontal: 8,
+        borderRadius: 4,
+        marginVertical: 16
+    },
+    title_text: {
+        color: 'black',
+        fontFamily: 'Roboto',
+        fontSize: 16,
+        marginLeft: 5,
+    }, 
+    inner_text: {
+        color: 'gray',
+        fontFamily: 'Roboto',
+        fontSize: 14,
+        marginLeft: 5,
+    },
+    horizontal_bar: {
+        width: '100%',
+        alignSelf: 'center',
+        borderBottomWidth: 1,
+        borderColor: GlobalValues.DARKER_OUTLINE,
+        marginTop: 8,
+        marginBottom: 4,
     }
-);
+});
 
-const info_styles = StyleSheet.create(
-    {
-        body: {
-            backgroundColor: "white", //#FFCDCD
-            borderRadius: 5,
-            padding: 8,
-            marginVertical: "2%",
-            marginHorizontal: '2%'
-        },
-        title_text: {
-            color: 'black',
-            fontFamily: 'Roboto',
-            fontSize: 16,
-            marginLeft: 5,
-        }, 
-        inner_text: {
-            color: 'gray',
-            fontFamily: 'Roboto',
-            fontSize: 14,
-            marginLeft: 5,
-        },
-        horizontal_bar: {
-            width: '100%',
-            alignSelf: 'center',
-            borderBottomWidth: 1,
-            borderColor: GlobalValues.DARKER_OUTLINE,
-            marginTop: 8,
-            marginBottom: 4,
-        }
+const attribute_styles = StyleSheet.create({
+    body: {
+        backgroundColor: 'white',
+        flexDirection: "column",
+        paddingHorizontal: 10,
+        paddingVertical: 2,
+    },
+    input_text_view: {
+        flexDirection:  'row',
+        marginBottom: 4,
+    },
+    multiline_input_text: {
+        fontSize: 14, 
+        maxHeight: "96px", 
+        textAlignVertical: "top",
+        fontFamily: 'Roboto'
+    },
+    title_text: {
+        alignSelf: 'flex-start',
+        fontSize: 16,
+        fontFamily: 'Roboto',
+        color: 'black',
+        marginBottom: 2,
+    },    
+    text_input: {
+        textAlignVertical: "top",
+        flex: 1,
+        maxHeight: 95,
+        borderRadius: 8,
+        fontFamily: 'Roboto'
+    },
+    inner_text: {
+        color: 'gray',
+        fontSize: 14,
+        marginHorizontal: 4,
+        fontFamily: 'Roboto'
+    },
+    slider: {
+        alignSelf: 'center',
+    },
+    title_with_value: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    title_value: {
+        fontSize: 14,
+        alignSelf: 'center',
+        fontFamily: 'Roboto'
     }
-);
+});
 
 const actions_styles = StyleSheet.create(
     {
-        actions_view: {
+        body: {
 
         },
         actions_button:  {
-            borderRadius: 3,
-            borderWidth: 4,
-            backgroundColor: GlobalValues.ORANGE_COLOR,//'#ff4576'
-            borderColor: GlobalValues.ORANGE_COLOR,
-            padding: 3,
-            paddingVertical: 3,
-            alignSelf: 'center',
-            width: "100%",
-            marginTop: 10,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginVertical: 10,
+            paddingHorizontal: 10,
         },
         action_button_inner: {
-            flexDirection: "row",
-            alignSelf: 'center',
         },
         action_button_icon: {
-            marginRight: 5,
-            alignSelf: 'center',
         },
         action_button_text: {
-            color: 'white',
+            color: 'black',
             fontFamily: 'Roboto',
-            fontSize: 18,
-            alignSelf: 'center',
+            fontSize: 16,
         }
     }
 );
@@ -173,40 +183,6 @@ const filter_snaps_styles = StyleSheet.create(
         }
     }
 );
-
-const point_styles = StyleSheet.create(
-    {
-        body: {
-            borderColor: GlobalValues.ORANGE_COLOR,
-            borderTopWidth: 3,
-            borderBottomWidth: 3,
-        },
-        container: {
-
-        },
-        text: {
-            fontFamily: 'Roboto',
-            fontSize: 16,
-            alignSelf: 'center',
-        },
-        image: {
-            marginTop: 10,
-            width: Math.trunc(Dimensions.get('window').width * 0.90),
-            height: Math.trunc(Dimensions.get('window').width * 0.90), 
-        },
-        trash_icon: {
-            flexDirection: 'row-reverse',
-        }
-    }
-);
-
-const HeaderTitle = (title) => {
-    return(
-        <Text style={{fontSize: 24, fontFamily: 'Roboto', color: 'black'}}>
-            {title.title}
-        </Text>
-    );
-}
 
 class FilterSnap extends React.Component {
     constructor(props) {
@@ -254,7 +230,10 @@ export class AnnouncementScreen extends React.Component {
     }
     
     componentDidMount() {
-        //init
+        GlobalProperties.return_screen = "Announcement Screen";
+        GlobalProperties.screen_props = {
+            _id: this.state._id,
+        };
 
         //fetch data
         this.fetchAnnouncement();
@@ -274,14 +253,12 @@ export class AnnouncementScreen extends React.Component {
 
         if (this.state.other_type == "activity"){
             renderViewOther = (
-                <View>
+                <View> 
                     <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("Other Activity Screen", {id: this.state.other_id, type: "none", viewing:""});}}>
-                        <View style={actions_styles.action_button_inner}>
-                            <AntDesign name="message1" size={20} color="white" style={actions_styles.action_button_icon}/>
-                            <Text style={actions_styles.action_button_text}>
-                                View Activity
-                            </Text>
-                        </View>
+                        <Text style={actions_styles.action_button_text}>
+                            View Activity
+                        </Text>
+                        <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
                     </TouchableOpacity>
                 </View>
             );
@@ -307,20 +284,19 @@ export class AnnouncementScreen extends React.Component {
                             </Text>
                         </View>
                         <View style={info_styles.body}>
-                            <Text style={info_styles.title_text}>
-                                Announcement
-                            </Text>
-                            <Text style={info_styles.inner_text}>
-                                {this.state.body}
-                            </Text>
+                            <View style={attribute_styles.body}>
+                                <Text style={attribute_styles.title_text}>
+                                    Announcement
+                                </Text>     
+                                <View style={attribute_styles.input_text_view}>
+                                    <Text style={attribute_styles.text_input}>
+                                        {this.state.body}
+                                    </Text>
+                                </View>                   
+                            </View> 
                         </View>
                         <View style={info_styles.body}>
-                            <Text style={info_styles.title_text}>
-                                Actions
-                            </Text>
-                            <View style={actions_styles.actions_view}> 
-                                {renderViewOther}
-                            </View>
+                            {renderViewOther}
                         </View>
                     </ScrollView>
                 </View>

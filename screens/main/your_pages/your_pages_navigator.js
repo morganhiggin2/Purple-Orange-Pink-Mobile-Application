@@ -1,10 +1,8 @@
 import 'react-native-gesture-handler';
 import { GlobalValues } from '../../../global/global_properties.js';
-import { NavigationContainer, StackActions,} from '@react-navigation/native';
 import { createStackNavigator, CardStyleInterpolators} from '@react-navigation/stack';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import {Easing, Image, StyleSheet, Text, View, StatusBar} from 'react-native';
-import { useHeaderHeight } from '@react-navigation/stack';
 import React from 'react';
 
 import {YourProfileScreen} from './your_profile_screen.js';
@@ -14,7 +12,6 @@ import { ManageActivityScreen } from './manageScreens/manage_activity_screen.js'
 import { SettingsNavigator } from './settings/settings_navigator.js';
 import { EditImagesScreen } from './edit_images_screen.js';
 import { SearchMapScreen } from './creationScreens/search_map_screen.js';
-import { EditActivityImagesScreen } from './manageScreens/edit_activity_images.js';
 import { ViewAdminsScreen } from './manageScreens/view_admins_screen.js';
 import { ViewParticipantsScreen } from './manageScreens/view_participants_screen.js';
 import { EditActivityScreen } from './edit screens/edit_activity_screen.js';
@@ -47,17 +44,6 @@ const EmptyTitle = (props) => {
     )
 }
 
-const ActionBarIcon = (props) => {
-    return(
-        <Image style={main_styles.logo} source={require("../../../assets/images/fakelogo.png")} resizeMode='contain'/>
-    );
-}
-
-//<FeedStack.Screen component={FeedScreen} name="Your Feed" initialParams={{poop: 5}}/>
-//screenOptions={{headerShown: true, alignSelf: 'center', headerTitleAlign:'center'}} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title="Map"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}} HeaderTitleStyle={{alignSelf: 'center'}} tabBarOptions={{style: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, indicatorStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}}
-
-//tabBarOptions={{style: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, indicatorStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}}
-
 class FeedNavigator extends React.Component {
     constructor(props) {
         super(props);
@@ -76,12 +62,6 @@ class FeedNavigator extends React.Component {
     }
 }
 
-// options={{headerTitle: () => <HeaderTitle: () => <HeaderTitle title="Post"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'vertical', cardStyleInterpolator:CardStyleInterpolators.forVerticalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
-//headerTitle: () => <HeaderTitle title="Post"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR},
-//                <Stack.Screen name="Your Feed Filters Screen" component={YourFeedFiltersScreen} options={{headerTitle: () => <HeaderTitle title="Post"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'vertical', cardStyleInterpolator:CardStyleInterpolators.forVerticalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
-
-
-
 const HeaderTitle = (props) => {
     return(
         <Text style={{fontSize: 24, fontFamily: 'Roboto', color: 'black'}}>
@@ -95,15 +75,6 @@ export class YourPagesNavigator extends React.Component {
     constructor(props) {
         super(props);
     }
-    
-    //headerStatusBarHeight:StatusBar.currentHeight , headerStyle: {backgroundColor: "white", height: StatusBar.currentHeight}}
-    //headerTitle: (<View style={{height: 0}}></View>), 
-    // screenOptions={{headerStatusBarHeight:StatusBar.currentHeight, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}}
-    //options={{headerStatusBarHeight:StatusBar.currentHeight, headerStyle: {backgroundColor: "white", alignSelf: 'center', headerShown: true}}}
-    //headerStatusBarHeight:StatusBar.currentHeight, 
-
-    //                <Stack.Screen name="Manage Filters Screen" component={ManageFiltersScreen} options={{headerTitle: () => <HeaderTitle title="Filters"/>, headerBackTitle: "back", headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'vertical', cardStyleInterpolator:CardStyleInterpolators.forVerticalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}} />
-
 
     render() {
         return (
@@ -117,7 +88,6 @@ export class YourPagesNavigator extends React.Component {
                 <Stack.Screen name="Make Announcement Screen" component={MakeAnnouncementScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"Make Announcement"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
 
                 <Stack.Screen name="Edit Images Screen" component={EditImagesScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"Edit Images"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
-                <Stack.Screen name="Edit Activity Images Screen" component={EditActivityImagesScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title={"Edit Group Images"}/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
 
                 <Stack.Screen name="Map Search Screen" component={SearchMapScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title="Search Map"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
                 <Stack.Screen name="View Map Screen" component={ViewMapScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title="View Map"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
@@ -147,23 +117,3 @@ const transition_config = {
         easing: Easing.linear
     }
 }
-
-/*
-will need to pass in initialParams for feed screen
-then can access them at this.props.route.params.[param_name]
-*/
-
-/*
-
-            <Stack.Navigator initialRouteName="Your Pages Screen"  
-                screenOptions={{headerMode:"float", gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS, headerShown: false, 
-                transitionSpec: {
-                    open: transition_config,
-                    close: transition_config,
-                }}
-                } animation="fade">
-
-                <Stack.Screen name="Your Pages Screen" component={YourPagesScreen}/>
-
-            </Stack.Navigator>
-*/

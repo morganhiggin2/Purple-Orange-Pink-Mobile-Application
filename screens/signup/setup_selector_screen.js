@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Image} from 'react-native';
+import {StyleSheet, View, Text} from 'react-native';
 import {TouchableHighlight} from 'react-native-gesture-handler';
 import { AntDesign } from '@expo/vector-icons'; 
 import { GlobalValues } from '../../global/global_properties';
@@ -9,7 +9,6 @@ const main_styles = StyleSheet.create(
         page: {
             backgroundColor: '#FFEDE7',
             height: '100%',
-            width: '100%',
             flexDirection: "column",
             justifyContent: "space-between",
         },
@@ -18,7 +17,6 @@ const main_styles = StyleSheet.create(
         },
         title_text: {
             alignSelf: 'center',
-            fontFamily: 'Roboto',
             fontSize: 24,
             color: 'gray',
             padding: 5,
@@ -62,10 +60,6 @@ const main_styles = StyleSheet.create(
 export class SetupSelectorScreen extends React.Component {
     constructor(props) {
         super(props);
-    }
-
-    async log_in() {
-
     }
 
     render() {

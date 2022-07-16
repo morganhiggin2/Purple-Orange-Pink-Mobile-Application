@@ -5,15 +5,6 @@ import { GlobalValues } from '../../../global/global_properties';
 import { GlobalEndpoints } from '../../../global/global_endpoints';
 import { LoadingScreen } from '../../misc/loading_screen';
 
-const main_styles = StyleSheet.create({
-    logo: {
-        width: 50,
-        height: 50,
-        alignSelf: 'center',
-        flexDirection: 'row-reverse',
-    }
-});
-
 const blip_styles = StyleSheet.create(
     {
         body: {
@@ -303,30 +294,11 @@ function dataType(item) {
     switch(item.type) {
         case "activity":
             return(
-                <Text style={blip_styles.inner_text}>
+                <Text style={[blip_styles.inner_text, {flex: 1, flexWrap: 'wrap'}]} numberOfLines={3}>
                     {item.date_time + "\n"}
-                    {limitDescription(item.description)}
+                    {item.description}
                 </Text>
             );
-        case "group":
-            return(
-                <Text style={blip_styles.inner_text}>
-                    {limitDescription(item.description)}
-                </Text>
-            );
-    }
-}
-
-function limitDescription(desc) {
-
-    if (desc.length > 120) {
-        return (desc.substring(0, 117) + "...");
-    }
-    else if (desc == "") {
-        return ;
-    }
-    else {
-        return desc;
     }
 }
 

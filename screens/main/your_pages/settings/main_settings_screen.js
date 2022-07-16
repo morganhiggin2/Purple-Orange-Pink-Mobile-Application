@@ -1,8 +1,7 @@
 import React from "react";
 import {Text, View, FlatList, StyleSheet, Alert} from 'react-native';
-import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableHighlight } from 'react-native-gesture-handler';
 import { MaterialIcons } from '@expo/vector-icons'; 
-import {Feather} from '@expo/vector-icons'; 
 import { GlobalProperties, GlobalValues } from "../../../../global/global_properties";
 import { GlobalEndpoints } from "../../../../global/global_endpoints";
 
@@ -11,7 +10,6 @@ const main_styles = StyleSheet.create(
         page: {
             backgroundColor: GlobalValues.DARKER_WHITE,
             height: '50%',
-            width: '100%',
             flexDirection: "column",
             flex: 1,
         },
@@ -53,37 +51,6 @@ const selector_styles = StyleSheet.create({
         alignSelf: 'center'
     }
 });
-
-const actions_styles = StyleSheet.create(
-    {
-        body: {
-            paddingVertical: "2%",
-            paddingHorizontal: "3%",
-        },
-        actions_button:  {
-            borderRadius: 3,
-            borderWidth: 4,
-            backgroundColor: GlobalValues.ORANGE_COLOR,
-            borderColor: GlobalValues.ORANGE_COLOR,
-            alignSelf: 'center',
-            width: "100%",
-        },
-        action_button_inner: {
-            flexDirection: "row",
-            alignSelf: 'center',
-        },
-        action_button_icon: {
-            marginRight: 5,
-            alignSelf: 'center',
-        },
-        action_button_text: {
-            color: 'white',
-            fontFamily: 'Roboto',
-            fontSize: 18,
-            alignSelf: 'center',
-        }
-    }
-);
 
 const section_styles = {
     body: {

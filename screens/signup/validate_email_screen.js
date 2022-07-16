@@ -1,10 +1,6 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Alert, FlatList, Switch} from 'react-native';
-import {TouchableOpacity, TouchableHighlight} from 'react-native-gesture-handler';
-import {} from '@expo/vector-icons'; 
-import DateTimePicker from '@react-native-community/datetimepicker';
-import DropDownPicker from 'react-native-dropdown-picker';
-import MultiSlider from '@ptomasroos/react-native-multi-slider';
+import {StyleSheet, View, Text, TextInput, Alert, FlatList} from 'react-native';
+import { TouchableHighlight } from 'react-native-gesture-handler';
 import { GlobalProperties, GlobalValues } from '../../global/global_properties';
 import { GlobalEndpoints } from '../../global/global_endpoints';
 
@@ -13,7 +9,6 @@ const main_styles = StyleSheet.create(
         page: {
             backgroundColor: 'white',
             height: '50%',
-            width: '100%',
             flexDirection: "column",
             flex: 1,
         },
@@ -37,7 +32,6 @@ const main_styles = StyleSheet.create(
             borderColor: 'gray'
         },
         title_text: {
-            fontFamily: 'Roboto',
             fontSize: 24,
             color: 'black',
             marginBottom: '0 %',
@@ -48,7 +42,6 @@ const main_styles = StyleSheet.create(
         },
         title_text: {
             alignSelf: 'center',
-            fontFamily: 'Roboto',
             fontSize: 24,
             color: 'gray',
             padding: 5,
@@ -67,7 +60,6 @@ const main_styles = StyleSheet.create(
         },
         button_text: {
             color: 'white',
-            fontFamily: 'Roboto',
             fontSize: 18,
             alignSelf: 'center',
             fontFamily: "Roboto",
@@ -121,6 +113,7 @@ const attribute_styles = StyleSheet.create({
     },
     multiline_input_text: {
         fontSize: 18, 
+        fontFamily: 'Roboto',
         maxHeight: "96px", 
         textAlignVertical: "top",
     },
@@ -152,6 +145,7 @@ const attribute_styles = StyleSheet.create({
     },
     title_value: {
         fontSize: 16,
+        fontFamily: 'Roboto',
         alignSelf: 'center'
     }
 });
@@ -214,7 +208,6 @@ export class ValidateEmailScreen extends React.Component {
         this.validateKeyCode = this.validateKeyCode.bind(this);
         this.updateKeyCode = this.updateKeyCode.bind(this);
     }
-
     
     //attempt to login with the information in the text fields
     async validateEmail() {

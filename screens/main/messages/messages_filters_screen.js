@@ -1,11 +1,9 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Alert, FlatList, Switch, Platform} from 'react-native';
+import {StyleSheet, View, Text, FlatList, Platform} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {AntDesign} from '@expo/vector-icons'; 
-import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { PickerIOS } from '@react-native-picker/picker';
-import MultiSlider from '@ptomasroos/react-native-multi-slider';
 
 import {GlobalProperties, GlobalValues} from '../../../global/global_properties.js';
 
@@ -14,7 +12,6 @@ const main_styles = StyleSheet.create(
         page: {
             backgroundColor: GlobalValues.DARKER_WHITE,
             height: '50%',
-            width: '100%',
             flexDirection: "column",
             flex: 1,
         },
@@ -23,7 +20,6 @@ const main_styles = StyleSheet.create(
         },
         title_text: {
             alignSelf: 'center',
-            fontFamily: 'Roboto',
             fontSize: 24,
             color: 'gray',
             padding: 5,
@@ -58,56 +54,18 @@ const info_styles = StyleSheet.create({
     }
 });
 
-const attribute_styles = StyleSheet.create({
-    body: {
-        backgroundColor: 'white',
-        flexDirection: "column",
-        paddingVertical: "3%",
-        paddingHorizontal: "3%",
-    },
-    input_text_view: {
-        flexDirection:  'row',
-    },
-    multiline_input_text: {
-        fontSize: 18, 
-        maxHeight: "96px", 
-        textAlignVertical: "top",
-    },
-    title_text: {
-        alignSelf: 'flex-start',
-        fontSize: 16,
-        color: 'black',
-        marginBottom: 6,
-        fontFamily: "Roboto",
-    },
-    text_input: {
-        textAlignVertical: "top",
-        flex: 1,
-        maxHeight: 95,
-        paddingVertical: 4,
-        paddingHorizontal: 4,
-        backgroundColor: '#EAEAEA',
-        borderRadius: 8,
-    },
-    slider: {
-        alignSelf: 'center',
-    },
-    title_with_value: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    title_value: {
-        fontSize: 16,
-        alignSelf: 'center'
-    }
-});
-
 const inline_attribute_styles = StyleSheet.create({
     body: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingVertical: "3%",
-        paddingHorizontal: "3%",
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+    },
+    title_view: {
+        flexDirection: 'row',
+    },
+    text_view: {
+        paddingVertical: 4
     },
     title_text: {
         alignSelf: 'flex-start',
@@ -122,17 +80,15 @@ const inline_attribute_styles = StyleSheet.create({
     },
     text_input: {
         textAlignVertical: "center",
-        paddingVertical: 2,
         paddingHorizontal: 4,
         width: '100%',
-        
         textAlign: 'right',
-        backgroundColor: GlobalValues.DARKER_OUTLINE,
         borderRadius: 4,
         fontSize: 16, 
+        fontFamily: 'Roboto'
     },
     drop_down_selector: {
-        paddingHorizontal: 4,
+        marginRight: -10
     },
     drop_down_selector_gap: {
         height: 100,
@@ -141,32 +97,6 @@ const inline_attribute_styles = StyleSheet.create({
         width: 200,
     }
 });
-
-const filter_snaps_styles = StyleSheet.create(
-    {
-        inner_text: {
-            borderRadius: 5,
-            borderWidth: 2,
-            paddingHorizontal: 3,
-            paddingVertical: 1,
-            fontFamily: 'Roboto',
-            fontSize: 16,
-            color: 'white', 
-            fontWeight: 'bold',
-            alignSelf: 'flex-start',
-            marginHorizontal: 2,
-            marginBottom: 8,
-            textAlign: 'center',
-        },
-        container: {
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'white',
-        }
-    }
-);
 
 export class MessagesFiltersScreen extends React.Component {
     constructor(props) {
@@ -188,12 +118,13 @@ export class MessagesFiltersScreen extends React.Component {
                                 <Text style={inline_attribute_styles.title_text}>
                                     Type
                                 </Text>
-                                <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {width: '50%', alignSelf: 'flex-end'}]}>
+                                <View style={inline_attribute_styles.drop_down_selector}>
                                         <DropDown 
                                             style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
                                             items={[{label: 'All', value: 'all'}, {label: 'Direct Messages', value: 'direct messages'}, {label: 'Conversations', value: 'conversations'}, {label: 'Invitations', value: 'invitations'}, {label: 'Announcements', value: 'announcements'}]}
                                             onChangeValue = {this.updateTypeDropDownValue}
                                             currentValue = {GlobalProperties.messages_filter_type}
+                                            width = {150}
                                             />
                                 </View>
                             </View>
@@ -211,15 +142,6 @@ export class MessagesFiltersScreen extends React.Component {
             </View>
         );
     }
-
-/**<View style={inline_attribute_styles.drop_down_selector}>
-                                <View style={{width: '50%', alignSelf: 'flex-end', marginRight: 10}}>
-                                    <DropDown 
-                                        items={[{label: 'Apple', value: 'apple'}, {label: 'Banana', value: 'banana', }, {label: "Orange", value: "orange"}, {label: "Pear", value: "pear"},   {label: "Pearr", value: "pearr"},  {label: "Pearrr", value: "pearrr"}]}
-                                        onChangeValue = {this.updateTypeDropDownValue}
-                                        />
-                                </View>
-                            </View> */
 
     //update the screen
     lazyUpdate() {
@@ -239,7 +161,8 @@ class DropDown extends React.Component {
       this.state = {
         open: false,
         value: props.currentValue,
-        items: props.items
+        items: props.items,
+        width: props.width,
       };
   
       this.setValue = this.setValue.bind(this);
@@ -279,12 +202,10 @@ class DropDown extends React.Component {
     }
   
     render() {
-      const { open, value, items } = this.state;
-  
       return (
-        items ? (
+        this.state.items ? (
             Platform.OS == 'ios' ? (
-                open ? (
+                this.state.open ? (
                     <PickerIOS
                         //open={open}
                         selectedValue={this.state.value}
@@ -292,7 +213,7 @@ class DropDown extends React.Component {
                         onValueChange={(value) => {this.changeValue(value); this.setOpen(false)}}
                         style={{width: GlobalValues.IOS_DROPDOWN_WIDTH}}
                         >
-                            {items.map((data) => {
+                            {this.state.items.map((data) => {
                                 return (
                                 <PickerIOS.Item
                                    key={data.label}
@@ -313,23 +234,24 @@ class DropDown extends React.Component {
                     </View>
                 )
             ) : (
-                <View>
+                <View style={{width: this.state.width}}>
                     <DropDownPicker
-                    open={open}
-                    value={value}
-                    items={items}
+                    open={this.state.open}
+                    value={this.state.value}
+                    items={this.state.items}
                     setOpen={this.setOpen}
                     setValue={this.setValue}
                     setItems={this.setItems}
                     listMode={"SCROLLVIEW"}
-                    style={{borderWidth: 0, borderRadius: 4, height: 50, backgroundColor: GlobalValues.DARKER_OUTLINE}}
-                    dropDownContainerStyle={{borderWidth: 0, borderRadius: 4, backgroundColor: GlobalValues.DARKER_OUTLINE}}
-                    maxHeight={120}
+                    textStyle={{fontSize: 14}}
+                    style={{borderWidth: 0, width: this.state.width}}
+                    dropDownContainerStyle={{borderWidth: 0, width: this.state.width}}
+                    maxHeight={80}
                     placeholder={"Select"}
                     />
 
-                    {open ? (
-                        <View style={{height: 120}}/>
+                    {this.state.open ? (
+                        <View style={{height: 90}}/>
                     ) : (
                         <View/>
                     )}

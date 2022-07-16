@@ -1,13 +1,10 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Image, ScrollView, Dimensions, TouchableOpacity, Alert} from 'react-native';
+import {StyleSheet, View, Text, ScrollView, Dimensions, TouchableOpacity, Alert} from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { SliderBox } from "react-native-image-slider-box";
-import { AntDesign, Feather, MaterialCommunityIcons, Entypo } from '@expo/vector-icons'; 
+import { AntDesign} from '@expo/vector-icons'; 
 import { GlobalProperties, GlobalValues } from '../../../global/global_properties';
 import { GlobalEndpoints } from '../../../global/global_endpoints';
 import { LoadingScreen } from '../../misc/loading_screen';
-
-const ImageStack = createMaterialTopTabNavigator();
 
 const main_styles = StyleSheet.create(
     {
@@ -42,99 +39,100 @@ const main_styles = StyleSheet.create(
             flexDirection: 'row',
             justifyContent: 'center',
         },
+        horizontal_bar: {
+            width: '94%',
+            alignSelf: 'center',
+            borderBottomWidth: 1,
+            borderColor: GlobalValues.DARKER_OUTLINE
+        },
         scroll_view: {
             backgroundColor: GlobalValues.DARKER_WHITE,
         },
     }
 );
 
-const image_styles = StyleSheet.create(
-    {
-        container: {
-            width: 254,
-            height: 250,
-            marginTop: '10%',
-            marginBottom: 5,
-            alignSelf: 'center',
-        },
-        box: {
-            width: 254,
-            height: 250,
-            borderWidth: 2,
-            borderColor: 'gray',
-            borderRadius: 2,
-        },
-        image: {
-            width: 250,
-            height: 250,
-        },
+const info_styles = StyleSheet.create({
+    body: {
+        backgroundColor: 'white', //#FFCDCD
+        marginHorizontal: 8,
+        borderRadius: 4,
+        marginVertical: 16
     }
-);
-
-const info_styles = StyleSheet.create(
-    {
-        body: {
-            backgroundColor: "white", //#FFCDCD
-            borderRadius: 5,
-            padding: 8,
-            marginVertical: "2%",
-            marginHorizontal: '2%'
-        },
-        title_text: {
-            color: 'black',
-            fontFamily: 'Roboto',
-            fontSize: 16,
-            marginLeft: 5,
-        }, 
-        inner_text: {
-            color: 'gray',
-            fontFamily: 'Roboto',
-            fontSize: 14,
-            marginLeft: 5,
-        },
-        horizontal_bar: {
-            width: '100%',
-            alignSelf: 'center',
-            borderBottomWidth: 1,
-            borderColor: GlobalValues.DARKER_OUTLINE,
-            marginTop: 8,
-            marginBottom: 4,
-        }
-    }
-);
+});
 
 const actions_styles = StyleSheet.create(
     {
-        actions_view: {
+        body: {
 
         },
         actions_button:  {
-            borderRadius: 3,
-            borderWidth: 4,
-            backgroundColor: GlobalValues.ORANGE_COLOR,//'#ff4576'
-            borderColor: GlobalValues.ORANGE_COLOR,
-            padding: 3,
-            paddingVertical: 3,
-            alignSelf: 'center',
-            width: "100%",
-            marginTop: 10,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginVertical: 10,
+            paddingHorizontal: 10,
         },
         action_button_inner: {
-            flexDirection: "row",
-            alignSelf: 'center',
         },
         action_button_icon: {
-            marginRight: 5,
-            alignSelf: 'center',
         },
         action_button_text: {
-            color: 'white',
+            color: 'black',
             fontFamily: 'Roboto',
-            fontSize: 18,
-            alignSelf: 'center',
+            fontSize: 16,
         }
     }
 );
+
+const attribute_styles = StyleSheet.create({
+    body: {
+        backgroundColor: 'white',
+        flexDirection: "column",
+        paddingHorizontal: 10,
+        paddingVertical: 2,
+    },
+    input_text_view: {
+        flexDirection:  'row',
+        marginBottom: 4,
+    },
+    multiline_input_text: {
+        fontSize: 14, 
+        maxHeight: "96px", 
+        textAlignVertical: "top",
+        fontFamily: 'Roboto'
+    },
+    title_text: {
+        alignSelf: 'flex-start',
+        fontSize: 16,
+        fontFamily: 'Roboto',
+        color: 'black',
+        marginBottom: 2,
+    },    
+    text_input: {
+        textAlignVertical: "top",
+        flex: 1,
+        maxHeight: 95,
+        borderRadius: 8,
+        fontFamily: 'Roboto'
+    },
+    inner_text: {
+        color: 'gray',
+        fontSize: 14,
+        marginHorizontal: 4,
+        fontFamily: 'Roboto'
+    },
+    slider: {
+        alignSelf: 'center',
+    },
+    title_with_value: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    title_value: {
+        fontSize: 14,
+        alignSelf: 'center',
+        fontFamily: 'Roboto'
+    }
+});
 
 const filter_snaps_styles = StyleSheet.create(
     {
@@ -173,40 +171,6 @@ const filter_snaps_styles = StyleSheet.create(
         }
     }
 );
-
-const point_styles = StyleSheet.create(
-    {
-        body: {
-            borderColor: GlobalValues.ORANGE_COLOR,
-            borderTopWidth: 3,
-            borderBottomWidth: 3,
-        },
-        container: {
-
-        },
-        text: {
-            fontFamily: 'Roboto',
-            fontSize: 16,
-            alignSelf: 'center',
-        },
-        image: {
-            marginTop: 10,
-            width: Math.trunc(Dimensions.get('window').width * 0.90),
-            height: Math.trunc(Dimensions.get('window').width * 0.90), 
-        },
-        trash_icon: {
-            flexDirection: 'row-reverse',
-        }
-    }
-);
-
-const HeaderTitle = (title) => {
-    return(
-        <Text style={{fontSize: 24, fontFamily: 'Roboto', color: 'black'}}>
-            {title.title}
-        </Text>
-    );
-}
 
 class FilterSnap extends React.Component {
     constructor(props) {
@@ -250,8 +214,6 @@ export class InviteeScreen extends React.Component {
 
         //once done, lazy update
         this.lazyUpdate = this.lazyUpdate.bind(this);
-
-        //this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={"Invite Screen"}/>});
     }
 
     async log_in() {
@@ -284,8 +246,6 @@ export class InviteeScreen extends React.Component {
 
         //once done, lazy update
         this.lazyUpdate();
-
-        //this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={this.state.name}/>});
     }
 
     render() {
@@ -295,12 +255,12 @@ export class InviteeScreen extends React.Component {
         {
             renderViewOther = (
                 <View>
+                    <View style={main_styles.horizontal_bar} />
                     <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("Other Explore Profile Screen", {id: this.state.other_id});}}>
-                        <View style={actions_styles.action_button_inner}>
-                            <Text style={actions_styles.action_button_text}>
-                                View Profile
-                            </Text>
-                        </View>
+                        <Text style={actions_styles.action_button_text}>
+                            View Profile
+                        </Text>
+                        <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
                     </TouchableOpacity>
                 </View>
             );
@@ -308,12 +268,12 @@ export class InviteeScreen extends React.Component {
         else if (this.state.other_type == "activity") {
             renderViewOther = (
                 <View>
+                    <View style={main_styles.horizontal_bar} />
                     <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("Other Activity Screen", {id: this.state.other_id});}}>
-                        <View style={actions_styles.action_button_inner}>
-                            <Text style={actions_styles.action_button_text}>
-                                View Activity
-                            </Text>
-                        </View>
+                        <Text style={actions_styles.action_button_text}>
+                            View Activity
+                        </Text>
+                        <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
                     </TouchableOpacity>
                 </View>
             );
@@ -331,31 +291,27 @@ export class InviteeScreen extends React.Component {
             return (
                 <View style={main_styles.page}>
                     <ScrollView style={main_styles.scroll_view}>
-                        <View style={info_styles.body}>
-                            <Text style={info_styles.title_text}>
-                                {this.state.body}
-                            </Text>
+                        <View style={info_styles.body} >
+                            <View style={attribute_styles.body}>
+                                <Text style={[attribute_styles.title_text]}>
+                                    {this.state.body}
+                                </Text>              
+                            </View>  
                         </View>
                         <View style={info_styles.body}>
-                            <Text style={info_styles.title_text}>
-                                Actions
-                            </Text>
                             <View style={actions_styles.actions_view}> 
                                 <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {acceptInvitationAlert(this.acceptInvitation);}}>
-                                    <View style={actions_styles.action_button_inner}>
-                                        <AntDesign name="message1" size={20} color="white" style={actions_styles.action_button_icon}/>
-                                        <Text style={actions_styles.action_button_text}>
-                                            Accept
-                                        </Text>
-                                    </View>
+                                    <Text style={actions_styles.action_button_text}>
+                                        Accept
+                                    </Text>
+                                    <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
                                 </TouchableOpacity>
+                                <View style={main_styles.horizontal_bar} />
                                 <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {declineInvitationAlert(this.removeInvitation);}}>
-                                    <View style={actions_styles.action_button_inner}>
-                                        <AntDesign name="message1" size={20} color="white" style={actions_styles.action_button_icon}/>
-                                        <Text style={actions_styles.action_button_text}>
-                                            Decline
-                                        </Text>
-                                    </View>
+                                    <Text style={actions_styles.action_button_text}>
+                                        Decline
+                                    </Text>
+                                    <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
                                 </TouchableOpacity>
                                 {renderViewOther}
                             </View>
@@ -365,13 +321,6 @@ export class InviteeScreen extends React.Component {
             );
         }
     }
-    
-    /*
-                        <View style={main_styles.name_view}>
-                            <Text style={main_styles.title_text}>
-                                Invitation
-                            </Text>
-                        </View> */
 
     async acceptInvitation() {
         //if request was successful
@@ -539,305 +488,3 @@ const declineInvitationAlert = (declineInvitation) => {
         }
     );
 };
-
-//<View style={{ borderBottomColor: '#CCCCCC', borderBottomWidth: 2, width: '95%', alignSelf: 'center', marginBottom: 0,}}/>
-//<FilterSnap innerText="light" color="#9A39E2"/>
-/*
-
-<View style={frame_styles.box} onPress={() => {this.props.navigation.navigate("Other Profile Screen")}}>
-                <Text style={frame_styles.main_text}>
-                    {this.props.id}
-                </Text>
-            </View>
-
-*/
-
-/*import React from 'react';
-import {StyleSheet, View, Text, TextInput, Image, SafeAreaView, ScrollView, Dimensions, FlatList, Alert} from 'react-native';
-import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
-import {FontAwesome, Feather} from '@expo/vector-icons'; 
-import {Route} from '@react-navigation/native';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import { render } from 'react-dom';
-
-import {GlobalProperties, GlobalValues} from '../../../global/global_properties.js';
-
-const main_styles = StyleSheet.create(
-    {
-        page: {
-            backgroundColor: "white", //#FFEDE7
-            height: '100%',
-            width: '100%',
-        },
-        title_text: {
-            alignSelf: 'center',
-            fontFamily: 'Roboto',
-            fontSize: 24,
-            color: 'black',
-            padding: 5,
-            marginBottom: 5,
-        }, 
-        name_view: {
-            flexDirection: 'row',
-            justifyContent: 'center',
-        },
-        top_gap: {
-            marginTop: '10%',
-        },
-    }
-);
-
-const other_profile_image_styles = StyleSheet.create(
-    {
-        box: {
-            width: 250,
-            height: 255,
-            marginBottom: 5,
-            alignSelf: 'center',
-            borderWidth: 2,
-            borderColor: 'gray',
-            borderRadius: 2,
-        },
-        image: {
-            width: 250,
-            height: 250,
-        },
-    }
-);
-
-const info_styles = StyleSheet.create(
-    {
-        body: {
-            backgroundColor: 'white', //#FFCDCD
-            borderRadius: 5,
-            padding: 8,
-            marginVertical: "2%",
-            marginHorizontal: '2%'
-        },
-        title_text: {
-            color: 'black',
-            fontFamily: 'Roboto',
-            fontSize: 16,
-            marginLeft: 5,
-        }, 
-        inner_text: {
-            color: 'gray',
-            fontFamily: 'Roboto',
-            fontSize: 14,
-            marginLeft: 5,
-        },
-        activity_name_body: {
-            alignItems: 'center',
-            alignSelf: 'center',
-            width: '90%',
-            backgroundColor: '#ff4576',
-            borderRadius: 4,
-            marginTop: 6,
-            paddingVertical: 4,
-        },
-        activity_name_text: {
-            fontFamily: 'Roboto',
-            fontSize: 18,
-            color: 'white',
-            fontWeight: 'bold',
-        }
-    }
-);
-
-const formal_header_styles = StyleSheet.create(
-    {
-        body: {
-            backgroundColor: '#ff4576', //#FFCDCD
-            borderRadius: 5,
-            padding: 4,
-            marginVertical: "2%",
-            marginHorizontal: '2%'
-        },
-        inner_body: {
-            flexDirection: "row",
-            alignItems: 'flex-start',
-            justifyContent: 'center',
-            alignItems: 'center',
-        },
-        text: {
-            fontFamily: 'Roboto',
-            fontSize: 30,
-            color: 'white',
-            fontWeight: 'bold',
-            marginLeft: 8,
-        },
-    }
-);
-
-const frame_styles = StyleSheet.create(
-    {
-        box: {
-            //backgroundColor: 'blue',
-            //width: "90%",
-            //marginHorizontal: 0,
-            //flexDirection: 'row',
-        },
-        main_text: {
-            fontFamily: 'Roboto',
-            fontSize: 14,
-            marginLeft: 2,
-            marginBottom: 2,
-            color: 'white',
-        },
-    }
-);
-
-const invite_button_styles = StyleSheet.create(
-    {
-        body: {
-            flexDirection: "row",
-            justifyContent: 'space-between',
-            alignItems: 'flex-start',
-            marginTop: 5,
-            marginTop: "5%",
-            //alignItems: 'flex-end'
-            //flexWrap: 'wrap',
-        },
-        button_view: {
-            //alignItems: 'flex-start',
-            borderRadius: 3,
-            borderWidth: 4,
-            //paddingVertical: 0,
-            //alignSelf: 'center',
-            //alignContent: 'center',
-            //justifyContent: 'center',
-            //width: 160,
-            paddingHorizontal: '15%',
-            //marginTop: 0,
-            //marginBottom: 0,
-
-        },
-        accept: {
-            backgroundColor: '#00b862',
-            borderColor: '#00b862',
-        },
-        deny: {
-            backgroundColor: '#ed001f',
-            borderColor: '#ed001f',
-        },
-        button_text: {
-            color: 'white',
-            fontFamily: 'Roboto',
-            fontSize: 18,
-            alignSelf: 'center',
-        }
-    }
-);
-
-const HeaderTitle = (props) => {
-    return(
-        <Text style={{fontSize: 24, fontFamily: 'Roboto', color: 'black'}}>
-            {props.title}
-        </Text>
-    );
-}
-
-export class InviteScreen extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            isLoading: false,
-            refreshFlatList: true,
-        };
-
-        this.lazyUpdate = this.lazyUpdate.bind(this);
-    }
-
-    componentDidMount() {
-        this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={"Manage Activity"}/>});
-    }
-    
-//this.props.route.params.first_name
-
-    render() {
-        const renderItem = ({ item }) => (
-            <FrameComponent item = {item} lazyUpdate = {this.lazyUpdate}/>
-        );
-
-        return (
-            <View style={main_styles.page}>
-                { this.state.isLoading ? (
-                    <Text>
-                        Loading...
-                    </Text> ) : (
-                        <View>
-                            <View style={formal_header_styles.body}>
-                                <View style={formal_header_styles.inner_body}>
-                                    <FontAwesome name="envelope-o" size={30} color="white" />
-                                    <Text style={formal_header_styles.text}>
-                                        Invitation Request
-                                    </Text>
-                                </View>
-                            </View>
-                            <View style={info_styles.body}>
-                                <View style={other_profile_image_styles.box}>
-                                    <ProfileImage image_url={'https://upload.wikimedia.org/wikipedia/commons/e/e4/Morgan_Freeman_Deauville_2018.jpg'} />
-                                </View>
-
-                                <View style={main_styles.name_view}>
-                                    <Text style={main_styles.title_text}>
-                                        {"Donald Trump"}
-                                    </Text>
-                                    <Text style={[main_styles.title_text, {color: 'black'}]}>
-                                        19
-                                    </Text>
-                                </View>
-                            </View>
-
-                            <View style={info_styles.body}>
-                                <Text style={info_styles.title_text}>
-                                    Request
-                                </Text>
-                                <TouchableOpacity style={info_styles.activity_name_body} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress = {() => {}} >
-                                    <Text style={info_styles.activity_name_text}>
-                                        Hike on South Mountain
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
-
-                            <View style={info_styles.body}>
-                                <Text style={info_styles.title_text}>
-                                    Actions
-                                </Text>
-                                <View style={invite_button_styles.body}>
-                                    <TouchableOpacity underlayColor="white" onPress={() => {}} onHideUnderlay={() => {}} activeOpacity={GlobalValues.ACTIVE_OPACITY} onShowUnderlay={() => {}}>
-                                        <View style={[invite_button_styles.button_view, invite_button_styles.accept]}>
-                                            <Text style={invite_button_styles.button_text}>
-                                                Accept
-                                            </Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity underlayColor="white" onPress={() => {}} onHideUnderlay={() => {}} activeOpacity={GlobalValues.ACTIVE_OPACITY} onShowUnderlay={() => {}}>
-                                        <View style={[invite_button_styles.button_view, invite_button_styles.deny]}>
-                                            <Text style={invite_button_styles.button_text}>
-                                                {" Deny "}
-                                            </Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-
-                        </View>
-                    ) 
-                }
-            </View>
-        );
-    }
-    
-    lazyUpdate() {
-        this.forceUpdate();
-    }
-}
-
-//return the image component of the other pofile
-function ProfileImage (props) {
-    return(
-        <Image style={other_profile_image_styles.image} source={{uri: 'https://upload.wikimedia.org/wikipedia/commons/e/e4/Morgan_Freeman_Deauville_2018.jpg'}}/>
-    );
-}*/

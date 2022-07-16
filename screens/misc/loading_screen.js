@@ -1,10 +1,6 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Image, ScrollView, Dimensions, TouchableHighlight, Alert} from 'react-native';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { SliderBox } from "react-native-image-slider-box";
-import { AntDesign, Feather, MaterialCommunityIcons } from '@expo/vector-icons'; 
-import { GlobalValues, GlobalProperties } from '../../global/global_properties';
-import { GlobalEndpoints } from '../../global/global_endpoints';
+import {StyleSheet, View, Text, TouchableHighlight} from 'react-native';
+import { GlobalValues } from '../../global/global_properties';
  
 const main_styles = StyleSheet.create({
     page: {
@@ -32,8 +28,8 @@ const post_styles = StyleSheet.create(
             alignItems: 'flex-start',
             borderRadius: 3,
             borderWidth: 4,
-            backgroundColor: '#FE3C3C',
-            borderColor: '#FE3C3C',
+            backgroundColor: GlobalValues.ORANGE_COLOR,
+            borderColor: GlobalValues.ORANGE_COLOR,
             padding: 3,
             paddingVertical: 0,
             alignSelf: 'center',
@@ -57,28 +53,23 @@ export class LoadingScreen extends React.Component {
         }
 
         this.lazyUpdate = this.lazyUpdate.bind(this);
-    }
+    } 
  
-   componentDidMount() {
-     
-   }
- 
- 
-   render() {
-       return (
-           <View style={main_styles.page}>
-               {!this.props.reload ? 
-               (
+    render() {
+        return (
+            <View style={main_styles.page}>
+                {!this.props.reload ? 
+                (
                    <View style={main_styles.container}>
                     <Text style={main_styles.title_text}>
                             Loading...
                         </Text>
                    </View>
-               ) 
-               : 
-               (
-                   <View style={main_styles.container}>
-                       <Text style={main_styles.title_text}>
+                ) 
+                : 
+                (
+                    <View style={main_styles.container}>
+                        <Text style={main_styles.title_text}>
                             Could not load
                         </Text>
                         <TouchableHighlight underlayColor="white" onHideUnderlay={() => {}} onShowUnderlay={() => {}} onPress = {() => {
@@ -86,20 +77,20 @@ export class LoadingScreen extends React.Component {
                             if (this.props.tryAgain) {
                                 this.props.tryAgain();
                             }
-                        }}>
-                            <View style={post_styles.post_button}>
-                                <Text style={post_styles.post_button_text}>
-                                    Reload
-                                </Text>
-                            </View>
-                        </TouchableHighlight>
-                   </View>
+                         }}>
+                             <View style={post_styles.post_button}>
+                                 <Text style={post_styles.post_button_text}>
+                                     Reload
+                                 </Text>
+                             </View>
+                         </TouchableHighlight>
+                    </View>
                     
-               )
-               }
-           </View>
-       );
-   }
+                )
+                }
+            </View>
+        );
+    }
  
     lazyUpdate() {
         this.forceUpdate();

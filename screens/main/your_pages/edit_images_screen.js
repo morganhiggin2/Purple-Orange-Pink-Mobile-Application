@@ -1,12 +1,11 @@
 import React from 'react';
-import {StyleSheet, View, Text, Image, Alert, ScrollView,  Dimensions, Platform} from 'react-native';
+import {StyleSheet, View, Image, Alert, ScrollView,  Dimensions, Platform} from 'react-native';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import * as ImagePicker from 'expo-image-picker';
 
 import {GlobalProperties, GlobalValues} from '../../../global/global_properties.js'
 import {GlobalEndpoints} from '../../../global/global_endpoints.js';
-import { readDirectoryAsync } from 'expo-file-system';
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 
 const main_styles = StyleSheet.create(
@@ -14,7 +13,6 @@ const main_styles = StyleSheet.create(
         page: {
             backgroundColor: GlobalValues.DARKER_WHITE,
             height: '50%',
-            width: '100%',
             flexDirection: "column",
             flex: 1,
         },
@@ -23,7 +21,6 @@ const main_styles = StyleSheet.create(
         },
         title_text: {
             alignSelf: 'center',
-            fontFamily: 'Roboto',
             fontSize: 24,
             color: 'gray',
             padding: 5,
@@ -37,16 +34,6 @@ const main_styles = StyleSheet.create(
         }
     }
 );
-
-const section_styles = StyleSheet.create({
-    body: {
-        marginTop: "10%",
-        backgroundColor: "white",
-    },
-    gap: {
-        height: 30,
-    }
-});
 
 const image_styles = StyleSheet.create(
     {
@@ -63,7 +50,6 @@ const image_styles = StyleSheet.create(
             borderRadius: 5,
         },
         box: {
-            //marginLeft: Math.trunc(Dimensions.get('window').width * 0.08),
             marginTop: Math.trunc(Dimensions.get('window').width * 0.10),
             marginLeft: Math.trunc(Dimensions.get('window').width * 0.10),
             marginBottom: Math.trunc(Dimensions.get('window').width * 0.029),
@@ -78,8 +64,6 @@ const image_styles = StyleSheet.create(
         },
     }
 );
-
-//<ImageStack.Screen key={data.id} name={"Testing" + data.id} children={() => <ProfileImage id={data.id} state={this.state}/>}/>
 
 export class EditImagesScreen extends React.Component {
     constructor(props) {

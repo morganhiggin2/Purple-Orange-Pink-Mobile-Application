@@ -1,15 +1,5 @@
-import React, { useEffect } from 'react';
-import {StyleSheet, View, Text, TextInput, Alert, FlatList, Switch, Platform, TouchableHighlight, Dimensions, Image} from 'react-native';
-import * as Location from 'expo-location';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import {AntDesign, Ionicons} from '@expo/vector-icons'; 
-import DateTimePicker from '@react-native-community/datetimepicker';
-import DropDownPicker from 'react-native-dropdown-picker';
-import { PickerIOS } from '@react-native-picker/picker';
-import MultiSlider from '@ptomasroos/react-native-multi-slider';
-import { Feather } from '@expo/vector-icons';
-import Dialog from "react-native-dialog";
-import * as ImagePicker from 'expo-image-picker';
+import React from 'react';
+import {StyleSheet, View, Text, TextInput, Alert, FlatList, TouchableHighlight} from 'react-native';
 
 import { GlobalProperties, GlobalValues } from '../../../../global/global_properties.js';
 import { GlobalEndpoints } from '../../../../global/global_endpoints.js';
@@ -19,7 +9,6 @@ const main_styles = StyleSheet.create(
         page: {
             backgroundColor: GlobalValues.DARKER_WHITE,
             height: '50%',
-            width: '100%',
             flexDirection: "column",
             flex: 1,
         },
@@ -32,7 +21,6 @@ const main_styles = StyleSheet.create(
             fontSize: 24,
             color: 'gray',
             padding: 5,
-            fontFamily: 'Roboto'
         }, 
         horizontal_bar: {
             width: '94%',
@@ -75,6 +63,7 @@ const attribute_styles = StyleSheet.create({
     },
     multiline_input_text: {
         fontSize: 18, 
+        fontFamily: 'Roboto',
         maxHeight: "96px", 
         textAlignVertical: "top",
     },
@@ -103,98 +92,9 @@ const attribute_styles = StyleSheet.create({
     },
     title_value: {
         fontSize: 16,
+        fontFamily: 'Roboto',
         alignSelf: 'center'
     },
-});
-
-const actions_styles = StyleSheet.create(
-    {
-        body: {
-            paddingVertical: "2%",
-            paddingHorizontal: "3%",
-        },
-        actions_button:  {
-            borderRadius: 3,
-            borderWidth: 4,
-            backgroundColor: GlobalValues.ORANGE_COLOR,
-            borderColor: GlobalValues.ORANGE_COLOR,
-            padding: 3,
-            paddingVertical: 3,
-            alignSelf: 'center',
-            width: "100%",
-            marginTop: 10,
-        },
-        action_button_inner: {
-            flexDirection: "row",
-            alignSelf: 'center',
-        },
-        action_button_icon: {
-            marginRight: 5,
-            alignSelf: 'center',
-        },
-        action_button_text: {
-            color: 'white',
-            fontFamily: 'Roboto',
-            fontSize: 18,
-            alignSelf: 'center',
-        }
-    }
-);
-
-const inline_attribute_styles = StyleSheet.create({
-    body: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingVertical: "3%",
-        paddingHorizontal: "3%",
-    },
-    title_text: {
-        alignSelf: 'flex-start',
-        alignSelf: 'center',
-        fontSize: 16,
-        color: 'black',
-        fontFamily: 'Roboto'
-    },
-    input_text_view: {
-        flexDirection:  'row',
-        width: "70%",
-    },
-    text_input: {
-        textAlignVertical: "center",
-        paddingVertical: 2,
-        paddingHorizontal: 4,
-        width: '100%',
-        
-        textAlign: 'right',
-        backgroundColor: GlobalValues.DARKER_OUTLINE,
-        borderRadius: 4,
-        fontSize: 16, 
-    },
-    numeric_text_input: {
-        textAlignVertical: "center",
-        paddingVertical: 4,
-        paddingHorizontal: 4,
-        width: 100,
-        backgroundColor: '#EAEAEA',
-        borderRadius: 4,
-        textAlign: 'left',
-        fontSize: 18,
-        textAlign: 'right',
-    },
-    numeric_input_text_view: {
-        flexDirection:  'row',
-        width: "70%",
-        justifyContent: 'flex-end'
-    },
-    drop_down_selector: {
-        paddingHorizontal: 4,
-    },
-    drop_down_selector_gap: {
-        height: 100,
-    },
-    date_picker: {
-        width: 200,
-    }
 });
 
 const post_button_styles = StyleSheet.create({
@@ -339,8 +239,9 @@ export class MakeAnnouncementScreen extends React.Component {
         //add elements
         //make body with requried elements
         var body = {
-            activiy_id: this.state.id,
-            announcement: this.state.announcement
+            activity_id: this.state.id,
+            expo_token: GlobalProperties.expo_push_token,
+            message: this.state.announcement
         };    
 
         //if request was successful
@@ -372,11 +273,13 @@ export class MakeAnnouncementScreen extends React.Component {
 
                 //once done, go back
                 this.props.navigation.pop(1);
+
+                return;
             }
             else {
                 //returned bad response, fetch server generated error message
-
                 Alert.alert(result.data);
+
                 return;
             }
         }
@@ -385,16 +288,22 @@ export class MakeAnnouncementScreen extends React.Component {
             //invalid request
             if (result == undefined) {
                 Alert.alert("There seems to be a network connection issue.\nCheck your internet.");
+
                 return;
             }
             else if (result.response.status == 400 && result.response.data) {
-                this.state.error_message = result.response.data;
+                console.log(result.response.data);
+                Alert.alert(JSON.stringify(result.response.data));
+
                 this.lazyUpdate();
+
                 return;
             }
             //handle not found case
             else if (result.response.status == 404) {
                 GlobalEndpoints.handleNotFound(false);
+
+                return;
             }
             else {
                 Alert.alert("There seems to be a network connection issue.\nCheck your internet.");

@@ -1,18 +1,16 @@
 import React from 'react';
-import {StyleSheet, View, Text, Dimensions, Alert, TouchableOpacity} from 'react-native';
+import {StyleSheet, View, Dimensions, TouchableOpacity} from 'react-native';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons'; 
 import MapView from 'react-native-maps';
 import { Marker } from 'react-native-maps';
 import { GlobalProperties, GlobalValues } from '../../../global/global_properties.js';
-import * as Location from 'expo-location';
 import { LoadingScreen } from '../../misc/loading_screen.js';
 
 const main_styles = StyleSheet.create(
     {
         page: {
             backgroundColor: 'white',
-            width: '100%',
             height: '100%',
         },
         search_bar: {
@@ -23,11 +21,8 @@ const main_styles = StyleSheet.create(
             width: Math.trunc(Dimensions.get('window').width * 0.85),
         },
         text_input: {
-            backgroundColor: '#DFDFDF', //#FECAB9
+            backgroundColor: '#DFDFDF',
             color: 'darkgray',
-            padding: 0,
-            margin: 0,
-            borderWidth: 0,
             fontFamily: 'Roboto',
             fontSize: 20,
             color: 'black',
@@ -83,19 +78,6 @@ const map_styles = StyleSheet.create(
         }
     }
 );
-
-/*
-            width: Dimensions.get('window').width,
-            height: Dimensions.get('window').height, */
-
-const EmptySpace = (props) => {
-    const btbh = useBottomTabBarHeight();
-
-    return(
-        <View style={{height: 100, width: '100%'}}>
-        </View>
-    )
-}
 
 export class ViewMapScreen extends React.Component {
     constructor(props) {

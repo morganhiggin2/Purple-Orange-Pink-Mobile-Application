@@ -10,7 +10,6 @@ const main_styles = StyleSheet.create(
     {
         page: {
             backgroundColor: GlobalValues.DARKER_WHITE,
-            height: '50%',
             flexDirection: "column",
             flex: 1,
         },
@@ -57,7 +56,7 @@ const main_styles = StyleSheet.create(
 
 const info_styles = StyleSheet.create({
     body: {
-        backgroundColor: 'white', //#FFCDCD
+        backgroundColor: 'white',
         marginHorizontal: 8,
         borderRadius: 4,
         marginVertical: 16
@@ -260,32 +259,6 @@ const image_styles = StyleSheet.create(
     }
 );
 
-const HeaderTitle = (title) => {
-    return(
-        <Text style={{fontSize: 24, fontFamily: 'Roboto', color: 'black'}}>
-            {title.title}
-        </Text>
-    );
-}
-
-class FilterSnap extends React.Component {
-    constructor(props) {
-        super(props)
-    }
-
-    render() {
-        return( 
-            <Text style={[filter_snaps_styles.inner_text, { backgroundColor: this.props.color, borderColor: this.props.color}]}>
-                {this.props.innerText}
-            </Text>
-        );
-    }
-}
-
-FilterSnap.defaultProps = {
-    color: GlobalValues.ORANGE_COLOR,
-}
-
 export class OtherExploreProfileScreen extends React.Component {
     constructor(props) {
         super(props);
@@ -304,7 +277,7 @@ export class OtherExploreProfileScreen extends React.Component {
 
             name: "",
 
-            profile_images: Array(3),
+            profile_images: ["","",""],
 
             attributes: [],
         };
@@ -435,160 +408,146 @@ export class OtherExploreProfileScreen extends React.Component {
             var genderRender = {};
             var descriptionRender = {};
 
-        if (this.state.description.length > 0) {
-            descriptionRender = (
-                <View>
-                    <View style={main_styles.horizontal_bar}/>
-                    <View style={attribute_styles.body}>
-                        <Text style={attribute_styles.title_text}>
-                            Description
-                        </Text>     
-                        <View style={attribute_styles.input_text_view}>
-                            <Text style={attribute_styles.text_input}>
-                                {this.state.description}
-                            </Text>
-                        </View>                   
-                    </View>  
-                </View>
-            );
-        }
-        else {
-            descriptionRender = (
-                <View />
-            );
-        }
-
-        if (this.state.gender == "male") {
-            genderRender = (
-                <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
-                    <MaterialCommunityIcons name="gender-male" size={14} color={GlobalValues.MALE_COLOR} style={filter_snaps_styles.icon}/>
-                    <Text style={{color: 'black', fontSize: 14}}>
-                        Male
-                    </Text>
-                </View>
-            );
-        }
-        else if (this.state.gender == "female") {
-            genderRender = (
-                <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
-                    <MaterialCommunityIcons name="gender-female" size={14} color={GlobalValues.FEMALE_COLOR} style={filter_snaps_styles.icon}/>
-                    <Text style={{color: 'black', fontSize: 14}}>
-                        Female
-                    </Text>
-                </View>
-            );
-        }
-        else {
-            genderRender = (
-                <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
-                    <MaterialCommunityIcons name="gender-non-binary" size={14} color="black" style={filter_snaps_styles.icon}/>
-                    <Text style={{color: 'black', fontSize: 14}}>
-                        {this.state.gender}
-                    </Text>
-                </View>
-            );
-        }
-
-        var inviteActions = {};
-
-        if (this.state.type == "none") {
-            inviteActions = (
-                <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.inviteTo();}}>
-                    <Text style={actions_styles.action_button_text}>
-                        Invite
-                    </Text>
-                    <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
-                </TouchableOpacity>
-            );
-        }
-
-        const renderComponent = () => {
-            if (this.state.loading == true) {
-                return (
+            if (this.state.description.length > 0) {
+                descriptionRender = (
                     <View>
-                        <LoadingScreen tryAgain={this.fetchActivityInformation} reload={this.state.reload}/>
+                        <View style={main_styles.horizontal_bar}/>
+                        <View style={attribute_styles.body}>
+                            <Text style={attribute_styles.title_text}>
+                                Description
+                            </Text>     
+                            <View style={attribute_styles.input_text_view}>
+                                <Text style={attribute_styles.text_input}>
+                                    {this.state.description}
+                                </Text>
+                            </View>                   
+                        </View>  
                     </View>
                 );
             }
             else {
-                return (
-                    <View>
-                        <View style={image_styles.container}>
-                            <SliderBox
-                                images={this.state.profile_images.map(uri => {
-                                    console.log("here");
-                                    return(handleImageURI(uri));
-                                })}
-                                parentWidth={image_styles.image.width}
-                                sliderBoxHeight={image_styles.image.height}
-                                dotColor={GlobalValues.ORANGE_COLOR}
-                                inactiveDotColor={GlobalValues.DISTINCT_GRAY}
-                            />
-                        </View>
-                        <View style={main_styles.name_view}>
-                            <Text style={main_styles.title_text}>
-                                {this.state.name}
-                            </Text>
-                        </View>
-                        <View style={filter_snaps_styles.profile_container}>
-                            {genderRender}
-                            <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
-                                <MaterialCommunityIcons name="baby"  size={12} color="gray" style={filter_snaps_styles.icon}/>
-                                <Text style={{color: 'black', fontSize: 14}}>
-                                    {this.state.age}
-                                </Text>
-                            </View>
-                            <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
-                                <FontAwesome name="road" size={12} color="gray" style={filter_snaps_styles.icon}/>
-                                <Text style={{color: 'black', fontSize: 14}}>
-                                    {this.state.distance + " mi"}
-                                </Text>
-                            </View>
-                        </View>
-                        <View style={info_styles.body}>
-                            {descriptionRender}
-                            <View style={main_styles.horizontal_bar}/>
-                            <View style={inline_attribute_styles.body}>
-                                <Text style={inline_attribute_styles.title_text}>
-                                    {"Interested in "}
-                                </Text>
-                            </View>
-                            <View style={filter_snaps_styles.container}> 
-                                {this.state.attributes.map((data, key) => {
-                                    return (
-                                        <FilterSnap key={key} parent={this} innerText={data} data={this.state.attributes} id={key}/>
-                                    );
-                                })}
-                            </View>
-                        </View>
-                        <View style={info_styles.body}>
-                            <View style={actions_styles.actions_view}> 
-                                <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.sendMessage();}}>
-                                    <Text style={actions_styles.action_button_text}>
-                                        Send Message
-                                    </Text>
-                                    <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
-                                </TouchableOpacity>
-                                <View style={main_styles.horizontal_bar} />
-                                <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.inviteTo();}}>
-                                    <Text style={actions_styles.action_button_text}>
-                                        Invite
-                                    </Text>
-                                    <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
-                                </TouchableOpacity>
-                                <View style={main_styles.horizontal_bar} />
-                                <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.blockFromUser();}}>
-                                    <Text style={actions_styles.action_button_text}>
-                                        Block
-                                    </Text>
-                                    <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
+                descriptionRender = (
+                    <View />
+                );
+            }
+
+            if (this.state.gender == "male") {
+                genderRender = (
+                    <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
+                        <MaterialCommunityIcons name="gender-male" size={14} color={GlobalValues.MALE_COLOR} style={filter_snaps_styles.icon}/>
+                        <Text style={{color: 'black', fontSize: 14}}>
+                            Male
+                        </Text>
                     </View>
                 );
             }
-        }
+            else if (this.state.gender == "female") {
+                genderRender = (
+                    <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
+                        <MaterialCommunityIcons name="gender-female" size={14} color={GlobalValues.FEMALE_COLOR} style={filter_snaps_styles.icon}/>
+                        <Text style={{color: 'black', fontSize: 14}}>
+                            Female
+                        </Text>
+                    </View>
+                );
+            }
+            else {
+                genderRender = (
+                    <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
+                        <MaterialCommunityIcons name="gender-non-binary" size={14} color="black" style={filter_snaps_styles.icon}/>
+                        <Text style={{color: 'black', fontSize: 14}}>
+                            {this.state.gender}
+                        </Text>
+                    </View>
+                );
+            }
+
+            const renderComponent = () => {
+                if (this.state.loading == true) {
+                    return (
+                        <View>
+                            <LoadingScreen tryAgain={this.fetchActivityInformation} reload={this.state.reload}/>
+                        </View>
+                    );
+                }
+                else {
+                    return (
+                        <View>
+                            <View style={image_styles.container}>
+                                <SliderBox
+                                    images={this.state.profile_images.map(uri => {
+                                        return(handleImageURI(uri));
+                                    })}
+                                    parentWidth={image_styles.image.width}
+                                    sliderBoxHeight={image_styles.image.height}
+                                    dotColor={GlobalValues.ORANGE_COLOR}
+                                    inactiveDotColor={GlobalValues.DISTINCT_GRAY}
+                                />
+                            </View>
+                            <View style={main_styles.name_view}>
+                                <Text style={main_styles.title_text}>
+                                    {this.state.name}
+                                </Text>
+                            </View>
+                            <View style={filter_snaps_styles.profile_container}>
+                                {genderRender}
+                                <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
+                                    <MaterialCommunityIcons name="baby"  size={12} color="gray" style={filter_snaps_styles.icon}/>
+                                    <Text style={{color: 'black', fontSize: 14}}>
+                                        {this.state.age}
+                                    </Text>
+                                </View>
+                                <View style={[filter_snaps_styles.tag_inner_text, { backgroundColor: "white", borderColor: GlobalValues.DISTINCT_GRAY}]}>
+                                    <FontAwesome name="road" size={12} color="gray" style={filter_snaps_styles.icon}/>
+                                    <Text style={{color: 'black', fontSize: 14}}>
+                                        {this.state.distance + " mi"}
+                                    </Text>
+                                </View>
+                            </View>
+                            <View style={info_styles.body}>
+                                {descriptionRender}
+                                <View style={main_styles.horizontal_bar}/>
+                                <View style={inline_attribute_styles.body}>
+                                    <Text style={inline_attribute_styles.title_text}>
+                                        {"Interested in "}
+                                    </Text>
+                                </View>
+                                <View style={filter_snaps_styles.container}> 
+                                    {this.state.attributes.map((data, key) => {
+                                        return (
+                                            <FilterSnap key={key} parent={this} innerText={data} data={this.state.attributes} id={key}/>
+                                        );
+                                    })}
+                                </View>
+                            </View>
+                            <View style={info_styles.body}>
+                                <View style={actions_styles.actions_view}> 
+                                    <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.sendMessage();}}>
+                                        <Text style={actions_styles.action_button_text}>
+                                            Send Message
+                                        </Text>
+                                        <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
+                                    </TouchableOpacity>
+                                    <View style={main_styles.horizontal_bar} />
+                                    <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.inviteTo();}}>
+                                        <Text style={actions_styles.action_button_text}>
+                                            Invite
+                                        </Text>
+                                        <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
+                                    </TouchableOpacity>
+                                    <View style={main_styles.horizontal_bar} />
+                                    <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {blockAlert(this.blockFromUser);}}>
+                                        <Text style={actions_styles.action_button_text}>
+                                            Block
+                                        </Text>
+                                        <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+                    );
+                }
+            }
 
             return (
                 <View style={main_styles.page}>
@@ -691,6 +650,24 @@ export class OtherExploreProfileScreen extends React.Component {
     }
 }
 
+class FilterSnap extends React.Component {
+    constructor(props) {
+        super(props)
+    }
+
+    render() {
+        return( 
+            <Text style={[filter_snaps_styles.inner_text, { backgroundColor: this.props.color, borderColor: this.props.color}]}>
+                {this.props.innerText}
+            </Text>
+        );
+    }
+}
+
+FilterSnap.defaultProps = {
+    color: GlobalValues.ORANGE_COLOR,
+}
+
 function handleImageURI(uri) {
     if (uri == undefined || uri == "") {
         return(require("../../../assets/images/default_image.png"));
@@ -700,15 +677,23 @@ function handleImageURI(uri) {
     }
 }
 
-
-//<View style={{ borderBottomColor: '#CCCCCC', borderBottomWidth: 2, width: '95%', alignSelf: 'center', marginBottom: 0,}}/>
-//<FilterSnap innerText="light" color="#9A39E2"/>
-/*
-
-<View style={frame_styles.box} onPress={() => {this.props.navigation.navigate("Other Explore Profile Screen")}}>
-                <Text style={frame_styles.main_text}>
-                    {this.props.id}
-                </Text>
-            </View>
-
-*/
+const blockAlert = (block) => {
+    Alert.alert(
+        "Delete",
+        "Are you sure you want to block this person?",
+        [
+            {
+                text: "Cancel",
+                onPress: () => {},
+                style: "cancel",
+            },
+            {
+                text: "Block",
+                onPress: () => {block();},
+            }
+        ],
+        {
+            cancelable: true,
+        }
+    );
+}

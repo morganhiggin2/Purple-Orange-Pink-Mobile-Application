@@ -2,7 +2,6 @@ import React from 'react';
 import {StyleSheet, View, Text, ScrollView, Dimensions, ImageBackground, Alert} from 'react-native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import { render } from 'react-dom';
 import { GlobalProperties, GlobalValues } from '../../../../global/global_properties.js';
 import { GlobalEndpoints } from '../../../../global/global_endpoints.js';
 import { LoadingScreen } from '../../../misc/loading_screen.js';
@@ -54,7 +53,6 @@ const main_styles = StyleSheet.create(
     {
         page: {
             backgroundColor: 'white',
-            width: '100%',
             height: '100%',
         },
         search_bar: {
@@ -65,7 +63,7 @@ const main_styles = StyleSheet.create(
             width: Math.trunc(Dimensions.get('window').width * 0.85),
         },
         text_input: {
-            backgroundColor: '#DFDFDF', //#FECAB9
+            backgroundColor: '#DFDFDF',
             color: 'darkgray',
             padding: 0,
             margin: 0,
@@ -86,23 +84,6 @@ const main_styles = StyleSheet.create(
         }
     }
 );
-
-var USERS = [{
-    username: "FraserMqdycDGweDx",
-    first_name: "Frasermcdas",
-    last_initial: "M",
-    distance: 8.0
-},{
-    username: "FraserMqdycDGweDx",
-    first_name: "Fraser",
-    last_initial: "M",
-    distance: 8.0
-},{
-    username: "FraserMqdycDGweDx",
-    first_name: "Fraser",
-    last_initial: "M",
-    distance: 8.0
-}];
 
 const EmptySpace = (props) => {
     const btbh = useBottomTabBarHeight();
@@ -136,6 +117,9 @@ export class ViewParticipantsScreen extends React.Component {
             //is group participants or activity participants?
             type: '',
 
+            //remove focus listener
+            removeFocusListener: null,
+
             //list of participants
             participants: [],
             participantComponents: [],
@@ -148,13 +132,10 @@ export class ViewParticipantsScreen extends React.Component {
         this.updateParticipants = this.updateParticipants.bind(this);
 
         this.lazyUpdate = this.lazyUpdate.bind(this);
-
-        //add navigation events
-        
     }
 
     componentDidMount() {
-        this.props.navigation.addListener('focus', () => {
+        this.state.removeFocusListener = this.props.navigation.addListener('focus', () => {
             this.state.global_props = GlobalProperties.screen_props;
 
             if (GlobalProperties.return_screen == "Other Activity Profile Screen" && GlobalProperties.screen_props != null) {
@@ -178,11 +159,12 @@ export class ViewParticipantsScreen extends React.Component {
         //get props passed in
         this.state.type = this.props.route.params.type;
 
-        /*for(i = 0; i < 17; i++) {
-            this.addFrameComponent("", i);
-        }*/
         //fetch search
         this.updateSearch();
+    }
+
+    componentWillUnmount() {
+        this.state.removeFocusListener();
     }
 
     updateParticipants() {
@@ -197,8 +179,6 @@ export class ViewParticipantsScreen extends React.Component {
     viewOtherProfile(id) {
         this.props.navigation.navigate("Other Activity Profile Screen", {id: id, activity_id: this.state.id, is_admin: this.state.is_admin, viewing_admins: false})
     }
-
-    //____>>>>>>>search bar creates attributes from even spaces, and adds them to the ones in the filter page
  
     async updateSearch() {
         if (this.state.reload) {

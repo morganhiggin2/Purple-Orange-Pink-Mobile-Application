@@ -1,10 +1,7 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Image, ScrollView, FlatList, Alert, Dimensions} from 'react-native';
-import { createStackNavigator, CardStyleInterpolators} from '@react-navigation/stack';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import {TouchableHighlight, TouchableOpacity} from 'react-native-gesture-handler';
-import { AntDesign, MaterialIcons, Feather, Entypo } from '@expo/vector-icons'; 
-import {SliderBox } from "react-native-image-slider-box";
+import {StyleSheet, View, Text, FlatList, Alert} from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { AntDesign, MaterialIcons, Entypo } from '@expo/vector-icons'; 
 
 import { GlobalProperties, GlobalValues } from '../../../../global/global_properties';
 import { GlobalEndpoints } from '../../../../global/global_endpoints';
@@ -15,7 +12,6 @@ const main_styles = StyleSheet.create(
         page: {
             backgroundColor: GlobalValues.DARKER_WHITE,
             height: '50%',
-            width: '100%',
             flexDirection: "column",
             flex: 1,
         },
@@ -60,16 +56,6 @@ const main_styles = StyleSheet.create(
     }
 );
 
-const section_styles = StyleSheet.create({
-    body: {
-        marginTop: "10%",
-        backgroundColor: GlobalValues.DARKER_WHITE,
-    },
-    gap: {
-        height: 30,
-    }
-});
-
 const info_styles = StyleSheet.create({
     body: {
         backgroundColor: 'white', //#FFCDCD
@@ -94,11 +80,12 @@ const attribute_styles = StyleSheet.create({
         fontSize: 14, 
         maxHeight: "96px", 
         textAlignVertical: "top",
-            fontFamily: 'Roboto'
+        fontFamily: 'Roboto'
     },
     title_text: {
         alignSelf: 'flex-start',
         fontSize: 16,
+        fontFamily: 'Roboto',
         color: 'black',
         marginBottom: 2,
     },    
@@ -265,6 +252,9 @@ export class ManageActivityScreen extends React.Component {
             is_admin: false,
             is_participant: false,
 
+            //remove focus listener
+            removeFocusListener: null,
+
             //address
             address: "",
 
@@ -290,20 +280,19 @@ export class ManageActivityScreen extends React.Component {
     }
 
     componentDidMount() {
-        this.props.navigation.addListener('focus', () => {
+        this.state.removeFocusListener = this.props.navigation.addListener('focus', () => {
             this.fetchActivityInformation();
         });
 
         this.fetchActivityInformation();
 
-        //TODO this goes in fetch code for valid case
-        //gets the images from the response
-        //...
-        //clean images
-
         GlobalProperties.return_screen = "Manage Activity Screen";
 
         this.lazyUpdate();
+    }
+
+    componentWillUnmount() {
+        this.state.removeFocusListener();
     }
 
     async fetchActivityInformation() {
@@ -643,8 +632,6 @@ export class ManageActivityScreen extends React.Component {
             }
         };
 
-        //go to screen
-        //dangerouslyGetParent()
         //this.props.navigation.navigate("Your Messages Screen");
         this.props.navigation.navigate("Your Messages Navigator", {screen: "Your Messages Screen"});
     }
@@ -833,23 +820,6 @@ class FilterSnap extends React.Component {
     }
 }
 
-const HeaderTitle = (props) => {
-    return(
-        <Text style={{fontSize: 24, fontFamily: 'Roboto', color: 'black'}}>
-            {props.title}
-        </Text>
-    );
-}
-
 FilterSnap.defaultProps = {
     color: GlobalValues.ORANGE_COLOR,
-}
-
-function handleImageURI(uri) {
-    if (uri == undefined) {
-        return(require("../../../../assets/images/default_image.png"));
-    }
-    else {
-        return({uri: uri});
-    }
 }

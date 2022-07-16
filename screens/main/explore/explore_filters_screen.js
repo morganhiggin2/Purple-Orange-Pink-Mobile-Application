@@ -73,6 +73,7 @@ const attribute_styles = StyleSheet.create({
     title_text: {
         alignSelf: 'flex-start',
         fontSize: 16,
+        fontFamily: 'Roboto',
         color: 'black',
         marginBottom: 2,
     },    

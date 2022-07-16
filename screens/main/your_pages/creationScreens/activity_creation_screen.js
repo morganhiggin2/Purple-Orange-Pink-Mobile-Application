@@ -1,26 +1,21 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Alert, FlatList, Switch, Platform, TouchableHighlight, Dimensions, Image} from 'react-native';
+import {StyleSheet, View, Text, TextInput, Alert, FlatList, Switch, Platform, TouchableHighlight} from 'react-native';
 import * as Location from 'expo-location';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {AntDesign, Ionicons} from '@expo/vector-icons'; 
+import {AntDesign} from '@expo/vector-icons'; 
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { PickerIOS } from '@react-native-picker/picker';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
-import { Feather } from '@expo/vector-icons';
-import Dialog from "react-native-dialog";
-import * as ImagePicker from 'expo-image-picker';
 
 import { GlobalProperties, GlobalValues } from '../../../../global/global_properties.js';
 import { GlobalEndpoints } from '../../../../global/global_endpoints.js';
-import { setNotificationHandler } from 'expo-notifications';
 
 const main_styles = StyleSheet.create(
     {
         page: {
             backgroundColor: GlobalValues.DARKER_WHITE,
             height: '50%',
-            width: '100%',
             flexDirection: "column",
             flex: 1,
         },
@@ -29,7 +24,6 @@ const main_styles = StyleSheet.create(
         },
         title_text: {
             alignSelf: 'center',
-            fontFamily: 'Roboto',
             fontSize: 24,
             color: 'gray',
             padding: 5,
@@ -56,7 +50,7 @@ const section_styles = StyleSheet.create({
 
 const info_styles = StyleSheet.create({
     body: {
-        backgroundColor: 'white', //#FFCDCD
+        backgroundColor: 'white',
         marginHorizontal: 8,
         borderRadius: 4,
         marginVertical: 16
@@ -78,11 +72,12 @@ const attribute_styles = StyleSheet.create({
         fontSize: 14, 
         maxHeight: "96px", 
         textAlignVertical: "top",
-            fontFamily: 'Roboto'
+        fontFamily: 'Roboto'
     },
     title_text: {
         alignSelf: 'flex-start',
         fontSize: 16,
+        fontFamily: 'Roboto',
         color: 'black',
         marginBottom: 2,
     },    
@@ -155,6 +150,7 @@ const inline_attribute_styles = StyleSheet.create({
         textAlign: 'left',
         borderRadius: 4,
         fontSize: 16, 
+        fontFamily: 'Roboto'
     },
     drop_down_selector: {
         marginRight: -10
@@ -240,17 +236,6 @@ const filter_snaps_styles = StyleSheet.create(
     }
 );
 
-//map selector, goes to map to select location
-//if they enter an address, it finds its longitude and latitude
-//  if it cannot be found, says address cannot be found, use map selector as well
-//if they choose map selector for location
-//  it clears address field if address was found (because you overrode it)
-//  it sets the search radius in this class to what it is there as well, but does NOT enable search radius searching
-//    just sets it so when it is enables the map can be used to set the radius
-//savess physical address and lat and long to server and local
-//default of search location is your location (if it was never set)
-    //if your location cannot be used, show error message and go back to manage page (cannot be allowed to create activity)
-
 export class ActivityCreationScreen extends React.Component {
     constructor(props) {
         super(props);
@@ -314,14 +299,15 @@ export class ActivityCreationScreen extends React.Component {
             participants_cap_enable: false,
             advanced_settings_enabled: false,
 
+            //remove focus listener
+            removeFocusListener: null,
+
             //for sliders
             age_range_values: [18, 100],
             search_range: 5.0,
         }
 
         this.requestLocation = this.requestLocation.bind(this);
-
-        
         this.updateTitle = this.updateTitle.bind(this);
         this.updateDescription = this.updateDescription.bind(this);
         this.updateAddress = this.updateAddress.bind(this);
@@ -352,7 +338,7 @@ export class ActivityCreationScreen extends React.Component {
             this.state.activity_images[i] = null;
         }
 
-        this.props.navigation.addListener('focus', () => {
+        this.state.removeFocusListener = this.props.navigation.addListener('focus', () => {
             this.state.global_props = GlobalProperties.screen_props;
 
             //we returned from the search screen with getting new activity/target location
@@ -381,8 +367,10 @@ export class ActivityCreationScreen extends React.Component {
                 this.lazyUpdate();
             }
         });
+    }
 
-        //this.requestLocation();
+    componentWillUnmount() {
+        this.state.removeFocusListener();
     }
 
     async requestLocation() {
@@ -407,29 +395,6 @@ export class ActivityCreationScreen extends React.Component {
             this.props.navigation.pop(2);
         });
     }
-
-    //style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {}]}
-
-    //TODO add images and edit images
-
-/*
-                <View style={inline_attribute_styles.body}>
-                    <Text style={inline_attribute_styles.title_text}>
-                        Search Location
-                    </Text>
-                    <View style={inline_attribute_styles.input_text_view}>
-                        <Text>
-                            Map select button goes here, set this.state.searchMapRequest = "Search"
-                        </Text>
-                    </View>
-                </View>
-                
-                
-                            {ACTIVITIES.map((data, key) => {
-                                return (
-                                    <FilterSnap key={key} id={data.id} innerText={data.name} parent={this} data={ACTIVITIES}/>
-                                );
-                            })}*/
 
     render() {
         let searchLocationRender;
@@ -524,15 +489,6 @@ export class ActivityCreationScreen extends React.Component {
         else {
             participantsCapRender = (<View />);
         }
-
-        /**<View style={inline_attribute_styles.title_view}>
-                            <Text style={inline_attribute_styles.title_text}>
-                                {"Address "}
-                            </Text>
-                            <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Invitation Type", GlobalValues.ADDRESS_INFORMATION);}}>
-                                <AntDesign name="infocirlceo" size={14} color="black" />
-                            </TouchableOpacity>
-                        </View> */
 
         if (this.state.is_physical_event) {
             physicalEventLocation = (
@@ -972,29 +928,6 @@ export class ActivityCreationScreen extends React.Component {
         }
     }
 
-    
-    //TODO feed location to search map if clicked
-
-    //request to get longitude and latitude of location
-    //called when text field is done editing
-    async getGeoLocationFromAddress() {
-        if (this.state.target_address != "") {
-            await Location.geocodeAsync(this.state.target_address)
-            .then((location) => {
-                //set address
-                this.target_latitude = location.latitude;
-                this.target_longitude = location.longitude;
-
-                return true;
-            })
-            .catch((error) => {
-                //address not found for network error
-                //alert user of error, say location will be set to your current location instead, unless try again
-                return false;
-            }); 
-        }
-    }
-
     updateTitle(value) {
         this.state.title = value;
     }
@@ -1225,20 +1158,6 @@ export class ActivityCreationScreen extends React.Component {
             return false;
         }
 
-        //validate address
-        //can be null
-        if (this.state.is_physical_event) {
-            if (this.state.target_address != "") {
-                //validate address
-                /*var result = await this.getGeoLocationFromAddress(this.state.address);
-
-                if (!result) {
-                    this.showError("invalid address");
-                    return false;
-                }*/
-            }
-        }
-
         //validate activity location
         if (this.state.is_physical_event && (this.state.target_latitude == null || this.state.target_longitude == null)) {
             this.showError("must set activity location by pin");
@@ -1269,15 +1188,6 @@ export class ActivityCreationScreen extends React.Component {
         Alert.alert(
             error
         );
-    }
-}
-
-function handleImageURI(uri) {
-    if (uri == undefined) {
-        return(require("../../../../assets/images/default_image.png"));
-    }
-    else {
-        return({uri: uri});
     }
 }
 

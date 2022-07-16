@@ -1,20 +1,16 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Image, ScrollView, Dimensions, TouchableOpacity, Alert, FlatList} from 'react-native';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import {StyleSheet, View, Text, TouchableOpacity, Alert, FlatList} from 'react-native';
 import { SliderBox } from "react-native-image-slider-box";
-import { AntDesign, Feather, MaterialCommunityIcons, Entypo, FontAwesome} from '@expo/vector-icons'; 
+import { AntDesign, MaterialCommunityIcons, FontAwesome} from '@expo/vector-icons'; 
 import { GlobalProperties, GlobalValues } from '../../../../global/global_properties';
 import { GlobalEndpoints } from '../../../../global/global_endpoints';
 import { LoadingScreen } from '../../../misc/loading_screen';
-const ImageStack = createMaterialTopTabNavigator();
-
 
 const main_styles = StyleSheet.create(
     {
         page: {
             backgroundColor: GlobalValues.DARKER_WHITE,
             height: '50%',
-            width: '100%',
             flexDirection: "column",
             flex: 1,
         },
@@ -59,16 +55,6 @@ const main_styles = StyleSheet.create(
     }
 );
 
-const section_styles = StyleSheet.create({
-    body: {
-        marginTop: "10%",
-        backgroundColor: GlobalValues.DARKER_WHITE,
-    },
-    gap: {
-        height: 30,
-    }
-});
-
 const info_styles = StyleSheet.create({
     body: {
         backgroundColor: 'white', //#FFCDCD
@@ -93,11 +79,12 @@ const attribute_styles = StyleSheet.create({
         fontSize: 14, 
         maxHeight: "96px", 
         textAlignVertical: "top",
-            fontFamily: 'Roboto'
+        fontFamily: 'Roboto'
     },
     title_text: {
         alignSelf: 'flex-start',
         fontSize: 16,
+        fontFamily: 'Roboto',
         color: 'black',
         marginBottom: 2,
     },    
@@ -272,13 +259,6 @@ const image_styles = StyleSheet.create(
         },
     }
 );
-const HeaderTitle = (title) => {
-    return(
-        <Text style={{fontSize: 24, fontFamily: 'Roboto', color: 'black'}}>
-            {title.title}
-        </Text>
-    );
-}
 
 class FilterSnap extends React.Component {
     constructor(props) {
@@ -319,7 +299,7 @@ export class OtherActivityProfileScreen extends React.Component {
 
             name: "",
 
-            profile_images: [],
+            profile_images: ["","",""],
 
             attributes: [],
         };
@@ -334,7 +314,6 @@ export class OtherActivityProfileScreen extends React.Component {
 
         //once done, lazy update
         this.lazyUpdate = this.lazyUpdate.bind(this);
-        this.cleanImages = this.cleanImages.bind(this);
         this.handleImageURI = this.handleImageURI.bind(this);
     }
 
@@ -392,10 +371,17 @@ export class OtherActivityProfileScreen extends React.Component {
                 this.state.description = requestJson.user_information.description;
                 this.state.distance = requestJson.user_information.distance;
                 this.state.attributes = requestJson.user_information.attributes;
-
-                //get images
-                if (this.state.profile_images.length == 0) {
-                    this.state.profile_images = [require("../../../../assets/images/default_image.png")];
+                var profile_images = requestJson.user_information.profile_image_uris;
+        
+                //add default image if nessesary
+                if (profile_images.length < 3) {
+        
+                    for (let i = 0; i < profile_images.length; i++) {
+                        this.state.profile_images[i] = profile_images[i];
+                    }
+                    for (let i = profile_images.length; i < 3; i++) {
+                        this.state.profile_images[i] = "";
+                    }
                 }
 
                 this.state.loading = false;
@@ -431,12 +417,6 @@ export class OtherActivityProfileScreen extends React.Component {
                 return;
             }
         }
-
-        //TODO this goes in fetch code for valid case
-        //gets the images from the response
-        //...
-        //clean images
-        this.cleanImages();
 
         //once done, lazy update
         this.lazyUpdate();
@@ -565,8 +545,6 @@ export class OtherActivityProfileScreen extends React.Component {
             }
         }
 
-        //<FontAwesome name="road" size={12} color="gray" style={filter_snaps_styles.icon}/>
-
         const renderComponent = () => {
             if (this.state.loading == true) {
                 return (
@@ -580,14 +558,14 @@ export class OtherActivityProfileScreen extends React.Component {
                     <View>
                         <View style={image_styles.container}>
                             <SliderBox
-                            images={this.state.profile_images.map(uri => {
-                                return(this.handleImageURI(uri));
-                            })}
-                            parentWidth={image_styles.image.width}
-                            sliderBoxHeight={image_styles.image.height}
-                            dotColor={GlobalValues.ORANGE_COLOR}
-                            inactiveDotColor={GlobalValues.DISTINCT_GRAY}
-                        />
+                                    images={this.state.profile_images.map(uri => {
+                                        return(handleImageURI(uri));
+                                    })}
+                                    parentWidth={image_styles.image.width}
+                                    sliderBoxHeight={image_styles.image.height}
+                                    dotColor={GlobalValues.ORANGE_COLOR}
+                                    inactiveDotColor={GlobalValues.DISTINCT_GRAY}
+                                />
                         </View>
 
                         <View style={main_styles.name_view}>
@@ -615,7 +593,7 @@ export class OtherActivityProfileScreen extends React.Component {
                             <View style={main_styles.horizontal_bar}/>
                             <View style={inline_attribute_styles.body}>
                                 <Text style={inline_attribute_styles.title_text}>
-                                    It's about
+                                    Interested in
                                 </Text>
                             </View>
                             <View style={filter_snaps_styles.container}> 
@@ -660,25 +638,12 @@ export class OtherActivityProfileScreen extends React.Component {
         }
     }
 
-    //get rid of any null entries
-    cleanImages() {
-        var cleaned_images = [];
-
-        for (var i = 0; i <= this.state.profile_images.length; i++) {
-            if (this.state.profile_images[i] != null && this.state.profile_images[i] != "") {
-                cleaned_images.push(this.state.profile_images[i]);
-            }
-        }
-
-        this.state.profile_images = cleaned_images;
-    }
-
     handleImageURI(uri) {
-        if (uri == undefined) {
+        if (uri == undefined || uri == "") {
             return(require("../../../../assets/images/default_image.png"));
         }
         else {
-            return(uri);
+            return({uri: uri});
         }
     }
 
@@ -960,23 +925,10 @@ const invitationSentAlert = () => {
 }
 
 function handleImageURI(uri) {
-    if (uri == undefined) {
+    if (uri == undefined || uri == "") {
         return(require("../../../../assets/images/default_image.png"));
     }
     else {
         return({uri: uri});
     }
 }
-
-
-//<View style={{ borderBottomColor: '#CCCCCC', borderBottomWidth: 2, width: '95%', alignSelf: 'center', marginBottom: 0,}}/>
-//<FilterSnap innerText="light" color="#9A39E2"/>
-/*
-
-<View style={frame_styles.box} onPress={() => {this.props.navigation.navigate("Other Profile Screen")}}>
-                <Text style={frame_styles.main_text}>
-                    {this.props.id}
-                </Text>
-            </View>
-
-*/

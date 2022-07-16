@@ -47,7 +47,6 @@ const main_styles = StyleSheet.create(
         },
         button_text: {
             color: 'white',
-            fontFamily: 'Roboto',
             fontSize: 18,
             alignSelf: 'center',
             fontFamily: "Roboto",
@@ -101,6 +100,7 @@ const attribute_styles = StyleSheet.create({
     },
     multiline_input_text: {
         fontSize: 18, 
+        fontFamily: 'Roboto',
         maxHeight: "96px", 
         textAlignVertical: "top",
     },

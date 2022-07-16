@@ -6,6 +6,7 @@ import { AntDesign, MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { GlobalValues, GlobalProperties } from '../../../global/global_properties';
 import { GlobalEndpoints } from '../../../global/global_endpoints';
 import { LoadingScreen } from '../../misc/loading_screen';
+import { cancelScheduledNotificationAsync } from 'expo-notifications';
 
 const main_styles = StyleSheet.create(
     {
@@ -82,6 +83,7 @@ const attribute_styles = StyleSheet.create({
     title_text: {
         alignSelf: 'flex-start',
         fontSize: 16,
+        fontFamily: 'Roboto',
         color: 'black',
         marginBottom: 2,
     },    
@@ -272,13 +274,7 @@ export class OtherActivityScreen extends React.Component {
     }
 
     componentDidMount() {
-        this.props.navigation.addListener('focus', () => {
-            this.fetchActivityInformation();
-        });
-
         this.fetchActivityInformation();
-
-        this.lazyUpdate();
     }
 
     async fetchActivityInformation() {
@@ -339,8 +335,6 @@ export class OtherActivityScreen extends React.Component {
                 Alert.alert(result.data);
                 return;
             }
-
-            console.log(this.state);
         }
         else {
 
@@ -502,21 +496,21 @@ export class OtherActivityScreen extends React.Component {
                         </View>
                         <View style={info_styles.body}> 
                             {joinRender}
-                            <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("View Map Screen", {location: this.state.location})}}>
+                            <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.navigation.navigate("View Map Screen", {location: this.state.location})}}>
                                 <Text style={actions_styles.action_button_text}>
                                     View Location
                                 </Text>
                                 <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
                             </TouchableOpacity>     
                             <View style={main_styles.horizontal_bar} />             
-                            <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.viewAdmins();}}>
+                            <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.viewAdmins();}}>
                                 <Text style={actions_styles.action_button_text}>
                                     View Creators
                                 </Text>
                                 <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
                             </TouchableOpacity>
                             <View style={main_styles.horizontal_bar} />   
-                            <TouchableOpacity  style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.viewParticipants();}}>
+                            <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.viewParticipants();}}>
                                 <Text style={actions_styles.action_button_text}>
                                     View Participants
                                 </Text>

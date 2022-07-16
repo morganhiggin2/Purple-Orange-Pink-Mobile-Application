@@ -134,6 +134,368 @@ const filter_snaps_styles = StyleSheet.create(
     }
 );
 
+export class ExploreScreen extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            //for loading page
+            loading: true,
+            reload: false,
+
+            //frames
+            frames: [],
+
+            //remove focus listener
+            removeFocusListener: null,
+
+            //page num
+            page_number: 1,
+
+            frameComponents: [],
+            global_props: null,
+        };
+
+        this.validateAttributes = this.validateAttributes.bind(this);
+        this.onScrollViewIsCloseToBottom = this.onScrollViewIsCloseToBottom.bind(this);
+        this.reloadResults = this.reloadResults.bind(this);
+        
+        this.updateSearch = this.updateSearch.bind(this);
+        this.updateUsers = this.updateUsers.bind(this);
+
+        this.lazyUpdate = this.lazyUpdate.bind(this);        
+    }
+
+    componentDidMount() {
+        GlobalProperties.currentExploreScreenSearchUpdate = this.updateSearch;
+        
+        this.state.removeFocusListener = this.props.navigation.addListener('focus', () => {
+            //update lazy update method for current explore screen
+            GlobalProperties.currentExploreScreenSearchUpdate = this.updateSearch;
+
+            if (GlobalProperties.return_screen == "Other Explore Profile Screen" && GlobalProperties.screen_props != null) {
+                if (GlobalProperties.screen_props.action = "remove") {
+                    //remove person
+
+                    for (let [i, data] of this.state.frames.entries()) {
+                        if (data.id == GlobalProperties.screen_props.id && data.type == "person") {
+                            this.state.frames.splice(i, 1);
+                        }
+                    }
+
+                    this.updateUsers();
+                    this.lazyUpdate();
+                }
+            }
+            else if (GlobalProperties.return_screen == "Other Activity Screen" && GlobalProperties.screen_props != null) {
+                if (GlobalProperties.screen_props.action = "remove") {
+                    //remove person
+
+                    for (let [i, data] of this.state.frames.entries()) {
+                        if (data.id == GlobalProperties.screen_props.id && data.type == "activity") {
+                            this.state.frames.splice(i, 1);
+                        }
+                    }
+
+                    this.updateUsers();
+                    this.lazyUpdate();
+                }
+            }
+
+            if (GlobalProperties.search_filters_updated) {
+                this.state.loading = true;
+                this.state.reload = false;
+
+                this.state.region = GlobalProperties.map_params;
+
+                this.lazyUpdate();
+
+                this.state.page_number = 1;
+
+                this.updateSearch();
+
+                GlobalProperties.search_filters_updated = false;
+            }
+
+            GlobalProperties.screenActivated();
+        });
+
+        this.updateSearch();
+    }
+
+    componentWillUnmount() {
+        this.state.removeFocusListener();
+    }
+
+    updateUsers() {
+        //when page increase is implemented, TODO get rid of this
+        this.state.frameComponents = [];
+
+        for (var i = 0; i < this.state.frames.length; i++) { 
+            var json = this.state.frames[i];
+
+            if (json.type == "person") {
+                this.state.frameComponents.push(<FrameComponent key={json.id} id={json.id} image_uri={json.profile_image_uri} type={json.type} name={json.name} description={json.description} age={json.age} distance={json.distance} navigation={this.props.navigation}/>);
+            }
+            else if (json.type == "activity") {
+                this.state.frameComponents.push(<FrameComponent key={json.id} id={json.id} type={json.type} name={json.name} description={json.description} date_time={json.date_time} distance={json.distance} navigation={this.props.navigation}/>);
+            }
+        }
+    }
+
+    async updateSearch() {
+        //if map has not been set
+        if (GlobalProperties.map_params == null) {
+            //use user's location
+            var location = await GlobalEndpoints.getLocation();
+
+            if (!location.granted) {
+                Alert.alert("Permission to access location was denied.\nEnable location access or use map.");
+
+                //use map settings
+                GlobalProperties.use_map_settings = true;
+            }
+            else if (location.location == null) {
+                Alert.alert("Location could not be determined.\nUsing map settings.");
+
+                //use map settings
+                GlobalProperties.use_map_settings = true;
+            }
+            else {
+                //if can get, set it to map_params
+                GlobalProperties.map_params = {
+                    latitude: location.location.coords.latitude,
+                    longitude: location.location.coords.longitude,
+                    latitudeDelta: GlobalProperties.default_map_params.latitudeDelta,
+                    longitudeDelta: GlobalProperties.default_map_params.longitudeDelta
+                }
+
+                //set to deafult region
+                GlobalProperties.default_map_params = GlobalProperties.map_params;
+            }
+        }
+
+        //update search
+        var body = {};
+        var requestUrl = "";
+
+        //get body
+        if (GlobalProperties.search_type == "people") {
+            body = {
+                "radius": GlobalProperties.search_radius,
+                "minimum_age": GlobalProperties.search_minAge,
+                "maximum_age": GlobalProperties.search_maxAge,
+                "location": {
+                    "latitude": GlobalProperties.map_params.latitude,
+                    "longitude": GlobalProperties.map_params.longitude,
+                },
+                "page_number": this.state.page_number,
+                "page_size": GlobalValues.SEARCH_PAGE_SIZE,
+            };
+
+            if (GlobalProperties.search_gender != "") {
+                body["gender"] = GlobalProperties.search_gender;
+            }    
+
+            requestUrl = "/api/User/Friends/SearchUsers";
+        }
+        else if (GlobalProperties.search_type == "activities") {
+            body = {
+                "radius": GlobalProperties.search_radius,
+                "location": {
+                    "latitude": GlobalProperties.map_params.latitude,
+                    "longitude": GlobalProperties.map_params.longitude,
+                },
+                "medium": GlobalProperties.medium,
+                "page_number": this.state.page_number,
+                "page_size": GlobalValues.SEARCH_PAGE_SIZE,
+            };
+
+            requestUrl = "/api/User/Friends/SearchActivities";
+        }
+
+        if (GlobalProperties.search_attributes != null) {
+            body["attributes"] = GlobalProperties.search_attributes;
+        }
+
+        //if request was successful
+        var successful = false;
+
+        //make request
+        var result = await GlobalEndpoints.makePostRequest(true, requestUrl, body)
+            .then((result) => {
+                if (result == undefined) {
+                    successful = false;
+                }
+                else {
+                    successful = true;
+                }
+                return(result);
+            })
+            .catch((error) => {
+                successful = false;
+                return(error);
+            });
+
+        //if there is no error message, request was good
+        if (successful) {
+
+            //if result status is ok
+            if (result.request.status ==  200) {
+
+                if (GlobalProperties.search_type == "people") {
+                    //get request body
+                    var users = JSON.parse(result.request.response).users;
+
+                    //add groups
+                    this.state.frames = users;
+                }
+                else if (GlobalProperties.search_type == "activities"){
+                    //get request body
+                    var activities = JSON.parse(result.request.response).activities;
+
+                    //add groups
+                    this.state.frames = activities;
+                }
+
+                //update users
+                this.updateUsers();
+
+                //set loading to false
+                this.state.loading = false;
+            }
+            else {
+                //returned bad response, fetch server generated error message
+                //and set 
+                this.state.reload = true;
+
+                Alert.alert(result.data);
+            }
+        }
+        else {
+            //invalid request
+            if (result == undefined) {
+                this.state.reload = true;
+            }
+            else if (result.response.status == 400 && result.response.data) {
+                Alert.alert(JSON.stringify(result.response.data));
+                return;
+            }
+            //handle not found case
+            else if (result.response.status == 404) {
+                GlobalEndpoints.handleNotFound(false);
+                this.state.reload = true;
+            }
+            else {
+                this.state.reload = true;
+            }
+        }
+
+        //once done, lazy update
+        this.lazyUpdate();
+    }
+
+    render() {
+        return (
+            <View style={main_styles.page}>
+                    {this.state.loading == true ? 
+                    (
+                        <LoadingScreen reload={this.state.reload} tryAgain={this.updateSearch} />
+                    ) : (
+                    <View style={{minHeight: '100%', flex: 1}}>
+                        <View>
+                            <ScrollView 
+                                contentContainerStyle={{alignItems: 'center'}}
+                                refreshControl={<RefreshControl refreshing={false} 
+                                onRefresh={() => {this.reloadResults();}}/>}
+                                onScroll={({nativeEvent}) => {
+                                    this.onScrollViewIsCloseToBottom(nativeEvent);
+                                }}
+                                scrollEventThrottle={400}
+                            >  
+                                {this.state.frameComponents.map((component) => (component))}
+                                <EmptySpace key={0}/>
+                            </ScrollView>
+                        </View>    
+                    </View>) 
+                    }
+            </View>
+        );
+    }
+
+    //reload results
+    reloadResults() {
+        this.state.page_number = 1;
+        this.state.loading = true;
+        this.updateSearch();
+    }
+
+    onScrollViewIsCloseToBottom(layoutMeasurement) {
+        const paddingToBottom = 40;
+
+        if (layoutMeasurement.layoutMeasurement.height + layoutMeasurement.contentOffset.y >= layoutMeasurement.contentSize.height - paddingToBottom && this.state.frames.length == GlobalValues.SEARCH_PAGE_SIZE * this.state.page_number) {
+            //then load more
+            this.state.page_number++;
+            this.updateSearch();
+        }
+    }
+
+    validateAttributes() {
+        if (GlobalProperties.search_filters_updated && (typeof(GlobalProperties.search_attributes) == "undefined" || typeof(GlobalProperties.search_attributes) == "null" || GlobalProperties.search_attributes.length == 0)) {
+            Alert.alert("You must specify attributes for searching\nattributes are set in the filters page");
+            return false;
+        }
+
+        return true;
+    }
+
+    
+    //for the filters
+    addFilter(input) {
+        GlobalProperties.search_filters_updated = true;
+        GlobalProperties.map_filters_updated = true;
+
+        this.addAttribute(input);
+        //clear the text input
+        this.state.attributes_input_handler.clear();
+        //update the screen
+        this.lazyUpdate();
+    }
+
+    addAttribute(attribute) {
+        //check if it already exists
+        if (!GlobalProperties.search_attributes.includes(attribute)) {
+            //if not, add it
+            GlobalProperties.search_attributes.push(attribute);
+        }
+    }
+
+    removeAttribute(attribute) {
+        var newAttributes = []
+
+        for (const attr of GlobalProperties.search_attributes) {
+            if (attr != attribute) {
+                newAttributes.push(attr);
+            }
+        }
+
+        GlobalProperties.search_attributes = newAttributes;
+    }
+
+    //after delete alert, delete attribute and update screen
+    afterDeleteAlertAttributes(attr) {
+        GlobalProperties.search_filters_updated = true;
+        GlobalProperties.map_filters_updated = true;
+
+        this.removeAttribute(attr);
+        this.lazyUpdate();
+    }
+
+    lazyUpdate() {
+        this.forceUpdate();
+    }
+}
+
 class FrameComponent extends React.Component{
     constructor(props) {
         super (props);
@@ -253,9 +615,8 @@ class FrameComponent extends React.Component{
 }
 
 function handleImageURI(uri) {
-    console.log(uri);
     if (uri == undefined || uri == "") {
-        return({uri: "../../../assets/images/default_image.png"});
+        return(require("../../../assets/images/default_image.png"));
     }
     else {
         return({uri: uri});
@@ -269,363 +630,6 @@ const EmptySpace = (props) => {
         <View style={{height: btbh, width: '100%'}}>
         </View>
     )
-}
-
-export class ExploreScreen extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            //for loading page
-            loading: true,
-            reload: false,
-
-            //frames
-            frames: [],
-
-            //page num
-            page_number: 1,
-
-            frameComponents: [],
-            global_props: null,
-        };
-
-        this.validateAttributes = this.validateAttributes.bind(this);
-        this.ScrollViewIsCloseToBottom = this.ScrollViewIsCloseToBottom.bind(this);
-        this.reloadResults = this.reloadResults.bind(this);
-        
-        this.updateSearch = this.updateSearch.bind(this);
-        this.updateUsers = this.updateUsers.bind(this);
-
-        this.lazyUpdate = this.lazyUpdate.bind(this);        
-    }
-
-    componentDidMount() {
-        GlobalProperties.currentExploreScreenSearchUpdate = this.updateSearch;
-        
-        this.props.navigation.addListener('focus', () => {
-            //update lazy update method for current explore screen
-            GlobalProperties.currentExploreScreenSearchUpdate = this.updateSearch;
-
-            if (GlobalProperties.return_screen == "Other Explore Profile Screen" && GlobalProperties.screen_props != null) {
-                if (GlobalProperties.screen_props.action = "remove") {
-                    //remove person
-
-                    for (let [i, data] of this.state.frames.entries()) {
-                        if (data.id == GlobalProperties.screen_props.id && data.type == "person") {
-                            this.state.frames.splice(i, 1);
-                        }
-                    }
-
-                    this.updateUsers();
-                    this.lazyUpdate();
-                }
-            }
-            else if (GlobalProperties.return_screen == "Other Activity Screen" && GlobalProperties.screen_props != null) {
-                if (GlobalProperties.screen_props.action = "remove") {
-                    //remove person
-
-                    for (let [i, data] of this.state.frames.entries()) {
-                        if (data.id == GlobalProperties.screen_props.id && data.type == "activity") {
-                            this.state.frames.splice(i, 1);
-                        }
-                    }
-
-                    this.updateUsers();
-                    this.lazyUpdate();
-                }
-            }
-
-            if (GlobalProperties.search_filters_updated) {
-                this.state.loading = true;
-                this.state.reload = false;
-
-                this.state.region = GlobalProperties.map_params;
-
-                this.lazyUpdate();
-
-                this.state.page_number = 1;
-
-                this.updateSearch();
-
-                GlobalProperties.search_filters_updated = false;
-            }
-
-            GlobalProperties.screenActivated();
-        });
-
-        this.updateSearch();
-    }
-
-    updateUsers() {
-        //when page increase is implemented, TODO get rid of this
-        this.state.frameComponents = [];
-
-        for (var i = 0; i < this.state.frames.length; i++) { 
-            var json = this.state.frames[i];
-
-            if (json.type == "person") {
-                this.state.frameComponents.push(<FrameComponent key={json.id} id={json.id} image_uri={json.profile_image_uri} type={json.type} name={json.name} description={json.description} age={json.age} distance={json.distance} navigation={this.props.navigation}/>);
-            }
-            else if (json.type == "activity") {
-                this.state.frameComponents.push(<FrameComponent key={json.id} id={json.id} type={json.type} name={json.name} description={json.description} date_time={json.date_time} distance={json.distance} navigation={this.props.navigation}/>);
-            }
-        }
-    }
-
-    async updateSearch() {
-        //if map has not been set
-        if (GlobalProperties.map_params == null) {
-            //use user's location
-            var location = await GlobalEndpoints.getLocation();
-
-            if (!location.granted) {
-                Alert.alert("Permission to access location was denied.\nEnable location access or use map.");
-
-                //use map settings
-                GlobalProperties.use_map_settings = true;
-            }
-            else if (location.location == null) {
-                Alert.alert("Location could not be determined.\nUsing map settings.");
-
-                //use map settings
-                GlobalProperties.use_map_settings = true;
-            }
-            else {
-                //if can get, set it to map_params
-                GlobalProperties.map_params = {
-                    latitude: location.location.coords.latitude,
-                    longitude: location.location.coords.longitude,
-                    latitudeDelta: GlobalProperties.default_map_params.latitudeDelta,
-                    longitudeDelta: GlobalProperties.default_map_params.longitudeDelta
-                }
-
-                //set to deafult region
-                GlobalProperties.default_map_params = GlobalProperties.map_params;
-            }
-        }
-
-        //update search
-        var body = {};
-        var requestUrl = "";
-
-        //get body
-        if (GlobalProperties.search_type == "people") {
-            body = {
-                "radius": GlobalProperties.search_radius,
-                "minimum_age": GlobalProperties.search_minAge,
-                "maximum_age": GlobalProperties.search_maxAge,
-                "location": {
-                    "latitude": GlobalProperties.map_params.latitude,
-                    "longitude": GlobalProperties.map_params.longitude,
-                },
-                "page_number": 1,
-                "page_size": 20,
-            };
-
-            if (GlobalProperties.search_gender != "") {
-                body["gender"] = GlobalProperties.search_gender;
-            }    
-
-            requestUrl = "/api/User/Friends/SearchUsers";
-        }
-        else if (GlobalProperties.search_type == "activities") {
-            body = {
-                "radius": GlobalProperties.search_radius,
-                "location": {
-                    "latitude": GlobalProperties.map_params.latitude,
-                    "longitude": GlobalProperties.map_params.longitude,
-                },
-                "medium": GlobalProperties.medium,
-                "page_number": 1,
-                "page_size": 20,
-            };
-
-            requestUrl = "/api/User/Friends/SearchActivities";
-        }
-
-        if (GlobalProperties.search_attributes != null) {
-            body["attributes"] = GlobalProperties.search_attributes;
-        }
-
-        //if request was successful
-        var successful = false;
-
-        //make request
-        var result = await GlobalEndpoints.makePostRequest(true, requestUrl, body)
-            .then((result) => {
-                if (result == undefined) {
-                    successful = false;
-                }
-                else {
-                    successful = true;
-                }
-                return(result);
-            })
-            .catch((error) => {
-                successful = false;
-                return(error);
-            });
-
-        //if there is no error message, request was good
-        if (successful) {
-
-            //if result status is ok
-            if (result.request.status ==  200) {
-
-                if (GlobalProperties.search_type == "people") {
-                    //get request body
-                    var users = JSON.parse(result.request.response).users;
-
-                    //add groups
-                    this.state.frames = users;
-                }
-                else if (GlobalProperties.search_type == "activities"){
-                    //get request body
-                    var activities = JSON.parse(result.request.response).activities;
-
-                    //add groups
-                    this.state.frames = activities;
-                }
-
-                //update users
-                this.updateUsers();
-
-                //set loading to false
-                this.state.loading = false;
-            }
-            else {
-                //returned bad response, fetch server generated error message
-                //and set 
-                this.state.reload = true;
-
-                Alert.alert(result.data);
-            }
-        }
-        else {
-            //invalid request
-            if (result == undefined) {
-                this.state.reload = true;
-            }
-            else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(JSON.stringify(result.response.data));
-                return;
-            }
-            //handle not found case
-            else if (result.response.status == 404) {
-                GlobalEndpoints.handleNotFound(false);
-                this.state.reload = true;
-            }
-            else {
-                this.state.reload = true;
-            }
-        }
-
-        //once done, lazy update
-        this.lazyUpdate();
-    }
-
-    render() {
-        return (
-            <View style={main_styles.page}>
-                    {this.state.loading == true ? 
-                    (
-                        <LoadingScreen reload={this.state.reload} tryAgain={this.updateSearch} />
-                    ) : (
-                    <View style={{minHeight: '100%', flex: 1}}>
-                        <View>
-                            <ScrollView 
-                                contentContainerStyle={{alignItems: 'center'}}
-                                refreshControl={<RefreshControl refreshing={false} 
-                                onRefresh={() => {this.reloadResults();}}/>}
-                                onScroll={({nativeEvent}) => {
-                                    if (this.ScrollViewIsCloseToBottom(nativeEvent)) {
-                                        console.log("at bottom");
-                                        //do something
-                                    }
-                                }}
-                                scrollEventThrottle={400}
-                            >  
-                                {this.state.frameComponents.map((component) => (component))}
-                                <EmptySpace key={0}/>
-                            </ScrollView>
-                        </View>    
-                    </View>) 
-                    }
-            </View>
-        );
-    }
-
-    //reload results
-    reloadResults() {
-        this.state.page_number = 1;
-        this.state.loading = true;
-        this.updateSearch();
-    }
-
-    ScrollViewIsCloseToBottom(layoutMeasurement, contentOffset, contentSize) {
-        //if we are at max
-        if (this.state.frames.length == GlobalValues.SEARCH_PAGE_SIZE * this.state.page_number) {
-            //then load more
-            this.state.page_number++;
-            this.updateSearch();
-        }
-    }
-
-    validateAttributes() {
-        if (GlobalProperties.search_filters_updated && (typeof(GlobalProperties.search_attributes) == "undefined" || typeof(GlobalProperties.search_attributes) == "null" || GlobalProperties.search_attributes.length == 0)) {
-            Alert.alert("You must specify attributes for searching\nattributes are set in the filters page");
-            return false;
-        }
-
-        return true;
-    }
-
-    
-    //for the filters
-    addFilter(input) {
-        GlobalProperties.search_filters_updated = true;
-        GlobalProperties.map_filters_updated = true;
-
-        this.addAttribute(input);
-        //clear the text input
-        this.state.attributes_input_handler.clear();
-        //update the screen
-        this.lazyUpdate();
-    }
-
-    addAttribute(attribute) {
-        //check if it already exists
-        if (!GlobalProperties.search_attributes.includes(attribute)) {
-            //if not, add it
-            GlobalProperties.search_attributes.push(attribute);
-        }
-    }
-
-    removeAttribute(attribute) {
-        var newAttributes = []
-
-        for (const attr of GlobalProperties.search_attributes) {
-            if (attr != attribute) {
-                newAttributes.push(attr);
-            }
-        }
-
-        GlobalProperties.search_attributes = newAttributes;
-    }
-
-    //after delete alert, delete attribute and update screen
-    afterDeleteAlertAttributes(attr) {
-        GlobalProperties.search_filters_updated = true;
-        GlobalProperties.map_filters_updated = true;
-
-        this.removeAttribute(attr);
-        this.lazyUpdate();
-    }
-
-    lazyUpdate() {
-        this.forceUpdate();
-    }
 }
 
 class FilterSnap extends React.Component {

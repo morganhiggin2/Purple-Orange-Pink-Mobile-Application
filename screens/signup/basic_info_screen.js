@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Image, Alert} from 'react-native';
+import {StyleSheet, View, Text, TextInput, Alert} from 'react-native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { GlobalEndpoints } from '../../global/global_endpoints';
 import { GlobalValues, GlobalProperties } from '../../global/global_properties';
@@ -28,7 +28,6 @@ const main_styles = StyleSheet.create(
             borderColor: 'gray'
         },
         title_text: {
-            fontFamily: 'Roboto',
             fontSize: 24,
             color: 'black',
             marginBottom: '0 %',
@@ -50,7 +49,6 @@ const main_styles = StyleSheet.create(
         },
         button_text: {
             color: 'white',
-            fontFamily: 'Roboto',
             fontSize: 18,
             alignSelf: 'center',
             fontFamily: "Roboto",
@@ -204,57 +202,7 @@ export class BasicInfoScreen extends React.Component {
             }
         }
 
-        //result.hasOwnProperty("")
-
         this.lazyUpdate();
-
-        /*
-        //check if the email is valid
-        if (!this.validateEmailAddress()) {
-            this.state.error_message = "Email is invalid";
-            this.renderErrorMessage();
-        }
-
-        //check if passwords match
-        if (!this.validatePasswords()) {
-            this.state.error_message = "Passwords do not match";
-            this.renderErrorMessage();
-        }
-
-        //make the call to the server and see if it exists
-        var result = GlobalEndpoints.makePostRequest(false, "/api/AccountManager/Register");
-
-        if (typeof(result) == 'string') {
-            console.log(result);
-            //something bad happened
-        }
-        else {
-            //we must have got json back then
-             to check if json has property, use
-            
-            if(result.hasOwnProperty(""))
-            {
-
-            }
-
-            
-        }
-
-        //if it does exist, redirect to the next page, else, show error
-        var successful = true;
-
-        if (successful) {
-            //set login to true, feeding it the auth token
-            //refesh the app page so it can reload (did it in some other file in this program altough i forget which one)
-            this.props.navigation.navigate("Profile Info")
-        }
-        else {
-            //show the error message (maybe get it from the request to the server for specifid like invlid username or invalid password)
-            this.state.error_message = "Invalid Login Information"
-        }
-
-        this.lazyUpdate();*/
-
     }
 
     //render the error message if there is one 
@@ -276,9 +224,6 @@ export class BasicInfoScreen extends React.Component {
     lazyUpdate() {
         this.forceUpdate();
     }
-
-//(input)  => {this.state.updateUsername(input);
-// onChangeText={(input) => {this.state.username = input}}
 
     render () {
         return (
@@ -386,6 +331,4 @@ export class BasicInfoScreen extends React.Component {
     updateEmailAddress(email) {
         this.state.email = email;
     }
-
-    //make sure it is valid email address
 }

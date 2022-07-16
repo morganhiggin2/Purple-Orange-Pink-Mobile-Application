@@ -1,19 +1,14 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Image, Alert, FlatList, Switch, Dimensions, Platform, TouchableHighlight, ActivityIndicator, Touchable} from 'react-native';
+import {StyleSheet, View, Text, TextInput, RefreshControl, Alert, FlatList, Switch, Platform, TouchableHighlight} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import {Feather, AntDesign, Ionicons} from '@expo/vector-icons'; 
+import {AntDesign} from '@expo/vector-icons'; 
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { PickerIOS } from '@react-native-picker/picker';
-import MultiSlider from '@ptomasroos/react-native-multi-slider';
-import * as ImagePicker from 'expo-image-picker';
 import { SliderBox } from "react-native-image-slider-box";
-import Dialog from "react-native-dialog";
 
 import {GlobalProperties, GlobalValues} from '../../../global/global_properties.js'
 import { GlobalEndpoints } from '../../../global/global_endpoints.js';
-import { ScreenStackHeaderBackButtonImage } from 'react-native-screens';
 import { LoadingScreen } from '../../misc/loading_screen.js';
 
 const main_styles = StyleSheet.create(
@@ -21,7 +16,6 @@ const main_styles = StyleSheet.create(
         page: {
             backgroundColor: GlobalValues.DARKER_WHITE,
             height: '50%',
-            width: '100%',
             flexDirection: "column",
             flex: 1,
         },
@@ -30,7 +24,6 @@ const main_styles = StyleSheet.create(
         },
         title_text: {
             alignSelf: 'center',
-            fontFamily: 'Roboto',
             fontSize: 24,
             color: 'gray',
             padding: 5,
@@ -57,7 +50,7 @@ const section_styles = StyleSheet.create({
 
 const info_styles = StyleSheet.create({
     body: {
-        backgroundColor: 'white', //#FFCDCD
+        backgroundColor: 'white',
         marginHorizontal: 8,
         borderRadius: 4,
         marginVertical: 16
@@ -79,11 +72,12 @@ const attribute_styles = StyleSheet.create({
         fontSize: 14, 
         maxHeight: "96px", 
         textAlignVertical: "top",
-            fontFamily: 'Roboto'
+        fontFamily: 'Roboto'
     },
     title_text: {
         alignSelf: 'flex-start',
         fontSize: 16,
+        fontFamily: 'Roboto',
         color: 'black',
         marginBottom: 2,
     },
@@ -284,7 +278,7 @@ export class YourProfileScreen extends React.Component {
             gender_dropdown_value: "other",
             
             //for profile images
-            profile_images: Array(3),
+            profile_images: ["","",""],
 
             //if update made
             updateMade: false,
@@ -303,32 +297,13 @@ export class YourProfileScreen extends React.Component {
         this.updateShown = this.updateShown.bind(this);
         this.cleanImages = this.cleanImages.bind(this);
         this.showError = this.showError.bind(this);
+        this.reloadResults = this.reloadResults.bind(this);
         this.lazyUpdate = this.lazyUpdate.bind(this);
     }
 
     componentDidMount() {
         //get information from server for profile
         this.fetchProfileInformation();
-
-        //get profile images
-        //get all the promises
-        //get the profile images promises
-        /*for (let i = 0; i < 3; i++) {
-            profile_images[i] = GlobalProperties.get_key_value_pair("profile_image_" + i);
-        }
-
-        //make sure all promises finish before continuing, with a set timeout
-
-        Promise.all(profile_images) //put all promises in this array [one, two, ...]
-        .then(promises => {
-            //set state
-
-            this.setState({
-                profile_images: promises, 
-            });
-
-            this.cleanImages();
-        }); */
 
         this.props.navigation.addListener('focus', () => {
             this.state.global_props = GlobalProperties.screen_props;
@@ -438,33 +413,6 @@ export class YourProfileScreen extends React.Component {
     }
 
     render() { 
-
-        /*for (var i = 0; i < this.state.points.length; i++) {
-            pointsRender.push(<Point key={i + this.state.points.length} index={i} data={this.state.points[i]} parentLazyUpdate={() => {this.lazyUpdate();}} deleteAlert={this.deletePointAlert} pointsUpdatedImage={this.pointsUpdatedImage} pointsUpdatedCaption={this.pointsUpdatedCaption}/>);
-            //pointsRender[i]["index"]
-        }*/
-
-        /*{this.state.points.map((data, key) => {
-                        console.log(data);
-                        console.log(":::" + key);
-                        return (
-                            <Point key={data.id} index={key} data={data} parentLazyUpdate={() => {this.lazyUpdate();}} deleteAlert={this.deletePointAlert} pointsUpdatedImage={this.pointsUpdatedImage} pointsUpdatedCaption={this.pointsUpdatedCaption}/>
-                        );
-                    })} 
-                    
-                    
-                        <SliderBox
-                            images={this.state.profile_images.map(uri => {
-                                return(handleImageURI(uri));
-                            })}
-                            parentWidth={image_styles.image.width}
-                            sliderBoxHeight={image_styles.image.height}
-                            dotColor={GlobalValues.ORANGE_COLOR}
-                            inactiveDotColor={GlobalValues.DISTINCT_GRAY}
-                        />
-                    
-                    */
-
         const renderComponent = ({item}) => {
             return (
                 <View>
@@ -587,62 +535,42 @@ export class YourProfileScreen extends React.Component {
         else {
             return (
                 <View style={[main_styles.page, {flex: 1}]}>
-                    <FlatList data={[{}]} keyExtractor={() => "dummy"} listEmptyComponent={null} renderItem={renderComponent} style={{zIndex: 99, flex: 1}}/><View style={post_button_styles.button_view}>
-                    
-                    {this.state.updateMade ? (
-                        <TouchableHighlight style={post_button_styles.button} underlayColor={'#ff6e6e'} onPress={() => {this.syncUpdates()}}>
-                        <Text style={post_button_styles.button_text}>
-                            Save Updates
-                        </Text>
-                        </TouchableHighlight>
-                    ) : (
-                        <View/>
-                    )}
-                    
+                    <FlatList 
+                        data={[{}]} 
+                        keyExtractor={() => "dummy"} 
+                        listEmptyComponent={null} 
+                        renderItem={renderComponent} 
+                        style={{zIndex: 99, flex: 1}}
+                        refreshControl={<RefreshControl refreshing={false} 
+                        onRefresh={() => {this.reloadResults();}}/>}
+                        />
+                    <View style={post_button_styles.button_view}>
+                        {this.state.updateMade ? (
+                            <TouchableHighlight style={post_button_styles.button} underlayColor={'#ff6e6e'} onPress={() => {this.syncUpdates()}}>
+                            <Text style={post_button_styles.button_text}>
+                                Save Updates
+                            </Text>
+                            </TouchableHighlight>
+                        ) : (
+                            <View/>
+                        )}
                     </View>
                 </View>
             );
         }
     }
 
-    /*{this.state.points.map((data, key) => {
-                        return (
-                            Point(data.id, data.description, data.image_uri)
-                        );
-                    })}*/
-
-    /*<View style={main_styles.horizontal_bar}/>
-                        <View style={inline_attribute_styles.body}>
-                            <Text style={inline_attribute_styles.title_text}>
-                                Enable
-                            </Text>
-                            <Switch
-                                trackColor = {{false: GlobalValues.DISTINCT_GRAY, true: GlobalValues.ORANGE_COLOR}}
-                                thumbColor = {this.state.enable_value ? 'white': 'white'}
-                                ios_backgroundColor = {GlobalValues.DISTINCT_GRAY}
-                                onValueChange = {this.updateEnableValue}
-                                value = {this.state.enable_value}
-                            />
-                        </View>
-                        <View style={main_styles.horizontal_bar}/>
-                        <View style={attribute_styles.body}>
-                            <View style={attribute_styles.title_with_value}>
-                                <Text style={attribute_styles.title_text}>
-                                    Slider
-                                </Text>
-                                <Text style={attribute_styles.title_value}>
-                                    {this.state.slider_value}
-                                </Text>
-                            </View>
-                            <View style={attribute_styles.slider}>
-                                <Slider onChangeValue={this.updateSliderValue} min={0} max={10} step={1} initialValue={0} backgroundColor={'#FF7485'}/>
-                            </View>
-                        </View>*/
+    //reload results
+    reloadResults() {
+        this.state.loading = true;
+        this.fetchProfileInformation();
+    }
 
     //update the screen
     lazyUpdate() {
         this.forceUpdate();
     }
+
     //get rid of any null entries
     cleanImages() {
         //this is not working right
@@ -828,89 +756,6 @@ export class YourProfileScreen extends React.Component {
         }
     }
 
-    /*doneEditingFirstName() {
-        
-        //validate first name field
-        if (this.state.first_name.length == 0) {
-            this.showError("first name field must not be empty");
-            this.state.updateUpdateMade = false;
-            this.lazyUpdate();
-            return false;
-        }
-
-        if (this.state.first_name.length > 256) {
-            this.showError("first name field is too long");
-            this.state.updateUpdateMade = false;
-            this.lazyUpdate();
-            return false;
-        }
-
-        this.updateUpdateMade();
-    }
-
-    doneEditingFirstName() {
-        //validate last name field
-        if (this.state.last_name.length == 0) {
-            this.showError("last name field must not be empty");
-            this.state.updateUpdateMade = false;
-            this.lazyUpdate();
-            return false;
-        }
-
-        if (this.state.laset_name.length > 256) {
-            this.showError("last name field is too long");
-            this.state.updateUpdateMade = false;
-            this.lazyUpdate();
-            return false;
-        }
-
-        this.updateUpdateMade();
-    }
-
-    doneEditingDescription() {
-        //validate description
-        if (this.state.description.length == 0) {
-            this.showError("description field must not be empty");
-            this.state.updateUpdateMade = false;
-            this.lazyUpdate();
-            return false;
-        }
-
-        if (this.state.description.length > 2048) {
-            this.showError("description field is too long");
-            this.state.updateUpdateMade = false;
-            this.lazyUpdate();
-            return false;
-        }
-
-        this.updateUpdateMade();
-    }
-
-    doneEditingAttributes() {
-        //validate attributes
-        if (this.state.attributes.length == 0) {
-            this.showError("must have at least one attribute");
-            this.state.updateUpdateMade = false;
-            this.lazyUpdate();
-            return false;
-        }
-
-        this.updateUpdateMade();
-    }
-
-    doneEditingDate() {
-        var validDate = new Date(Date.now());
-        validDate.setFullYear(dateNow.getFullYear() + 18);
-
-        //validate birthdate
-        if (this.state.date.getTime() >= validDate) {
-            this.showError("you must be at least 18 years old to use this app");
-            return false;
-        }
-
-        this.updateUpdateMade();
-    }*/
-    
     async validateFields() {
         //validate name field
         if (this.state.name.length == 0) {
@@ -1103,18 +948,6 @@ class FilterSnap extends React.Component {
 FilterSnap.defaultProps = {
     color: GlobalValues.ORANGE_COLOR,
 }
-
-//TODO fix react native buttons (all, even in manage screen files for ones with onHideUnderlay and onShowUnderlay) click twice
-//work around: onPress is only called once, so put main stuff in there that is triggered with the button besides the color state variables
-
-/*<View style={actions_styles.body}> 
-                <Text style={info_styles.title_text}>
-                    {description}
-                </Text>
-                <FastImage style={point_styles.image} source={{uri: require("../../../assets/images/default_image.png")}}/>
-            </View>*/
-
-// resizeMode={FastImage.resizeMode.contain}
 
 //create a delete alert for deleting an attribute of id=id from
 // a json data structure with id attributes, each different.

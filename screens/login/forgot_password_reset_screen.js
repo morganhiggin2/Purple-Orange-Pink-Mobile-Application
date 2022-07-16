@@ -106,6 +106,7 @@ const attribute_styles = StyleSheet.create({
     },
     title_value: {
         fontSize: 16,
+        fontFamily: 'Roboto',
         alignSelf: 'center'
     }
 });

@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import {StyleSheet, Text, View, SafeAreaView, FlatList, StatusBar, Image, Alert, RefreshControl} from 'react-native';
+import React from 'react';
+import {StyleSheet, Text, View, SafeAreaView, FlatList, Alert, RefreshControl} from 'react-native';
 import { TouchableOpacity, TouchableHighlight } from 'react-native-gesture-handler';
-import { color } from 'react-native-reanimated';
-import {AntDesign, Feather, Ionicons} from '@expo/vector-icons';
+import {Feather} from '@expo/vector-icons';
 import { GlobalProperties, GlobalValues } from '../../../global/global_properties';
 import { GlobalEndpoints } from '../../../global/global_endpoints';
 import { LoadingScreen } from '../../misc/loading_screen';
@@ -20,7 +19,7 @@ const main_styles = StyleSheet.create({
     top_bar: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        backgroundColor: 'white', //#FFCDCD
+        backgroundColor: 'white',
         borderRadius: 5,
         padding: 8,
         marginTop: "2%",
@@ -34,7 +33,7 @@ const main_styles = StyleSheet.create({
 const blip_styles = StyleSheet.create(
     {
         body: {
-            backgroundColor: 'white', //#FFCDCD
+            backgroundColor: 'white',
             borderRadius: 5,
             padding: 8,
             marginTop: "2%",
@@ -58,7 +57,6 @@ const blip_styles = StyleSheet.create(
             justifyContent: 'space-between',
             alignItems: 'flex-start',
             flexWrap: 'wrap',
-            //alignItems: 'flex-end'
         },
         top_text: {
             color: 'black',
@@ -77,7 +75,7 @@ const blip_styles = StyleSheet.create(
 const post_styles = StyleSheet.create(
     {
         body: {
-            backgroundColor: 'white', //#FFCDCD
+            backgroundColor: 'white',
             borderRadius: 5,
             padding: 8,
             marginTop: "2%",
@@ -103,7 +101,6 @@ const post_styles = StyleSheet.create(
             justifyContent: 'space-between',
             alignItems: 'flex-start',
             flexWrap: 'wrap',
-            //alignItems: 'flex-end'
         },
         top_text: {
             color: 'black',
@@ -121,8 +118,8 @@ const post_styles = StyleSheet.create(
             alignItems: 'flex-start',
             borderRadius: 3,
             borderWidth: 4,
-            backgroundColor: '#FE3C3C',
-            borderColor: '#FE3C3C',
+            backgroundColor: GlobalValues.ORANGE_COLOR,
+            borderColor: GlobalValues.ORANGE_COLOR,
             padding: 3,
             paddingVertical: 0,
             alignSelf: 'center',
@@ -137,17 +134,6 @@ const post_styles = StyleSheet.create(
         }
     }
 );
-
-const inner_blip_styles = StyleSheet.create(
-    {
-        text: {
-            color: 'gray',
-            fontFamily: 'Roboto',
-            fontSize: 14,
-            marginLeft: 5,
-        }
-    }
-)
 
 const title_styles = StyleSheet.create(
     {
@@ -171,9 +157,6 @@ const title_styles = StyleSheet.create(
     }
 );
 
-var DATA = [
-];
-
 export class ManageScreen extends React.Component {
     constructor(props) {
         super(props);
@@ -181,6 +164,8 @@ export class ManageScreen extends React.Component {
             //is loading
             reload: false,
             loading: true,
+
+            frames: [],
 
             trashColor: "black",
         }
@@ -198,12 +183,6 @@ export class ManageScreen extends React.Component {
             else if (GlobalProperties.return_screen == "Manage Activity Screen" && GlobalProperties.screen_props != null) {
                 if (GlobalProperties.screen_props.action = "remove") {
                     //remove activity
-
-                    /*for (let [i, data] of this.state.frames.entries()) {
-                        if (data.id == GlobalProperties.screen_props.id && data.type == "activity") {
-                            this.state.frames.splice(i, 1);
-                        }
-                    }*/
 
                     this.fetchList();
                 }
@@ -246,7 +225,7 @@ export class ManageScreen extends React.Component {
             //if result status is ok
             if (result.request.status ==  200) {
                 //get request body
-                DATA = JSON.parse(result.request.response).list;
+                this.state.frames = JSON.parse(result.request.response).list;
 
                 this.state.loading = false;
             }
@@ -308,7 +287,7 @@ export class ManageScreen extends React.Component {
                         </TouchableHighlight>
                     </View>
                     <FlatList 
-                        data={DATA}
+                        data={this.state.frames}
                         renderItem={renderItem}
                         keyExtractor={item => item.id}
                         refreshControl={<RefreshControl refreshing={false} 
@@ -323,8 +302,6 @@ export class ManageScreen extends React.Component {
         this.forceUpdate();
     }
 }
-
-//<Ionicons name="person" size={16} style={title_styles.icon} color={filledIconColor(this.state.item)}/>
 
 class FrameComponent extends React.Component {
     constructor(props) {
@@ -404,9 +381,9 @@ class FrameComponent extends React.Component {
     }
 
     deleteDataComponent(id) {
-        for (let [i, data] of DATA.entries()) {
+        for (let [i, data] of this.state.frames.entries()) {
             if (data.id == id) {
-                DATA.splice(i, 1);
+                this.state.frames.splice(i, 1);
             }
         }
     }
@@ -501,5 +478,3 @@ const deleteAlert = (frameComponent) => {
         }
     );
 }
-
-//make sure there is a cap on how long the name can be or it will push everything off the edge

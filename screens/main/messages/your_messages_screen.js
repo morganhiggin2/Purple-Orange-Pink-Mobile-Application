@@ -1,32 +1,20 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Image, SafeAreaView, ScrollView, Dimensions, FlatList, Alert, RefreshControl} from 'react-native';
+import {StyleSheet, View, Text, SafeAreaView, Dimensions, FlatList, Alert, RefreshControl} from 'react-native';
 import { TouchableHighlight, TouchableOpacity} from 'react-native-gesture-handler';
-import { AntDesign, Feather } from '@expo/vector-icons'; 
-import {Route} from '@react-navigation/native';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import { render } from 'react-dom';
-import { assertThisExpression } from '@babel/types';
+import { Feather } from '@expo/vector-icons'; 
 import { GlobalProperties, GlobalValues } from '../../../global/global_properties';
 import { GlobalEndpoints } from '../../../global/global_endpoints';
 import * as Notifications from 'expo-notifications';
-
-//import { MessageHandler } from '../../../global/messages_handler';
-//import { MessageHandler } from '../../../global/messages_handler.js';
-
 const frame_styles = StyleSheet.create(
     {
         box: {
-            //width: "100%",
             marginHorizontal: '2%',
-            //flexDirection: 'row',
-            backgroundColor: 'white', //#FFCDCD
+            backgroundColor: 'white',
             borderRadius: 5,
             paddingVertical: 8,
             paddingHorizontal: 4,
             marginTop: "2%",
-            //marginHorizontal: '1%',
             borderLeftWidth: 5,
-            //width: '98%',
         },
         main_text: {
             fontFamily: 'Roboto',
@@ -53,7 +41,7 @@ const main_styles = StyleSheet.create(
             width: Math.trunc(Dimensions.get('window').width * 0.85),
         },
         text_input: {
-            backgroundColor: '#DFDFDF', //#FECAB9
+            backgroundColor: '#DFDFDF',
             color: 'darkgray',
             padding: 0,
             margin: 0,
@@ -66,7 +54,7 @@ const main_styles = StyleSheet.create(
         },
         top_bar: {
             flexDirection: 'row-reverse',
-            backgroundColor: 'white', //#FFCDCD
+            backgroundColor: 'white',
             borderRadius: 5,
             padding: 8,
             marginTop: "2%",
@@ -129,53 +117,6 @@ const blip_styles = StyleSheet.create(
     }
 );
 
-const inner_blip_styles = StyleSheet.create(
-    {
-        text: {
-            color: 'gray',
-            fontFamily: 'Roboto',
-            fontSize: 14,
-            marginLeft: 5,
-        }
-    }
-)
-
-//once the sorting algorithm has ran
-var SORTED_DATA = [
-
-];
-
-const DATA = [
-    {
-        id: "1",
-        first_name: "Morgan",
-        last_name: "Higginbotham",
-        username: "3490834",
-        type: "invitation",
-        invite_type: "activity",
-        invite_to: "Hike at South Mountain",
-        read: false,
-    },
-    {
-        id: "2",
-        first_name: "Morgan",
-        last_name: "Higginbotham",
-        username: "3490834",
-        type: "message",
-        message: "This is the message that will be displayed and this should go over into the next line and what not enjoy.",
-        read: false,
-    },
-    {
-        id: "3",
-        first_name: "Mellisa",
-        last_name: "Warming",
-        username: "3490833",
-        type: "message",
-        message: "This is the message that will be displayed and this should go over into the next line and what not enjoy.",
-        read: true,
-    },
-  ];
-
 export class YourMessagesScreen extends React.Component {
     constructor(props) {
         super(props);
@@ -199,6 +140,9 @@ export class YourMessagesScreen extends React.Component {
                 search_for_id: null,
             },
 
+            //remove focus listener
+            removeFocusListener: null,
+
             messageHeaders: [],
         };
 
@@ -210,75 +154,10 @@ export class YourMessagesScreen extends React.Component {
 
     componentDidMount() {
         //initiate realm database
-        //MessageHandler.start();
         this.fetchMessages();
 
-        this.props.navigation.addListener('focus', () => {
+        this.state.removeFocusListener = this.props.navigation.addListener('focus', () => {
             this.state.global_props = GlobalProperties.screen_props;
-            //we returned from the search screen with getting new activity/target location
-            /*if (GlobalProperties.return_screen == "Manage Activity Screen" && GlobalProperties.screen_props != null) {
-
-                this.state.filters.type = GlobalProperties.screen_props.filters.type;
-                this.state.filters.invitation_type = GlobalProperties.screen_props.filters.invitation_type;
-                this.state.filters.search_for_id = GlobalProperties.screen_props.filters.id;
-
-                //clear other fields of filter
-            }
-            else if (GlobalProperties.return_screen == "Manage Group Screen" && GlobalProperties.screen_props != null) {
-
-                this.state.filters.type = GlobalProperties.screen_props.filters.type;
-                this.state.filters.invitation_type = GlobalProperties.screen_props.filters.invitation_type;
-                this.state.filters.search_for_id = GlobalProperties.screen_props.filters.id;
-
-                //clear other fields of filter
-            }
-            else if (GlobalProperties.return_screen == "Other Profile Screen" && GlobalProperties.screen_props != null) {
-
-                /*var found = false;
-
-                //check to see if conversation with that person doesn't already exist
-                for (var i in DATA) {
-                    //if they exist
-
-                    //need a new approac to this REALM APPROACH, TODO
-                    if (DATA[i].type == 0 && DATA[i].user_id == this.state.global_props.username) {
-                        this.props.navigation.setOptions({headerTitle: () => <HeaderTitle title={"Manage Car Group"}/>});
-                        this.props.navigation.navigate("Conversation Screen", {id: i, name: DATA[i].username})
-                        //pull up conversation
-
-                        found = true;
-                    }
-                }
-
-                //if we didn't find a current conversation, create a new one
-                if (!found) {
-                    DATA.push(
-                        {
-                            id: (DATA.length + 1),
-                            first_name: "Melinda",
-                            last_name: "Harp",
-                            username: "MelindaHard434",
-                            type: "message",
-                            message: "Can you explain the rent to me? This does not seem to make any sense in regards to final payment made last month. Also, should I be putting more money into the account in order to make the difference? Thanks..",
-                            read: false,
-                        });
-
-                        this.props.navigation.navigate("Conversation Screen", {id: i, first_name: DATA[i].first_name, last_name: DATA[i].last_name, username: DATA[i].username});
-
-                        this.lazyUpdate();
-                }*
-
-                //new conversation
-
-                //if it does, pull it up
-
-                //else, create it
-                //this.state.filters.type = GlobalProperties.screen_props.filters.type;
-                //this.state.filters.invitation_type = GlobalProperties.screen_props.filters.invitation_type;
-                //this.state.filters.search_for_id = GlobalProperties.screen_props.filters.id;
-
-                //clear other fields of filter
-            }*/
 
             if (GlobalProperties.return_screen == "Conversation Screen" && GlobalProperties.screen_props != null) {
                 GlobalProperties.messagesHandler.readMessage(GlobalProperties.screen_props._id);
@@ -326,6 +205,10 @@ export class YourMessagesScreen extends React.Component {
         //this.fetchPendingMessages
 
         GlobalProperties.reload_messages = false;
+    }
+
+    componentWillUnmount() {
+        this.state.removeFocusListener();
     }
 
     async fetchMessages() {
@@ -470,12 +353,6 @@ class FrameComponent extends React.Component {
 
             trashColor: "black",
         };
-
-        //this.state.name = this.props.item.first_name + " " + this.props.item.last_name;
-
-        /*if (this.state.title.length > 20) {
-            this.state.title = this.state.title.substring(0, 17) + "...";
-        }*/
         
         this.colorCode = this.colorCode.bind(this);
         this.onTrashButtonPress = this.onTrashButtonPress.bind(this);
@@ -542,6 +419,9 @@ class FrameComponent extends React.Component {
                 break;
             }
             case 3: {
+                GlobalProperties.messagesHandler.readMessage(this.state._id);
+                GlobalProperties.reload_messages = true;
+
                 this.props.navigation.navigate("Announcement Screen", {title: this.state.title, _id: this.state._id, sub_header_id: this.state.sub_header_id, type_id: this.state.type_id, type: this.state.type, body: this.state.body});
 
                 break;
@@ -590,8 +470,6 @@ class FrameComponent extends React.Component {
             this.state.lazyUpdate();
         });
     }
-
-    
        
     //have the unread color be the theme color (purple, pink, orange)
     colorCode() {
@@ -635,31 +513,3 @@ const deleteAlert = (frameComponent) => {
         }
     );
 }
-
-/*
-
-
-                                <View style={main_styles.search_bar}>
-                                    <Feather name="search" size={30} color="gray" style={{alignSelf: 'center'}}/>
-                                    <TextInput style={main_styles.text_input} placeholderTextColor="black"/>
-                                </View>
-
-*/
-
-//<Feather name="search" size={30} color="gray" style={{alignSelf: 'center'}}/>
-//<View style={{ borderBottomColor: '#CCCCCC', borderBottomWidth: 2, width: '97%', alignSelf: 'center'}}/> 
-//#FFC2B5 was border color for underline
-
-//fix it not going into the slot
-
-/*
-<ScrollView contentContainerStyle={{flexDirection: "row", flexWrap: "wrap", flexGrow: 1}}>  
-                                {frames.map((component) => (component))}
-                            </ScrollView>
-*/
-
-//use flatlist to not reder all components at once? or just keep adding to it when reaching bottom, though this can create performance issues. {frames.map((component) => (component))}
-
-
-
-//find the real height of UseBottomTabBarHeight or set the height yourself
