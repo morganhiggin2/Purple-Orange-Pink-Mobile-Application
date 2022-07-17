@@ -27,8 +27,8 @@ const main_styles = StyleSheet.create(
             height: '100%',
         },
         search_bar: {
-            backgroundColor: '#DFDFDF',
-            borderColor: '#DFDFDF',
+            backgroundColor: GlobalValues.SEARCH_TEXT_INPUT_COLOR,
+            borderColor: GlobalValues.SEARCH_TEXT_INPUT_COLOR,
             borderRadius: 4,
             paddingHorizontal: 10,
             flexDirection: 'row',

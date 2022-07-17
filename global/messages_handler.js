@@ -393,7 +393,6 @@ export class MessageHandler {
 			}	
 		} catch (error) {
 			Alert.alert("Cannot add messages, are you out of memory?");
-			console.log(error);
 		}
     }
 

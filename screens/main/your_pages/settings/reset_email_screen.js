@@ -28,6 +28,13 @@ const main_styles = StyleSheet.create(
             alignSelf: 'center',
             borderBottomWidth: 1,
             borderColor: GlobalValues.DARKER_OUTLINE,
+        },
+        error_message: {
+            color: 'red',
+            fontFamily: 'Roboto',
+            fontSize: 12,
+            alignSelf: 'center',
+            textAlign: 'center',
         }
     }
 );
@@ -76,13 +83,14 @@ const attribute_styles = StyleSheet.create({
         fontFamily: "Roboto",
     },
     text_input: {
-        textAlignVertical: "top",
         flex: 1,
         maxHeight: 95,
-        paddingVertical: 4,
+        paddingVertical: 2,
         paddingHorizontal: 4,
-        backgroundColor: '#EAEAEA',
-        borderRadius: 8,
+        backgroundColor: GlobalValues.SEARCH_TEXT_INPUT_COLOR,
+        fontSize: 14,
+        fontFamily: 'Roboto',
+        borderRadius: 4,
     },
     slider: {
         alignSelf: 'center',
@@ -190,9 +198,12 @@ export class ResetEmailScreen extends React.Component {
             newEmail: "",
             newEmailConfirm: "",
 
+            error_message: "",
+
             updateMade: false,
         }
 
+        this.renderErrorMessage = this.renderErrorMessage.bind(this);
         this.fetchEmail = this.fetchEmail.bind(this);
         this.updateEmail = this.updateEmail.bind(this);
         this.updateEmailConfirm = this.updateEmailConfirm.bind(this);
@@ -273,7 +284,7 @@ export class ResetEmailScreen extends React.Component {
                 return;
             }
             else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(JSON.stringify(result.response.data));
+                this.state.error_message = JSON.stringify(result.response.data);
                 return;
             }
             //handle not found case
@@ -326,6 +337,7 @@ export class ResetEmailScreen extends React.Component {
                             </View>
                         </View>
                     </View>
+                    {this.renderErrorMessage()}
                     <View style={section_styles.gap} />
                     <View style={section_styles.gap} />
                     <View style={section_styles.gap} />
@@ -354,6 +366,22 @@ export class ResetEmailScreen extends React.Component {
                         )}
                     </View>
                 </View>
+            );
+        }
+    }
+
+    //render the error message if there is one 
+    renderErrorMessage() {
+        if (this.state.error_message != "") {
+            return (
+                <Text style={main_styles.error_message}>
+                    {this.state.error_message}
+                </Text>
+            );
+        }
+        else {
+            return(
+                <View style={{height: 0}} />
             );
         }
     }
@@ -418,7 +446,7 @@ export class ResetEmailScreen extends React.Component {
         var updatedEmail = (this.state.newEmail != "" || this.state.newEmailConfirm != "");
 
         if (!(await this.validateFields(updatedEmail))) {
-            Alert.alert(this.state.error_message);
+            this.lazyUpdate();
             return;
         }
 

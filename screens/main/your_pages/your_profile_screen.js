@@ -295,7 +295,6 @@ export class YourProfileScreen extends React.Component {
         this.updateGenderDropDownValue = this.updateGenderDropDownValue.bind(this);
         this.syncUpdates = this.syncUpdates.bind(this);
         this.updateShown = this.updateShown.bind(this);
-        this.cleanImages = this.cleanImages.bind(this);
         this.showError = this.showError.bind(this);
         this.reloadResults = this.reloadResults.bind(this);
         this.lazyUpdate = this.lazyUpdate.bind(this);
@@ -358,7 +357,7 @@ export class YourProfileScreen extends React.Component {
                 this.state.description = user_information.description;
                 this.state.shown = user_information.shown;
                 this.state.attributes = user_information.attributes;
-                this.state.date = new Date(Date.parse(user_information.birthdate, "dd/MM/yyyy"));
+                this.state.date = new Date(Date.parse(user_information.birthdate));
                 this.state.gender_dropdown_value = user_information.gender;
                 var profile_images = user_information.profile_image_uris;
                 this.state.loading = false;
@@ -571,24 +570,6 @@ export class YourProfileScreen extends React.Component {
         this.forceUpdate();
     }
 
-    //get rid of any null entries
-    cleanImages() {
-        //this is not working right
-        var cleaned_images = [];
-
-        for (var i = 0; i <= this.state.profile_images.length; i++) {
-            if (this.state.profile_images[i] != null && this.state.profile_images[i] != "") {
-                cleaned_images.push(this.state.profile_images[i]);
-            }
-        }
-
-        if (cleaned_images.length == 0) {
-            cleaned_images.push(require("../../../assets/images/default_image.png"));
-        }
-
-        this.state.profile_images = cleaned_images;
-    }
-
     //for the time setting
     showDate() {
         //when you press cancel, it gives an undefined date
@@ -616,7 +597,6 @@ export class YourProfileScreen extends React.Component {
     }
 
     updateDate(value) { 
-        console.log(value);
         this.state.date = value;
 
         this.state.updateBody["birthdate"] = this.state.date.getDate() + "/" + (this.state.date.getMonth() + 1) + "/" + this.state.date.getFullYear();

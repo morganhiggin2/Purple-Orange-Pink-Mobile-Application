@@ -292,7 +292,6 @@ export class MakeAnnouncementScreen extends React.Component {
                 return;
             }
             else if (result.response.status == 400 && result.response.data) {
-                console.log(result.response.data);
                 Alert.alert(JSON.stringify(result.response.data));
 
                 this.lazyUpdate();

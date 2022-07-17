@@ -296,6 +296,8 @@ export class OtherExploreProfileScreen extends React.Component {
     }
     
     componentDidMount() {
+        GlobalProperties.check_interstitial_add();
+        
         //init
         GlobalProperties.return_screen = "Other Explore Profile Screen";
 

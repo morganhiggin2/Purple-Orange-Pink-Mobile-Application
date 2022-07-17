@@ -280,7 +280,7 @@ export class EditActivityScreen extends React.Component {
             target_longitude: null,
 
             //is physical or virtual event
-            is_physical_event: true,
+            is_virtual_event: true,
 
             //for virtual address
             virtual_link: "",
@@ -452,12 +452,12 @@ export class EditActivityScreen extends React.Component {
                 this.state.address = activity_information.address;
                 this.state.attributes = activity_information.attributes;
                 this.state.invitation_type_dropdown_value = activity_information.invitation_type;
-                this.state.date = new Date(activity_information.date);
+                this.state.date = new Date(Date.parse(activity_information.date));
                 this.state.description = activity_information.description;
                 this.state.gender_dropdown_value = activity_information.gender;
                 this.state.invite_cap_value = parseInt(activity_information.invite_cap);
                 this.state.participants_cap_value = parseInt(activity_information.participants_cap);
-                this.state.is_physical_event = activity_information.is_physical;
+                this.state.is_virtual_event = !activity_information.is_physical;
                 this.state.age_range_values = [activity_information.minimum_age, activity_information.maximum_age];
                 this.state.title = activity_information.title;
                 this.state.target_latitude = activity_information.target_location.latitude;
@@ -465,7 +465,7 @@ export class EditActivityScreen extends React.Component {
                 this.state.search_latitude = activity_information.search_location.latitude;
                 this.state.search_longitude = activity_information.search_location.longitude;
 
-                if (!this.state.is_physical_event) {
+                if (!this.state.is_virtual_event) {
                     this.state.virtual_link = this.state.address;
                 }
 
@@ -652,7 +652,7 @@ export class EditActivityScreen extends React.Component {
             participantsCapRender = (<View />);
         }
 
-        if (this.state.is_physical_event) {
+        if (this.state.is_virtual_event) {
             physicalEventLocation = (
                 <View>
                     <View style={inline_attribute_styles.body}>
@@ -951,14 +951,14 @@ export class EditActivityScreen extends React.Component {
                         <View style={main_styles.horizontal_bar}/>
                         <View style={inline_attribute_styles.body}>
                             <Text style={inline_attribute_styles.title_text}>
-                                Is physical event
+                                Is virtual
                             </Text>
                             <Switch
                                 trackColor = {{false: GlobalValues.DISTINCT_GRAY, true: GlobalValues.ORANGE_COLOR}}
                                 thumbColor = 'white'
                                 ios_backgroundColor = {GlobalValues.DISTINCT_GRAY}
                                 onValueChange = {this.updateSetPhysicalEventToEnable}
-                                value = {this.state.is_physical_event}
+                                value = {this.state.is_virtual_event}
                             />
                         </View>
                     </View>
@@ -1219,8 +1219,8 @@ export class EditActivityScreen extends React.Component {
     }
 
     updateSetPhysicalEventToEnable(value) {
-        this.setState({is_physical_event: value});
-        this.state.updateBody["is_physical"] = value;
+        this.setState({is_virtual_event: value});
+        this.state.updateBody["is_physical"] = !value;
         this.updateUpdateMade(false);
     }
 
@@ -1390,7 +1390,7 @@ export class EditActivityScreen extends React.Component {
 
         //validate address
         //can be null
-        if (this.state.is_physical_event) {
+        if (this.state.is_virtual_event) {
             if (this.state.target_address != "") {
                 //validate address
                 var result = await this.getGeoLocationFromAddress(this.state.address);

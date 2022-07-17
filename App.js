@@ -1,21 +1,13 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
 import 'react-native-gesture-handler';
 import * as Location from 'expo-location';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 
-import React, { lazy } from 'react';
+import React from 'react';
 
 import {WelcomeNavigator} from './screens/login/welcome_navigator.js';
 import {MainNavigator} from './screens/main/main_navigator.js';
-import { GlobalProperties, GlobalValues } from './global/global_properties.js';
+import { GlobalProperties} from './global/global_properties.js';
 import { GlobalEndpoints } from './global/global_endpoints.js';
 import { Alert, LogBox } from 'react-native';
 
@@ -23,6 +15,7 @@ import { LoadingScreen } from './screens/misc/loading_screen.js';
 import { MessageHandler } from './global/messages_handler.js';
 import 'react-native-get-random-values';
 import * as Font from 'expo-font';
+import mobileAds from 'react-native-google-mobile-ads';
 
 //expo
 Notifications.setNotificationHandler({
@@ -67,7 +60,9 @@ export class App extends React.Component {
   }
 
   async load() {
-		
+    //set system values
+    GlobalProperties.isAndroid = Platform.OS !== 'ios';
+
     //open realm
     GlobalProperties.messagesHandler = new MessageHandler();
 
@@ -84,20 +79,6 @@ export class App extends React.Component {
     //add notification listeners
     Notifications.addNotificationReceivedListener(this.handleNotification);
     Notifications.addNotificationResponseReceivedListener(this.handleNotificationResponse);
-    //Notifications.addPushTokenListener(registerDevicePushTokenAsync);
-    
-    /*this.props.navigation.addListener('focus', () => {
-        this.state.global_props = GlobalProperties.screen_props;
-
-        if (GlobalProperties.return_screen == "Validate Email Screen" && GlobalProperties.screen_props != null) {
-            
-            if (screen_props.success) {
-              this.connect();
-            }
-        }
-
-        GlobalProperties.screenActivated();
-    });*/
 
     LogBox.ignoreLogs([
       'Non-serializable values were found in the navigation state',
@@ -115,117 +96,18 @@ export class App extends React.Component {
       // Load a font `Montserrat` from a static resource
       Roboto: require('./assets/fonts/Roboto-Regular.ttf'),
     });
-  
-    //Alert.alert("There seems to be a network connection issue.\nCheck your internet.");
 
-    //if so, update server with new location
-    
-      /*//check if valid api token via endpoint
-
-      //make body
-      var body = {
-        "ApiToken": key,
-      };
-
-      var successful = false;
-
-      //make request
-      var foundResult = await GlobalEndpoints.makePostRequest(false, "/api/AccountManager/ValidateUserApiToken", body)
-          .then((result) => {
-              successful = true;
-              return(result);
-          })
-          .catch((error) => {
-              successful = false;
-              return(error);
-          });
-      
-      if (successful) {
-        var found = result.body.found;
-
-        if (found) {
-          //auth token is valid, can start using it to log in
-          this.state.is_logged_in = true;
-        }
-        else {
-          this.state.is_logged_in = false;
-          //not found, go to login screen
-        }
-      }
-      else {
-        this.state.is_logged_in = false;
-        //network error
-      }
-      
-
-      //if valid, logged in, set global value
-
-      //else, not logged in*/
-
-      //assumed auth token is still valid
+    /*await mobileAds()
+    .initialize()
+    .then(adapterStatues => {
+      console.log(adapterStatues);
+      console.log("------");
+    })
+    .catch(e => {console.log(e);})*/
 	}
-
-	/**
-    //open realm
-    GlobalProperties.messagesHandler = new MessageHandler();
-
-    //get username
-    GlobalProperties.get_key_value_pair("User_Username")
-    .then((value) => {
-      GlobalProperties.user_name = JSON.parse(value);
-    })
-    .catch(() => {
-      GlobalProperties.put_key_value_pair("User_Username", "");
-    });
-
-    //add notification listeners
-    Notifications.addNotificationReceivedListener(this.handleNotification);
-    Notifications.addNotificationResponseReceivedListener(this.handleNotificationResponse);
-    //Notifications.addPushTokenListener(registerDevicePushTokenAsync);
-    
-
-    LogBox.ignoreLogs([
-      'Non-serializable values were found in the navigation state',
-      'ViewPropTypes will be removed from React Native. Migrate to ViewPropTypes exported from \'deprecated-react-native-prop-types\'.'
-    ]);
-
-    //ask user permission to get location
-    let status = Location.requestForegroundPermissionsAsync()
-    .then(() => {
-      //successful, do nothing
-    })
-    .catch((error) => {
-      Alert.alert("Permission to access location was denied. Location is required to use this app");
-    });
-
-    Font.loadAsync({
-      // Load a font `Montserrat` from a static resource
-      R: require('./assets/fonts/Roboto-Light.ttf'),
-    })
-    .then(() => {
-
-    }).
-    catch(() => {
-      Alert.alert("Could not load font");
-    }); */
 
   async connect() {
     this.state.loading = true;
-    /*const timeoutPromise = new Promise((resolve, reject) => {
-      var timeout = setTimeout(() => {
-        resolve();
-      }, 1000);
-      //reject();
-    });
-
-    timeoutPromise.then(() => {
-      console.log("finished right");
-    }).catch(() => {
-      console.log("not in a good place");
-    });
-
-    console.log("here");*/
-
     if (this.state.reload) {
       this.state.reload = false;
 
@@ -563,32 +445,3 @@ export class App extends React.Component {
 }
 
 export default App;
-
-/**
- * TODO
- * add another other profile and other activity screen to other navigators and reference 
- * thoughs so goback goes back to the previous page on that stack and not just back to the explore screen
- */
-
-/*
-cd App
-- npm start # you can open iOS, Android, or web from here, or run them directly with the commands below.
-- npm run android
-- npm run ios # requires an iOS device or macOS for access to an iOS simulator
-- npm run web
-*/
-
-/*
-https://docs.expo.dev/versions/latest/sdk/securestore/
-https://docs.expo.dev/versions/latest/sdk/async-storage/
-*/
-
-/*
-fix drop box not showing what is selected
-fix going back to other pages arrow overlapping with header title
-edit images thing with not all the images appearing when it expands
-*/
-
-//gps: for android timeout issue: https://github.com/Agontuk/react-native-geolocation-service
-
-//to confirm email is correct, notify them when registering saying "look for an email in your inbox"

@@ -34,14 +34,14 @@ const main_styles = StyleSheet.create(
         },
         search_bar: {
             paddingHorizontal: 7,
-            backgroundColor: '#DFDFDF',
+            backgroundColor: GlobalValues.SEARCH_TEXT_INPUT_COLOR,
             borderRadius: 5,
             flexDirection: 'row',
             paddingVertical: 0,
             width: Math.trunc(Dimensions.get('window').width * 0.89),
         },
         text_input: {
-            backgroundColor: '#DFDFDF',
+            backgroundColor: GlobalValues.SEARCH_TEXT_INPUT_COLOR,
             color: 'darkgray',
             fontFamily: 'Roboto',
             fontSize: 14,

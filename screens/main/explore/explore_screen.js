@@ -1,11 +1,13 @@
 import React from 'react';
 import {StyleSheet, View, Text, Image, ScrollView, Dimensions, Alert, RefreshControl, TouchableOpacity} from 'react-native';
+import * as Device from 'expo-device';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons'; 
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { GlobalProperties, GlobalValues } from '../../../global/global_properties.js';
 import { GlobalEndpoints } from '../../../global/global_endpoints.js';
 import { LoadingScreen } from '../../misc/loading_screen.js';
+import {TestIds, BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
 
 const frame_styles = StyleSheet.create(
     {
@@ -64,6 +66,10 @@ const frame_styles = StyleSheet.create(
     }
 );
 
+const ad_styles = {
+
+};
+
 const main_styles = StyleSheet.create(
     {
         page: {
@@ -73,13 +79,13 @@ const main_styles = StyleSheet.create(
         },
         search_bar: {
             paddingHorizontal: 7,
-            backgroundColor: '#DFDFDF',
+            backgroundColor: GlobalValues.SEARCH_TEXT_INPUT_COLOR,
             borderRadius: 5,
             flexDirection: 'row',
             width: Math.trunc(Dimensions.get('window').width * 0.86),
         },
         text_input: {
-            backgroundColor: '#DFDFDF',
+            backgroundColor: GlobalValues.SEARCH_TEXT_INPUT_COLOR,
             color: 'darkgray',
             fontFamily: 'Roboto',
             fontSize: 14,
@@ -227,22 +233,6 @@ export class ExploreScreen extends React.Component {
         this.state.removeFocusListener();
     }
 
-    updateUsers() {
-        //when page increase is implemented, TODO get rid of this
-        this.state.frameComponents = [];
-
-        for (var i = 0; i < this.state.frames.length; i++) { 
-            var json = this.state.frames[i];
-
-            if (json.type == "person") {
-                this.state.frameComponents.push(<FrameComponent key={json.id} id={json.id} image_uri={json.profile_image_uri} type={json.type} name={json.name} description={json.description} age={json.age} distance={json.distance} navigation={this.props.navigation}/>);
-            }
-            else if (json.type == "activity") {
-                this.state.frameComponents.push(<FrameComponent key={json.id} id={json.id} type={json.type} name={json.name} description={json.description} date_time={json.date_time} distance={json.distance} navigation={this.props.navigation}/>);
-            }
-        }
-    }
-
     async updateSearch() {
         //if map has not been set
         if (GlobalProperties.map_params == null) {
@@ -343,19 +333,42 @@ export class ExploreScreen extends React.Component {
             //if result status is ok
             if (result.request.status ==  200) {
 
+                var new_frames;
+
                 if (GlobalProperties.search_type == "people") {
                     //get request body
-                    var users = JSON.parse(result.request.response).users;
-
-                    //add groups
-                    this.state.frames = users;
+                    new_frames = JSON.parse(result.request.response).users;
                 }
                 else if (GlobalProperties.search_type == "activities"){
                     //get request body
-                    var activities = JSON.parse(result.request.response).activities;
+                    new_frames = JSON.parse(result.request.response).activities;
+                }
 
-                    //add groups
-                    this.state.frames = activities;
+                if (this.state.page_number == 1) {
+                    this.state.frames = [];
+
+                    for (let i = 0; i < new_frames.length; i++) {
+                        if (i % 10 == 0 && i != 0) {
+                            this.state.frames.push({
+                                id: -1 * i,
+                                type: "ad"
+                            });
+                        }
+
+                        this.state.frames.push(new_frames[i]);
+                    }
+                }
+                else {
+                    for (let i = 0; i < new_frames.length; i++) {
+                        if (i % 10 == 0) {
+                            this.state.frames.push({
+                                id: -1 * i,
+                                type: "ad"
+                            });
+                        }
+
+                        this.state.frames.push(new_frames[i]);
+                    }
                 }
 
                 //update users
@@ -393,6 +406,24 @@ export class ExploreScreen extends React.Component {
 
         //once done, lazy update
         this.lazyUpdate();
+    }
+
+    updateUsers() {
+        this.state.frameComponents = [];
+
+        for (var i = 0; i < this.state.frames.length; i++) { 
+            var json = this.state.frames[i];
+
+            if (json.type == "person") {
+                this.state.frameComponents.push(<FrameComponent key={json.id} id={json.id} image_uri={json.profile_image_uri} type={json.type} name={json.name} description={json.description} age={json.age} distance={json.distance} navigation={this.props.navigation}/>);
+            }
+            else if (json.type == "activity") {
+                this.state.frameComponents.push(<FrameComponent key={json.id} id={json.id} type={json.type} name={json.name} description={json.description} date_time={json.date_time} distance={json.distance} navigation={this.props.navigation}/>);
+            }
+            else if (json.type == "ad") {
+                this.state.frameComponents.push(<FrameComponent key={json.id} id={json.id} type={json.type} />);
+            }
+        }
     }
 
     render() {
@@ -512,105 +543,129 @@ class FrameComponent extends React.Component{
         }
     }
 
-    render() {
-        var renderDescription = {};
-        
-        if (this.props.description != null && this.props.description != "") {
-            if (this.props.type == "person") {
-                renderDescription = (
-                    <View style={[frame_styles.inner_text_container, {maxHight: 50}]}>
-                        <Text numberOfLines={4} style={[frame_styles.description_text, {flex: 1, flexWrap: 'wrap'}]}>
-                            {this.props.description}
-                        </Text>
-                    </View>
-                );
-            }
-            else if (this.props.type == "activity") {
-                renderDescription = (
-                    <View style={[frame_styles.inner_text_container, {maxHight: 50}]}>
-                        <Text numberOfLines={3} style={[frame_styles.description_text, {flex: 1, flexWrap: 'wrap'}]}>
-                            {this.props.description}
-                        </Text>
-                    </View>
-                );
+    render() {        
+        if (this.props.type != "ad") {
+            var renderDescription = {};
+
+            if (this.props.description != null && this.props.description != "") {
+                if (this.props.type == "person") {
+                    renderDescription = (
+                        <View style={[frame_styles.inner_text_container, {maxHight: 50}]}>
+                            <Text numberOfLines={4} style={[frame_styles.description_text, {flex: 1, flexWrap: 'wrap'}]}>
+                                {this.props.description}
+                            </Text>
+                        </View>
+                    );
+                }
+                else if (this.props.type == "activity") {
+                    renderDescription = (
+                        <View style={[frame_styles.inner_text_container, {maxHight: 50}]}>
+                            <Text numberOfLines={3} style={[frame_styles.description_text, {flex: 1, flexWrap: 'wrap'}]}>
+                                {this.props.description}
+                            </Text>
+                        </View>
+                    );
+                }
+                else {
+                    renderDescription = (<View />);
+                }
             }
             else {
                 renderDescription = (<View />);
             }
+    
+            if (this.props.type == "person") {
+                return (
+                    <View style={frame_styles.box} >
+                        <TouchableHighlight underlayColor={"white"} onPress={() => {
+                            this.props.navigation.navigate("Other Explore Profile Screen", {id: this.props.id});
+                        }}>
+                            <View style={frame_styles.inner_box}>
+                                <Image style={frame_styles.background_image} source={handleImageURI(this.props.image_uri)}/>
+                                <View style={[frame_styles.text_container, {width: '65%'}]}>
+                                    <View style={frame_styles.inner_text_container}>
+                                        <Text numberOfLines={1} style={frame_styles.name_text}>
+                                            {this.state.name}
+                                        </Text> 
+                                    </View>
+                                    <View style={frame_styles.inner_text_apart_container}>
+                                        <Text style={frame_styles.main_text}>
+                                            <FontAwesome name="road" size={12} color="gray" style={filter_snaps_styles.icon}/>
+                                            {" " + this.props.distance + " miles"}
+                                        </Text> 
+                                        <Text style={frame_styles.main_text}>
+                                            <MaterialCommunityIcons name="baby" size={12} color="lightskyblue" />
+                                            {" " + this.props.age + " y.o."}
+                                        </Text>
+                                    </View>
+                                    {renderDescription}
+                                </View>
+                            </View>
+                        </TouchableHighlight>
+                    </View>
+                );
+            }
+            else if (this.props.type == "activity") {
+                return (
+                    <View style={frame_styles.box} >
+                        <TouchableHighlight underlayColor={"white"} onPress={() => {
+                            this.props.navigation.navigate("Other Activity Screen", {id: this.props.id, type: "none", viewing:""});
+                        }}>
+                            <View style={frame_styles.inner_box}>
+                                <View style={[frame_styles.text_container, {width: '100%'}]}>
+                                    <View style={frame_styles.inner_text_container}>
+                                        <Text style={frame_styles.name_text}>
+                                            {this.state.name}
+                                        </Text> 
+                                    </View>
+                                    <View style={[frame_styles.inner_text_apart_container]}>
+                                        <Text style={frame_styles.main_text}>
+                                            <FontAwesome name="road" size={12} color="gray" style={filter_snaps_styles.icon}/>
+                                            {" " + this.props.distance + " miles"}
+                                        </Text> 
+                                        <Text style={frame_styles.main_text}>
+                                            <FontAwesome name="calendar" size={12} color="red" />
+                                            {" " + this.props.date_time}
+                                        </Text> 
+                                    </View>
+                                    {renderDescription}
+                                </View>
+                            </View>
+                        </TouchableHighlight>
+                    </View>
+                );
+            }
+            else {
+                return (
+                    <View/>
+                );
+            }
         }
         else {
-            renderDescription = (<View />);
-        }
+            const productionID = GlobalProperties.isAndroid ? GlobalValues.ADMOB_ANDROID_ID : GlobalValues.ADMOB_IOS_ID;
+      
+            // Is a real device and running in production.
+            const adUnitID = Device.isDevice && !__DEV__ ? productionID : TestIds.BANNER;
 
-        if (this.props.type == "person") {
             return (
-                <View style={frame_styles.box} >
-                    <TouchableHighlight underlayColor={"white"} onPress={() => {
-                        this.props.navigation.navigate("Other Explore Profile Screen", {id: this.props.id});
-                    }}>
-                        <View style={frame_styles.inner_box}>
-                            <Image style={frame_styles.background_image} source={handleImageURI(this.props.image_uri)}/>
-                            <View style={[frame_styles.text_container, {width: '65%'}]}>
-                                <View style={frame_styles.inner_text_container}>
-                                    <Text numberOfLines={1} style={frame_styles.name_text}>
-                                        {this.state.name}
-                                    </Text> 
-                                </View>
-                                <View style={frame_styles.inner_text_apart_container}>
-                                    <Text style={frame_styles.main_text}>
-                                        <FontAwesome name="road" size={12} color="gray" style={filter_snaps_styles.icon}/>
-                                        {" " + this.props.distance + " miles"}
-                                    </Text> 
-                                    <Text style={frame_styles.main_text}>
-                                        <MaterialCommunityIcons name="baby" size={12} color="lightskyblue" />
-                                        {" " + this.props.age + " y.o."}
-                                    </Text>
-                                </View>
-                                {renderDescription}
-                            </View>
-                        </View>
-                    </TouchableHighlight>
-                </View>
-            );
-        }
-        else if (this.props.type == "activity") {
-            return (
-                <View style={frame_styles.box} >
-                    <TouchableHighlight underlayColor={"white"} onPress={() => {
-                        this.props.navigation.navigate("Other Activity Screen", {id: this.props.id, type: "none", viewing:""});
-                    }}>
-                        <View style={frame_styles.inner_box}>
-                            <View style={[frame_styles.text_container, {width: '100%'}]}>
-                                <View style={frame_styles.inner_text_container}>
-                                    <Text style={frame_styles.name_text}>
-                                        {this.state.name}
-                                    </Text> 
-                                </View>
-                                <View style={[frame_styles.inner_text_apart_container]}>
-                                    <Text style={frame_styles.main_text}>
-                                        <FontAwesome name="road" size={12} color="gray" style={filter_snaps_styles.icon}/>
-                                        {" " + this.props.distance + " miles"}
-                                    </Text> 
-                                    <Text style={frame_styles.main_text}>
-                                        <FontAwesome name="calendar" size={12} color="red" />
-                                        {" " + this.props.date_time}
-                                    </Text> 
-                                </View>
-                                {renderDescription}
-                            </View>
-                        </View>
-                    </TouchableHighlight>
-                </View>
-            );
-        }
-        else {
-            return (
-                <View>
+                <BannerAd 
+                    unitId={adUnitID}
+                    size={BannerAdSize.LARGE_BANNER}
+                    requestOptions={{
 
-                </View>
+                    }}
+                />
             );
-        }
 
+            /**
+                <BannerAd 
+                    unitId={adUnitID}
+                    size={BannerAdSize.LARGE_BANNER}
+                    requestOptions={{
+
+                    }}
+                /> */
+        }
     }
 }
 

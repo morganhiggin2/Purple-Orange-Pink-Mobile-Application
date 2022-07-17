@@ -1,6 +1,7 @@
 import { FileSystem } from 'expo-file-system';
 import * as SecureStore from 'expo-secure-store';
 import * as Device from 'expo-device';
+import { InterstitialAd, TestIds, AdEventType } from 'react-native-google-mobile-ads';
 
 //static values
 export const GlobalValues = {
@@ -22,6 +23,7 @@ export const GlobalValues = {
   DISTINCT_GRAY: '#c9c9c9',
   PINK_COLOR: '#FF2DC7',
   PURPLE_COLOR: 'A221FF',
+  SEARCH_TEXT_INPUT_COLOR: "#DFDFDF",
 
   //for other profiles
   MALE_COLOR: "#1b72e3",
@@ -65,13 +67,21 @@ export const GlobalValues = {
   ADDRESS_INFORMATION: "Only people who join you activity are able to see this",
 
   //search page size
-  SEARCH_PAGE_SIZE: 50,
+  //SEARCH_PAGE_SIZE: 50,
+  SEARCH_PAGE_SIZE: 10,
 
   //messages
   MESSAGES_PAGE_AMOUNT: 40,
+
+  //ads
+  ADMOB_ANDROID_ID: "ca-app-pub-4589296191079889~6156806437",
+  ADMOB_IOS_ID: "ca-app-pub-4589296191079889~5676610078"
 }
 
 export class GlobalProperties {
+    //system values
+    static isAndroid = false;
+
     //dynamic runtime values
     static auth_token = "";
     static expo_push_token = "";
@@ -131,7 +141,7 @@ export class GlobalProperties {
     static birthdate = new Date(Date.now());
 
 	  //for adds
-
+    static start_timestamp = 0;
 
     //when navigating to the next screen, call this method
     //pass in the navigation variable, screen name, and params
@@ -150,23 +160,6 @@ export class GlobalProperties {
     //update user location, send to server
     static updateLocation(latitude, longitude) {
       
-    }
-    
-    //download file to directory
-    static async download_to(fileName, uri) {
-        const downloadResumable = FileSystem.createDownloadResumable(
-            uri,
-            FileSystem.documentDirectory + 'profile_images/' + fileName,
-            {},
-            callback
-          );
-
-        try {
-            const { dir } = await downloadResumable.downloadAsync();
-                console.log('Finished downloading to ', dir);
-          } catch (e) {
-            console.error(e);
-          }
     }
 
     //EXPO SECURE STORE SYSTEM
@@ -216,12 +209,32 @@ export class GlobalProperties {
       return 7926.3812 * Math.asin(Math.sqrt(a));
     }
 
-    static showInterstitialAdd() {
-		const testID = 'google-test-id';
-		const productionID = 'my-id';
+    static check_interstitial_add() {
+      var currentTime = Date.now();
 
-		// Is a real device and running in production.
-		const adUnitID = Device.isDevice && !__DEV__ ? productionID : testID;
-		//https://docs.expo.dev/versions/latest/sdk/admob/#usage
-	}
+      if (currentTime - GlobalProperties.start_timestamp > 900000) {
+        GlobalProperties.start_timestamp = currentTime;
+        this.showInterstitialAdd();
+      }
+    }
+
+    static showInterstitialAdd() {
+      const productionID = GlobalProperties.isAndroid ? GlobalValues.ADMOB_ANDROID_ID : GlobalValues.ADMOB_IOS_ID;
+
+      // Is a real device and running in production.
+      const adUnitID = Device.isDevice && !__DEV__ ? productionID : TestIds.INTERSTITIAL;
+
+      //create request for ad
+      const interstitial = InterstitialAd.createForAdRequest(adUnitID, {
+        requestNonPersonalizedAdsOnly: true,
+      });
+
+      //set event listener for when it is done loading
+      var adEventListener = interstitial.addAdEventListener(AdEventType.LOADED, () => {
+        interstitial.show();
+      });
+
+      //load the ad
+      interstitial.load();
+	  }
 }

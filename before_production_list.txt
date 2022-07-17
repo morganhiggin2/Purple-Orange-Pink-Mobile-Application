@@ -1,0 +1,1 @@
+change test id to production id for admob ads (big and banner ones)

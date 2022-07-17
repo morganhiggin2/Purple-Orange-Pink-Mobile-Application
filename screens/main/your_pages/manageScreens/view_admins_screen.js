@@ -57,13 +57,13 @@ const main_styles = StyleSheet.create(
         },
         search_bar: {
             paddingHorizontal: 7,
-            backgroundColor: '#DFDFDF',
+            backgroundColor: GlobalValues.SEARCH_TEXT_INPUT_COLOR,
             borderRadius: 5,
             flexDirection: 'row',
             width: Math.trunc(Dimensions.get('window').width * 0.85),
         },
         text_input: {
-            backgroundColor: '#DFDFDF',
+            backgroundColor: GlobalValues.SEARCH_TEXT_INPUT_COLOR,
             color: 'darkgray',
             padding: 0,
             margin: 0,

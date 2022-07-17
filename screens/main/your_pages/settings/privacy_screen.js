@@ -241,8 +241,6 @@ export class PrivacyScreen extends React.Component {
             shown: this.state.shown,
         };
 
-        console.log(body);
-
         //if request was successful
         var successful = false;
         //make request        

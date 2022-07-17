@@ -82,24 +82,6 @@ export class EditImagesScreen extends React.Component {
     }
 
     componentDidMount() {
-
-        /*var profile_images = [];
-
-        //if there were image uri's sent
-        if (this.props.route.params.profile_images) {
-            for (var i = 0; i < this.props.route.params.profile_images.length; i++) {
-                profile_images.push(this.props.route.params.profile_images[i]);
-            }
-        }
-        //we have a problem, houston
-        else {
-            console.log("no images passed to the edit images, will display nothing!");
-        }
-        
-        this.setState({
-            profile_images: profile_images,
-        });*/
-
         GlobalProperties.return_screen = "Edit Images Screen";
         GlobalProperties.screen_props = {
             edit_image: false
@@ -146,8 +128,7 @@ export class EditImagesScreen extends React.Component {
 
             if (status !== 'granted') 
             {
-              //alert('Sorry, we need camera roll permissions to make this work!');
-              console.log("permission to camera roll not allowed!");
+              alert('Sorry, we need camera roll permissions to make this work!');
             }
         }
 
@@ -176,8 +157,6 @@ export class EditImagesScreen extends React.Component {
 
             var image_uri = Platform.OS === 'android' ? result_change.uri : result_change.uri.replace('file://', '');
 
-            console.log(result_change);
-
             //upload to server
             var body = new FormData();
             body.append('num', id);
@@ -187,34 +166,6 @@ export class EditImagesScreen extends React.Component {
                 name: 'photo.jpg'
             });
 
-            console.log(body);
-
-            /**{
-                    uri: Platform.OS === 'android' ? result_change.uri : result_change.uri.replace('file://', ''),
-                    name: "profile_image.jpg",
-                    type: result_change.type
-                } */
-
-            //make post request to upload image
-            
-            /*var axios = require('axios');
-
-            axios({
-                method: 'post',
-                url: GlobalValues.HOST + "/api/User/Friends/UploadProfileImage",
-                headers: { 
-                    "content-type": "multipart/form-data",
-                    'Cookie': '.AspNetCore.Identity.Application=' + GlobalProperties.auth_token,
-                },
-                data : body
-            }).then((response, status) => {
-                console.log(response);
-                console.log(status);
-            })
-            .catch(function(error) {
-                console.log(error.message);
-            })*/
-
             //if request was successful
             var successful = false;
 
@@ -222,7 +173,6 @@ export class EditImagesScreen extends React.Component {
             //make request
             result = await GlobalEndpoints.makePostRequestFormData(true, "/api/User/Friends/UploadProfileImage", body)
                 .then((result) => {
-                    console.log("finished");
                     if (result == undefined) {
                         successful = false;
                     }
@@ -232,7 +182,6 @@ export class EditImagesScreen extends React.Component {
                     return(result);
                 })
                 .catch((error) => {
-                    console.log(error);
                     successful = false;
                     return(error);
                 });
@@ -266,7 +215,6 @@ export class EditImagesScreen extends React.Component {
                 }
                 else if (result.response.status == 400 && result.response.data) {
                     Alert.alert(JSON.stringify(result.response.data));
-                    console.log(result.response.data);
                     return;
                 }
                 //handle not found case

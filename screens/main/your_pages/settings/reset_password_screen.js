@@ -27,6 +27,13 @@ const main_styles = StyleSheet.create(
             alignSelf: 'center',
             borderBottomWidth: 1,
             borderColor: GlobalValues.DARKER_OUTLINE,
+        },
+        error_message: {
+            color: 'red',
+            fontFamily: 'Roboto',
+            fontSize: 12,
+            alignSelf: 'center',
+            textAlign: 'center',
         }
     }
 );
@@ -75,13 +82,14 @@ const attribute_styles = StyleSheet.create({
         fontFamily: "Roboto",
     },
     text_input: {
-        textAlignVertical: "top",
         flex: 1,
         maxHeight: 95,
-        paddingVertical: 4,
+        paddingVertical: 2,
         paddingHorizontal: 4,
-        backgroundColor: '#EAEAEA',
-        borderRadius: 8,
+        backgroundColor: GlobalValues.SEARCH_TEXT_INPUT_COLOR,
+        fontSize: 14,
+        fontFamily: 'Roboto',
+        borderRadius: 4,
     },
     slider: {
         alignSelf: 'center',
@@ -96,6 +104,7 @@ const attribute_styles = StyleSheet.create({
         alignSelf: 'center'
     },
 });
+
 const post_button_styles = StyleSheet.create({
     button_view: {
         marginVertical: 10,
@@ -138,6 +147,7 @@ export class ResetPasswordScreen extends React.Component {
             updateMade: false,
         }
 
+        this.renderErrorMessage = this.renderErrorMessage.bind(this);
         this.updateOldPassword = this.updateOldPassword.bind(this);
         this.updateNewPassword = this.updateNewPassword.bind(this);
         this.updateNewPasswordConfirm = this.updateNewPasswordConfirm.bind(this);
@@ -182,6 +192,7 @@ export class ResetPasswordScreen extends React.Component {
                             </View>
                         </View>
                     </View>
+                    {this.renderErrorMessage()}
                     <View style={section_styles.gap} />
                     <View style={section_styles.gap} />
                     <View style={section_styles.gap} />
@@ -205,6 +216,22 @@ export class ResetPasswordScreen extends React.Component {
                 </View>
             </View>
         );
+    }
+
+    //render the error message if there is one 
+    renderErrorMessage() {
+        if (this.state.error_message != "") {
+            return (
+                <Text style={main_styles.error_message}>
+                    {this.state.error_message}
+                </Text>
+            );
+        }
+        else {
+            return(
+                <View style={{height: 0}} />
+            );
+        }
     }
     
     updateOldPassword(value) {
@@ -274,7 +301,7 @@ export class ResetPasswordScreen extends React.Component {
         }
 
         if (!(await this.validateFields(updatedPassword))) {
-            Alert.alert(this.state.error_message);
+            this.lazyUpdate();
             return;
         }
 
