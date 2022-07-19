@@ -152,8 +152,15 @@ export class BasicInfoScreen extends React.Component {
                 //regex expression
                 var reg = RegExp("\=(.*?)\;");
 
+                var token = "";
+
                 //get token
-                var token = reg.exec(result["request"]["responseHeaders"]["set-cookie"])[0];
+                if (Platform.OS == 'ios') {
+                    token = reg.exec(result["request"]["responseHeaders"]["Set-Cookie"])[0];
+                }
+                else {
+                    token = reg.exec(result["request"]["responseHeaders"]["set-cookie"])[0];
+                }
 
                 //avoid delimiters
                 token = token.substring(1, token.length - 1);

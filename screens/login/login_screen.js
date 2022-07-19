@@ -180,7 +180,6 @@ export class LoginScreen extends React.Component {
             //invalid request
             if (result.response.status == 400 && result.response.data) {
                 this.state.error_message = result.response.data;
-                console.log(this.state.error_message);
                 this.lazyUpdate();
             }
             //handle not found case
