@@ -191,8 +191,9 @@ export class EditImagesScreen extends React.Component {
 
                 //if result status is ok
                 if (result.request.status ==  200) {
+                    GlobalProperties.return_screen = "Edit Images Screen";
                     GlobalProperties.screen_props = {
-                        edit_image: true
+                        edit_images: true
                     }
 
                     this.lazyUpdate();
