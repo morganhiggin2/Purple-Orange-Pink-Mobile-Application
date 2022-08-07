@@ -5,6 +5,7 @@ import { Feather } from '@expo/vector-icons';
 import { GlobalProperties, GlobalValues } from '../../../global/global_properties';
 import { GlobalEndpoints } from '../../../global/global_endpoints';
 import * as Notifications from 'expo-notifications';
+
 const frame_styles = StyleSheet.create(
     {
         box: {
@@ -215,9 +216,6 @@ export class YourMessagesScreen extends React.Component {
         //set global property to false first (so if multiple notifications, they dont create many overlapping requests)
         GlobalProperties.reload_messages = false;
 
-        //set badge count to 0
-        Notifications.setBadgeCountAsync(0);
-
         //get pending messages
 
         //if request was successful
@@ -244,6 +242,8 @@ export class YourMessagesScreen extends React.Component {
 
             //if result status is ok
             if (result.request.status ==  200) {
+                //clear badge count
+                Notifications.setBadgeNumberAsync(0);
 
                 //get messages from json
                 var messages = JSON.parse(result.request.response).messages;

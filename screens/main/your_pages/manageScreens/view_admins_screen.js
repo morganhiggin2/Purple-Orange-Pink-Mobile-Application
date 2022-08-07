@@ -155,6 +155,12 @@ export class ViewAdminsScreen extends React.Component {
             }
         });
 
+        //ask for in store review
+        //the idea is to put this in a place where the user will visit when they are 
+        //1. not too budy
+        //2. only going to visit once they have used the app for a bit
+        GlobalProperties.askForInStoreReview();
+
         //get props passed in
         this.state.type = this.props.route.params.type;
 

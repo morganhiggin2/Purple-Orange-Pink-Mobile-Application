@@ -139,10 +139,7 @@ export class AboutScreen extends React.Component {
             return (
                 <View>
                     <View style={info_styles.body}>
-                        <View style={attribute_styles.body}>
-                            <Text style={attribute_styles.title_text}>
-                                About
-                            </Text>     
+                        <View style={attribute_styles.body}>  
                             <Text style={attribute_styles.title_text}>
                                 Developed by a UC Berkeley student, looking to help connect people. Made and solely produced by Morgan Higginbotham
                             </Text>                   

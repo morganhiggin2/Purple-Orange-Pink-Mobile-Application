@@ -152,7 +152,7 @@ export class EditImagesScreen extends React.Component {
                 result.uri, [
                     {resize: {width: 800, height: 800}}
                 ],
-                { compress: 1, format: SaveFormat.JPEG}
+                { format: SaveFormat.JPEG}
             );
 
             var image_uri = Platform.OS === 'android' ? result_change.uri : result_change.uri.replace('file://', '');

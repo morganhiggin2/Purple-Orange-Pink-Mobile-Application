@@ -129,7 +129,7 @@ const inline_attribute_styles = StyleSheet.create({
     },
     input_text_view: {
         flexDirection:  'row',
-        width: "70%",
+        width: "60%",
     },
     input_text_view_continuation: {
         flexDirection:  'row',

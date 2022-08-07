@@ -157,7 +157,7 @@ export class ContactSupportScreen extends React.Component {
                     <View style={info_styles.body}>
                         <View style={attribute_styles.body}>
                             <Text style={attribute_styles.title_text}>
-                                feedback
+                                Feedback
                             </Text>     
                             <View style={attribute_styles.input_text_view}>
                                 <TextInput style={attribute_styles.text_input} multiline={true} editable={true} maxLength={160} ref={(input) => {this.state.feedback_input_handler = input}}  numberOfLines={4} scrollEnables={true} defaultValue={this.state.feedback} onChangeText={(value) => {this.updatefeedback(value);}} onEndEditing={(value) => {this.updateUpdateMade(false)}}/>

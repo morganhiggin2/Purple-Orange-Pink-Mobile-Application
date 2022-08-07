@@ -17,7 +17,6 @@ export class SettingsNavigator extends React.Component {
         return (
             <Stack.Navigator screenOptions={{headerTitle: (<View style={{height: 0}}></View>), headerStatusBarHeight: StatusBar.currentHeight, headerStyle: {backgroundColor: "white", height: StatusBar.currentHeight}}} >
                 <Stack.Screen component={MainSettingsScreen} name="Main Settings Screen" options={{headerBackTitle: "back", headerStyle: {height: 0}}}/>      
-                
             </Stack.Navigator>
         );
     }

@@ -2,6 +2,7 @@ import { FileSystem } from 'expo-file-system';
 import * as SecureStore from 'expo-secure-store';
 import * as Device from 'expo-device';
 import { InterstitialAd, TestIds, AdEventType } from 'react-native-google-mobile-ads';
+import { Platform } from 'react-native';
 
 //static values
 export const GlobalValues = {
@@ -208,7 +209,7 @@ export class GlobalProperties {
       return 7926.3812 * Math.asin(Math.sqrt(a));
     }
 
-    static check_interstitial_add() {
+    static check_interstitial_ad() {
       var currentTime = Date.now();
 
       if (currentTime - GlobalProperties.start_timestamp > 900000) {
@@ -236,4 +237,42 @@ export class GlobalProperties {
       //load the ad
       interstitial.load();
 	  }
+
+    static async askForInStoreReview() {
+      var reviewed = await this.get_key_value_pair("AskedForReviewBoolean")
+      .then((val) => {
+        return val;
+      })
+      .catch (() => {
+        return null;
+      });
+
+      if (reviewed == null || !reviewed) {
+        /*if (Platform.OS === 'ios') {
+          const itunesItemId = ; //982107779
+          // Open the iOS App Store in the browser -> redirects to App Store on iOS
+          Linking.openURL(`https://apps.apple.com/app/apple-store/id${itunesItemId}?action=write-review`);
+          // Open the iOS App Store directly
+          Linking.openURL(
+            `itms-apps://itunes.apple.com/app/viewContentsUserReviews/id${itunesItemId}?action=write-review`
+          );
+        }
+        else {
+          const androidPackageName = ; //'host.exp.exponent'
+          // Open the Android Play Store in the browser -> redirects to Play Store on Android
+          Linking.openURL(
+            `https://play.google.com/store/apps/details?id=${androidPackageName}&showAllReviews=true`
+          );
+          // Open the Android Play Store directly
+          Linking.openURL(`market://details?id=${androidPackageName}&showAllReviews=true`);
+        }*/
+
+        //requires expo's StoreReview npm module
+      }
+      else {
+        await this.put_key_value_pair("AskedForReviewBoolean", true);
+      }
+
+      
+    }
 }

@@ -93,6 +93,7 @@ const filter_snaps_styles = StyleSheet.create(
             alignSelf: 'center',
             marginHorizontal: 2,
             marginVertical: 1,
+            marginBottom: 8,
         },
         container: {
             flexDirection: 'row',
@@ -162,7 +163,7 @@ export class ListScreen extends React.Component {
                     <View style={main_styles.top_bar_area_top}>
                         <View style={main_styles.search_bar}>
                             <Feather name="search" size={18} color="gray" style={{alignSelf: 'center'}}/>
-                            <TextInput style={main_styles.text_input} placeholder={"swimming, biking, poker..."} placeholderTextColor="gray" editable={true} maxLength={160} ref={(input) => {this.state.attributes_input_handler = input}} onEndEditing={(event) => {this.addFilter(event.nativeEvent.text)}}/>
+                            <TextInput style={main_styles.text_input} placeholder={"swimming, biking, poker..."} placeholderTextColor="gray" autoCapitalize={'none'} editable={true} maxLength={160} ref={(input) => {this.state.attributes_input_handler = input}} onEndEditing={(event) => {this.addFilter(event.nativeEvent.text)}}/>
                         </View>
                         <TouchableHighlight style={{alignSelf: 'center'}} underlayColor="white" onPress={() => {this.props.navigation.navigate("Explore Filters Screen");}}>
                             <Feather name="list" size={32} color="gray"/>

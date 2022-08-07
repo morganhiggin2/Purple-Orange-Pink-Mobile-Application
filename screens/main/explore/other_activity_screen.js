@@ -275,7 +275,7 @@ export class OtherActivityScreen extends React.Component {
     }
 
     componentDidMount() {
-        GlobalProperties.check_interstitial_add();
+        GlobalProperties.check_interstitial_ad();
         this.fetchActivityInformation();
     }
 

@@ -103,14 +103,6 @@ export class MainSettingsScreen extends React.Component {
                         </TouchableHighlight>
                     </View>
                     <View style={section_styles.body}>
-                        <TouchableHighlight underlayColor={"#b8b8b8"} onPress = {() => {}}>
-                            <View style={selector_styles.body}>
-                                <Text style={selector_styles.title_text}>
-                                    Notifications
-                                </Text>
-                                <MaterialIcons name="keyboard-arrow-right" size={28} color="black" style={selector_styles.arrow}/>
-                            </View>
-                        </TouchableHighlight>
                         <View style={main_styles.horizontal_bar}/>
                         <TouchableHighlight underlayColor={"#b8b8b8"} onPress = {() => {clearMessagesAlert(this.clearMessages);}}>
                             <View style={selector_styles.body}>
@@ -134,7 +126,7 @@ export class MainSettingsScreen extends React.Component {
                         <TouchableHighlight underlayColor={"#b8b8b8"} onPress = {() => {this.props.navigation.navigate("Contact Support Screen");}}>
                             <View style={selector_styles.body}>
                                 <Text style={selector_styles.title_text}>
-                                    Contact Support
+                                    Feedback and Support
                                 </Text>
                                 <MaterialIcons name="keyboard-arrow-right" size={28} color="black" style={selector_styles.arrow}/>
                             </View>
