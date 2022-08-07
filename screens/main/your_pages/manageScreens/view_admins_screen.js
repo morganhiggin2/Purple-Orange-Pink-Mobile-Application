@@ -171,7 +171,7 @@ export class ViewAdminsScreen extends React.Component {
 
         for (var i = 0; i < this.state.admins.length; i++) { 
             var json = this.state.admins[i];
-            this.state.adminComponents.push(<FrameComponent key={i} id={json.id} name={json.name} distance={json.distance} viewOtherProfile={this.viewOtherProfile}/>);
+            this.state.adminComponents.push(<FrameComponent key={i} id={json.id} name={json.name} distance={json.distance} image_uri={json.image_uri} viewOtherProfile={this.viewOtherProfile}/>);
         }
     }
 
@@ -310,6 +310,7 @@ class FrameComponent extends React.Component{
         this.state = {
             name: this.props.name,
             id: this.props.id,
+            image_uri: this.props.image_uri
         }
 
         if (this.state.name.length > 13) {
@@ -320,7 +321,7 @@ class FrameComponent extends React.Component{
     render() {
         return(
             <TouchableHighlight style={frame_styles.box} onPress={() => {this.props.viewOtherProfile(this.state.id);}}>
-                <ImageBackground style={frame_styles.background_image} source={require("../../../../assets/images/default_image.png")}>
+                <ImageBackground style={frame_styles.background_image} source={handleImageURI(this.state.image_uri)}>
                     <View style={frame_styles.text_container}>   
                         <Text style={frame_styles.name_text}>
                             {this.state.name}
@@ -329,5 +330,14 @@ class FrameComponent extends React.Component{
                 </ImageBackground>
             </TouchableHighlight>
         );
+    }
+}
+
+function handleImageURI(uri) {
+    if (uri == undefined || uri == "") {
+        return(require("../../../../assets/images/default_image.png"));
+    }
+    else {
+        return({uri: uri});
     }
 }

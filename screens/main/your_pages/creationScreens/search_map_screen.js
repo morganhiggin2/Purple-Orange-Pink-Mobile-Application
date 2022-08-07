@@ -1,6 +1,5 @@
 import React from 'react';
 import {StyleSheet, View, Dimensions, Alert, TouchableOpacity} from 'react-native';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons'; 
 import MapView from 'react-native-maps';
 import { Marker } from 'react-native-maps';
@@ -227,6 +226,7 @@ export class SearchMapScreen extends React.Component {
             <Marker 
                 key={-1}
                 coordinate={{latitude: GlobalProperties.default_map_params.latitude, longitude:GlobalProperties.default_map_params.longitude}}
+                tappable={false}
             >
                 <View style={map_styles.current_location_marker}/>
             </Marker>

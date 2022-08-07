@@ -6,9 +6,9 @@ import { InterstitialAd, TestIds, AdEventType } from 'react-native-google-mobile
 //static values
 export const GlobalValues = {
   //for server
-  HOST: "https://api.purpleorangepink.com", //"https://localhost:5001/",
+  HOST: "https://api.purpleorangepink.com",
   //timout value
-  CONNECTION_RETRY_TIME: 5000,
+  CONNECTION_RETRY_TIME: 8000,
 
   //colors
   WELCOME_SCREENS_COLOR: "#FFE1D6",
@@ -41,7 +41,6 @@ export const GlobalValues = {
   ACTIVE_OPACITY: 0.7,
 
   //map
-  MARKER_IMAGE_PATHS: ["https://cpng.pikpng.com/pngl/s/43-430057_pixel-heart-pixel-heart-png-transparent-clipart.png", "path_from_base_image_2"],
   GAP_OVERLAP_REFRESH_RATIO: 0.25,
 
   //map current location colors

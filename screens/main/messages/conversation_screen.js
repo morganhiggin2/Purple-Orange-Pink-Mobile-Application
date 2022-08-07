@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, SafeAreaView, Dimensions, FlatList, Alert, RefreshControl, TouchableOpacity} from 'react-native';
+import {StyleSheet, View, Text, TextInput, SafeAreaView, Dimensions, FlatList, Alert, RefreshControl, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard} from 'react-native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { Feather} from '@expo/vector-icons'; 
 import { GlobalProperties, GlobalValues } from '../../../global/global_properties';
@@ -25,6 +25,7 @@ const main_styles = StyleSheet.create(
         page: {
             backgroundColor: GlobalValues.DARKER_WHITE,
             height: '100%',
+            display: 'flex'
         },
         search_bar: {
             backgroundColor: GlobalValues.SEARCH_TEXT_INPUT_COLOR,
@@ -96,6 +97,32 @@ const blip_styles = StyleSheet.create(
     }
 );
 
+const HeaderTitle = (props) => {
+    if (props.state.type == 0) {
+        return(
+            <TouchableOpacity activeOpacity={1.0} onPress={() => {this.viewOtherProfile(props.state.other_user_id);}} >
+                <Text style={{fontSize: 24, color: 'black', textAlign: 'center'}}>
+                    {props.title}
+                </Text>
+            </TouchableOpacity>
+        );
+    }
+    else if (props.state.type == 1) {
+        return (
+            <Text style={{fontSize: 24, color: 'black'}}>
+                {props.title}
+            </Text>
+            );
+    }
+    else {
+        return (
+        <Text style={{fontSize: 24, color: 'black'}}>
+            {props.title}
+        </Text>
+        );
+    }
+}
+
 export class ConversationScreen extends React.Component {
     constructor(props) {
         super(props);
@@ -120,43 +147,22 @@ export class ConversationScreen extends React.Component {
             messages_input_handler: null,
             message: "",
             showSendButton: false,
+
+            keyboardShowListener: null,
+            keyboardHideListener: null,
+            keyboardPadding: 0,
         };
 
-        this.props.navigation.setOptions({headerTitle: () => <this.HeaderTitle title={this.limitTitle(this.state.title)}/>});
+        this.props.navigation.setOptions({headerTitle: () => <HeaderTitle state={this.state} title={this.limitTitle(this.state.title)}/>});
 
         this.viewOtherProfile = this.viewOtherProfile.bind(this);
         this.limitTitle = this.limitTitle.bind(this);
-        this.HeaderTitle = this.HeaderTitle.bind(this);
         this.fetchMessages = this.fetchMessages.bind(this);
         this.onChangeMessage = this.onChangeMessage.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
+        this.keyboardShowed = this.keyboardShowed.bind(this);
+        this.keyboardHide = this.keyboardHide.bind(this);
         this.lazyUpdate = this.lazyUpdate.bind(this);
-    }
-    
-    HeaderTitle(props) {
-        if (this.state.type == 0) {
-            return(
-                <TouchableOpacity activeOpacity={1.0} onPress={() => {this.viewOtherProfile(this.state.other_user_id);}} >
-                    <Text style={{fontSize: 24, color: 'black', textAlign: 'center'}}>
-                        {props.title}
-                    </Text>
-                </TouchableOpacity>
-            );
-        }
-        else if (this.state.type == 1) {
-            return (
-                <Text style={{fontSize: 24, color: 'black'}}>
-                    {props.title}
-                </Text>
-                );
-        }
-        else {
-            return (
-            <Text style={{fontSize: 24, color: 'black'}}>
-                {props.title}
-            </Text>
-            );
-        }
     }
 
     limitTitle(title) {
@@ -179,12 +185,27 @@ export class ConversationScreen extends React.Component {
             _id: this.state._id,
         };
 
+        this.state.keyboardShowListener = Keyboard.addListener('keyboardWillShow', this.keyboardShowed);
+        this.state.keyboardHideListener = Keyboard.addListener('keyboardWillHide', this.keyboardHide);
+
         //fetch messages
         this.fetchMessages();
     }
 
     componentWillUnmount() {
         this.state.messages.removeAllListeners();
+        this.state.keyboardShowListener.remove();
+        this.state.keyboardHideListener.remove();
+    }
+
+    keyboardShowed(event) {
+        if (Platform.OS == 'ios') {
+            this.setState({keyboardPadding: event.endCoordinates.height - 33});
+        }
+    }
+
+    keyboardHide() {
+        this.setState({keyboardPadding: 0});
     }
 
     async fetchMessages() {
@@ -232,18 +253,18 @@ export class ConversationScreen extends React.Component {
                     <Text>
                         Loading...
                     </Text> ) : (
-                        <SafeAreaView style={{width: "100%", height: "100%"}}>
+                        <SafeAreaView style={{flex: 1}}>
                             <FlatList
                                 data={this.state.messages.slice(0, this.state.messages_count)}
                                 renderItem={renderItem}
                                 keyExtractor={item => (item.id.toString() + this.state.last_timestamp.getSeconds().toString())}
-                                style={{width: "100%", height: "100%"}}
+                                style={{}}
                                 inverted={true}
                                 onEndReached={() => {this.state.messages_count += GlobalValues.MESSAGES_PAGE_AMOUNT; this.lazyUpdate();}}
                                 refreshControl={<RefreshControl refreshing={false} 
                                 onRefresh={() => {this.lazyUpdate();}}/>}
-                                />
-                            <View style={main_styles.top_bar}>
+                            /> 
+                            <View style={[main_styles.top_bar, {marginBottom: this.state.keyboardPadding}]}>
                                 <View style={main_styles.search_bar}>
                                     <TextInput style={main_styles.text_input} ref={(input) => {this.state.messages_input_handler = input}}  onChangeText={(text) => {this.onChangeMessage(text);}} placeholderTextColor="black" maxHeight={38} multiline={true}/>
                                 </View>

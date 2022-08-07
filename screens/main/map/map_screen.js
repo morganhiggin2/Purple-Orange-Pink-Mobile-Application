@@ -2,7 +2,6 @@ import React from 'react';
 import {StyleSheet, View, Text, Dimensions, Alert} from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { MaterialIcons } from '@expo/vector-icons'; 
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import {GlobalProperties, GlobalValues} from '../../../global/global_properties.js';
 import { GlobalEndpoints } from '../../../global/global_endpoints.js';
 import MapView from 'react-native-maps';
@@ -393,6 +392,7 @@ export class MapScreen extends React.Component {
                         key={index}
                         coordinate={{latitude: marker.latitude, longitude: marker.longitude}}
                         pinColor={GlobalValues.ACTIVITY_COLOR}
+                        tappable={false}
                     >
                         <Text style={{color: 'white', fontWeight: 'bold', fontSize: 18, textAlign: 'center', backgroundColor: GlobalValues.PEOPLE_COLOR, borderRadius: 15, padding: 3, minWidth: 30, minHeight: 30}}>
                             {marker.count}

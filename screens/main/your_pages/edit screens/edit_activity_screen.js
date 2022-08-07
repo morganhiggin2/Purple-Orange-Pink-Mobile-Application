@@ -62,7 +62,7 @@ const attribute_styles = StyleSheet.create({
         backgroundColor: 'white',
         flexDirection: "column",
         paddingHorizontal: 10,
-        paddingVertical: 2,
+        paddingVertical: 8,
     },
     input_text_view: {
         flexDirection:  'row',
@@ -216,15 +216,16 @@ const filter_snaps_styles = StyleSheet.create(
             borderRadius: 5,
             borderWidth: 2,
             paddingHorizontal: 3,
-            paddingVertical: 1,
+            paddingVertical: 0,
             fontFamily: 'Roboto',
             fontSize: 16,
+            textAlign: 'center',
             color: 'white', 
             fontWeight: 'bold',
-            alignSelf: 'flex-start',
+            alignSelf: 'center',
             marginHorizontal: 2,
-            marginBottom: 8,
-            textAlign: 'center',
+            marginVertical: 1,
+            marginBottom: 8
         },
         container: {
             flexDirection: 'row',
@@ -465,8 +466,11 @@ export class EditActivityScreen extends React.Component {
                 this.state.search_latitude = activity_information.search_location.latitude;
                 this.state.search_longitude = activity_information.search_location.longitude;
 
-                if (!this.state.is_virtual_event) {
+                if (this.state.is_virtual_event) {
                     this.state.virtual_link = this.state.address;
+                }
+                else {
+                    this.state.target_address = this.state.address;
                 }
 
                 if (this.state.target_latitude == this.state.search_latitude && this.state.target_longitude == this.state.search_longitude) {
@@ -652,7 +656,7 @@ export class EditActivityScreen extends React.Component {
             participantsCapRender = (<View />);
         }
 
-        if (this.state.is_virtual_event) {
+        if (!this.state.is_virtual_event) {
             physicalEventLocation = (
                 <View>
                     <View style={inline_attribute_styles.body}>
@@ -746,7 +750,7 @@ export class EditActivityScreen extends React.Component {
                             The link is
                         </Text>
                         <View style={inline_attribute_styles.input_text_view}>
-                            <TextInput style={inline_attribute_styles.text_input} placeholder="discord, steam..." placeholderTextColor="gray" autoCorrect={false} editable={true} maxLength={160} onChangeText={(value) => {this.updateVirtualLink(value);}} onEndEditing={() => {this.updateUpdateMade(false);}}/>
+                            <TextInput style={inline_attribute_styles.text_input} placeholder="discord, steam..." placeholderTextColor="gray" autoCorrect={false} editable={true} maxLength={160} defaultValue={this.state.virtual_link} onChangeText={(value) => {this.updateVirtualLink(value);}} onEndEditing={() => {this.updateUpdateMade(false);}}/>
                         </View>
                     </View>
                 </View>
@@ -906,7 +910,7 @@ export class EditActivityScreen extends React.Component {
                                 We are going to 
                             </Text>
                             <View style={inline_attribute_styles.input_text_view}>
-                                <TextInput style={inline_attribute_styles.text_input} placeholder={"play videogames"} placeholderTextColor="gray" autoCorrect={false} editable={true} maxLength={160} onChangeText={(value) => {this.updateTitle(value);}} onEndEditing={() => {this.updateUpdateMade(false);}}/>
+                                <TextInput style={inline_attribute_styles.text_input} placeholder={"play videogames"} placeholderTextColor="gray" autoCorrect={false} editable={true} maxLength={160} defaultValue={this.state.title} onChangeText={(value) => {this.updateTitle(value);}} onEndEditing={() => {this.updateUpdateMade(false);}}/>
                             </View>
                         </View>
                         <View style={main_styles.horizontal_bar}/>
@@ -938,7 +942,7 @@ export class EditActivityScreen extends React.Component {
                                 It's about
                             </Text>
                             <View style={inline_attribute_styles.input_text_view}>
-                                <TextInput style={inline_attribute_styles.text_input} placeholder="biking, partying, gaming..." placeholderTextColor="gray" editable={true} maxLength={160} ref={(input) => {this.state.attributes_input_handler = input}} onEndEditing={(event) => {this.addFilter(event.nativeEvent.text)}}/>
+                                <TextInput style={inline_attribute_styles.text_input} placeholder="biking, partying, gaming..." placeholderTextColor="gray" editable={true} autoCapitalize={"none"} maxLength={160} ref={(input) => {this.state.attributes_input_handler = input}} onEndEditing={(event) => {this.addFilter(event.nativeEvent.text)}}/>
                             </View>
                         </View>
                         <View style={filter_snaps_styles.container}> 
@@ -987,18 +991,22 @@ export class EditActivityScreen extends React.Component {
         else {
             return (
                 <View style={[main_styles.page, {flex: 1}]}>
-                    <FlatList data={[{}]} keyExtractor={() => "dummy"} listEmptyComponent={null} renderItem={renderComponent} style={{zIndex: 99, flex: 1}}/><View style={post_button_styles.button_view}>
-                    
-                    {this.state.updateMade ? (
-                        <TouchableHighlight style={post_button_styles.button} underlayColor={'#ff6e6e'} onPress={() => {this.syncUpdates()}}>
-                        <Text style={post_button_styles.button_text}>
-                            Save Updates
-                        </Text>
-                        </TouchableHighlight>
-                    ) : (
-                        <View/>
-                    )}
-                    
+                    <FlatList 
+                        data={[{}]} 
+                        keyExtractor={() => "dummy"} 
+                        listEmptyComponent={null} 
+                        renderItem={renderComponent} 
+                        style={{zIndex: 99, flex: 1}}/>
+                    <View style={post_button_styles.button_view}>
+                        {this.state.updateMade ? (
+                            <TouchableHighlight style={post_button_styles.button} underlayColor={'#ff6e6e'} onPress={() => {this.syncUpdates()}}>
+                            <Text style={post_button_styles.button_text}>
+                                Save Updates
+                            </Text>
+                            </TouchableHighlight>
+                        ) : (
+                            <View/>
+                        )}
                     </View>
                 </View>
             );
@@ -1500,7 +1508,7 @@ class DropDown extends React.Component {
                     //, flexBasis: 'sp'
                     <View style={{alignSelf: 'flex-end'}}>
                         <TouchableOpacity style={{flexDirection: 'row', justifyContent: 'space-between'}} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.setState({open: true})}}>
-                            <Text style={{marginRight: 5}}>
+                            <Text style={{marginRight: 5, fontSize: 16, fontFamily: 'Roboto', fontStyle: 'normal', fontWeight: 'normal'}}>
                                 {this.state.value == null ? "Select" : this.state.items.find(e => e.value == this.state.value).label} 
                             </Text>
                             <AntDesign style={{alignSelf: 'center'}} name="down" size={14} color="black"/>
@@ -1517,7 +1525,7 @@ class DropDown extends React.Component {
                     setValue={this.setValue}
                     setItems={this.setItems}
                     listMode={"SCROLLVIEW"}
-                    textStyle={{fontSize: 14}}
+                    textStyle={{fontSize: 14, fontFamily: 'Roboto'}}
                     style={{borderWidth: 0, width: this.state.width}}
                     dropDownContainerStyle={{borderWidth: 0, width: this.state.width}}
                     maxHeight={80}
@@ -1566,7 +1574,7 @@ class Slider extends React.Component {
                     min={this.props.min}
                     max={this.props.max}
                     step={this.props.step}
-                    sliderLength={300}
+                    sliderLength={320}
                     isMarkersSeparated = {true}
                     width={'100%'}
                     snapped={true}
@@ -1574,9 +1582,10 @@ class Slider extends React.Component {
                     showSteps = {true}
                     showStepLabels = {true}
                     trackStyle = {{backgroundColor: GlobalValues.DISTINCT_GRAY, height: 4}}
-                    selectedStyle={{backgroundColor: this.props.backgroundColor, height: 4}}
-                    markerStyle={{backgroundColor: 'white', borderColor: GlobalValues.DISTINCT_GRAY, borderWidth: 1, padding: 8}}
-                    ios_backgroundColor = {GlobalValues.DISTINCT_GRAY}
+                    selectedStyle={{backgroundColor: GlobalValues.ORANGE_COLOR, height: 4}}
+                    markerStyle={{backgroundColor: 'white', borderColor: GlobalValues.DISTINCT_GRAY, borderWidth: 2, width: 20, height: 20}}
+                    containerStyle={{margin: 0, padding: 0, height: 30}}
+                    ios_backgroundColor = {GlobalValues.ORANGE_COLOR}
                 />
             );
         }
@@ -1596,9 +1605,9 @@ class Slider extends React.Component {
                     showSteps = {true}
                     showStepLabels = {true}
                     trackStyle = {{backgroundColor: GlobalValues.DISTINCT_GRAY, height: 4}}
-                    selectedStyle={{backgroundColor: this.props.backgroundColor, height: 4}}
-                    markerStyle={{backgroundColor: 'white', borderColor: GlobalValues.DISTINCT_GRAY, borderWidth: 1, padding: 8}}
-                    ios_backgroundColor = {GlobalValues.DISTINCT_GRAY}
+                    selectedStyle={{backgroundColor: GlobalValues.ORANGE_COLOR, height: 4}}
+                    markerStyle={{backgroundColor: 'white', borderColor: GlobalValues.DISTINCT_GRAY, borderWidth: 2, width: 20, height: 20}}
+                    ios_backgroundColor = {GlobalValues.ORANGE_COLOR}
                 />
             );
         }

@@ -1,9 +1,10 @@
 import React from 'react';
-import {StyleSheet, View, Text, TextInput, Alert, FlatList} from 'react-native';
+import {StyleSheet, View, Text, TextInput, Alert, FlatList, Platform} from 'react-native';
 import {TouchableOpacity, TouchableHighlight} from 'react-native-gesture-handler';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import {AntDesign} from '@expo/vector-icons'; 
 import DropDownPicker from 'react-native-dropdown-picker';
-import MultiSlider from '@ptomasroos/react-native-multi-slider';
+import { PickerIOS } from '@react-native-picker/picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { GlobalValues} from '../../global/global_properties';
 import { GlobalEndpoints } from '../../global/global_endpoints';
 
@@ -110,6 +111,9 @@ const attribute_styles = StyleSheet.create({
         alignSelf: 'center',
         marginVertical: 8,
         paddingVertical: 10,
+        borderColor: 'black',
+        borderBottomWidth: 1,
+        borderRadius: 4,
     },
     input_text_view: {
         flexDirection:  'row',
@@ -134,8 +138,6 @@ const attribute_styles = StyleSheet.create({
         paddingVertical: 2,
         paddingHorizontal: 4,
         backgroundColor: 'white',
-        borderColor: 'black',
-        borderBottomWidth: 1,
         borderRadius: 4,
         fontFamily: "Roboto",
     },
@@ -179,20 +181,16 @@ const inline_attribute_styles = StyleSheet.create({
     },
     text_input: {
       textAlignVertical: "center",
-      padding: 10,
-      paddingVertical: 10,
-      marginVertical: 8,
       width: '100%',
       textAlign: 'left',
+      paddingVertical: 2,
+      paddingHorizontal: 4,
       backgroundColor: 'white',
-      color: 'darkgray',
-      borderBottomWidth: 1,
       borderColor: 'black',
       fontFamily: "Roboto",
     },
     drop_down_selector: {
         paddingHorizontal: 4,
-        marginTop: 13,
         alignSelf: 'flex-end',
     },
     drop_down_selector_gap: {
@@ -368,37 +366,38 @@ export class ProfileInfoScreen extends React.Component {
             return (
                 <View>
                     <View style={info_styles.body}>
-                        <View style={attribute_styles.body}>
-                            <View style={attribute_styles.input_text_view}>
-                                <TextInput style={attribute_styles.text_input} onChangeText={(input)  => {this.updateName(input);}} placeholderTextColor="gray" placeholder="Name" editable={true} maxLength={160}/>
+                        <View style={inline_attribute_styles.body}>
+                            <View style={inline_attribute_styles.input_text_view}>
+                                <TextInput style={inline_attribute_styles.text_input} onChangeText={(input)  => {this.updateName(input);}} placeholderTextColor="gray" placeholder="Name" editable={true} maxLength={160}/>
                             </View>
                         </View>
                         <View style={inline_attribute_styles.body}>
                             <Text style={inline_attribute_styles.title_text}>
                                 Birth Date
-                            </Text>       
+                            </Text>         
                             <View style={attribute_styles.input_text_view}>
-                                    <TouchableOpacity onPress={() => this.setState({showDatePicker: true})}>
+                                <TouchableOpacity onPress={() => this.setState({showDatePicker: true})}>
                                     <Text style={{color: GlobalValues.ORANGE_COLOR}}>
                                             {this.showDate()} 
                                             {" "}
                                     </Text>
                                 </TouchableOpacity>
-                            </View>   
-                        </View>
+                            </View>  
+                        </View> 
                         {this.showDatePicker()}   
-                        <View style={[inline_attribute_styles.body, {paddingBottom: 40}]}>
+                        <View style={[inline_attribute_styles.body, Platform.OS == 'ios' ? {} : {paddingBottom: 40}]}>
                             <Text style={[inline_attribute_styles.title_text, {alignSelf: 'flex-end'}]}>
                                 Gender
                             </Text>
-                            <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {width: 120, alignSelf: 'flex-end'}]}>
+                            <View style={[inline_attribute_styles.drop_down_selector, Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH} : {}]}>
                                 <DropDown 
-                                        style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
-                                        items={[{label: 'Male', value: 'male'}, {label: 'Female', value: 'female', }, {label: "Other", value: "other"}]}
-                                        onChangeValue = {this.updateGenderDropDownValue}
-                                        />
+                                    style={Platform.OS == 'ios' ? {minWidth: GlobalValues.IOS_DROPDOWN_WIDTH, flexDirection: 'row'} : {}}
+                                    items={[{label: 'Male', value: 'male'}, {label: 'Female', value: 'female'}, {label: 'Other', value: 'other'}]}
+                                    onChangeValue = {this.updateGenderDropDownValue}
+                                    width = {110}
+                                />
                             </View>
-                        </View>
+                        </View> 
                         {this.renderErrorMessage()}
                     </View>
                     <View style={section_styles.gap} />
@@ -512,32 +511,28 @@ export class ProfileInfoScreen extends React.Component {
     }
 }
 
-
 class DropDown extends React.Component {
     constructor(props) {
-      super(props);
-      
-      this.state = {
-        open: false,
-        value: null,
-        items: props.items
-      };
+        super(props);
 
-      if (this.props["currentValue"] != null) {
-          this.state.value = this.props.currentValue;
-      }
-  
-      this.setValue = this.setValue.bind(this);
-      this.changeValue = this.changeValue.bind(this);
+        this.state = {
+        open: false,
+        value: props.currentValue,
+        items: props.items,
+        width: props.width,
+        };
+    
+        this.setValue = this.setValue.bind(this);
+        this.changeValue = this.changeValue.bind(this);
     }
-  
+    
     //set the open state
     setOpen = (open) => {
-      this.setState({
+        this.setState({
         open: open
-      });
+        });
     }
-  
+    
     //set the value (ANDROID, involves a callback)
     setValue = (callback) => {
         //call the changeitem method from props
@@ -555,21 +550,19 @@ class DropDown extends React.Component {
             value: item
         }));
     }
-  
+    
     //set the items (ANDROID, involves a callback)
     setItems = (callback) => {
-      this.setState(state => ({
+        this.setState(state => ({
         items: callback(state.items)
-      }));
+        }));
     }
-  
+    
     render() {
-      const { open, value, items } = this.state;
-  
-      return (
-        items ? (
+        return (
+        this.state.items ? (
             Platform.OS == 'ios' ? (
-                open ? (
+                this.state.open ? (
                     <PickerIOS
                         //open={open}
                         selectedValue={this.state.value}
@@ -577,12 +570,12 @@ class DropDown extends React.Component {
                         onValueChange={(value) => {this.changeValue(value); this.setOpen(false)}}
                         style={{width: GlobalValues.IOS_DROPDOWN_WIDTH}}
                         >
-                            {items.map((data) => {
+                            {this.state.items.map((data) => {
                                 return (
                                 <PickerIOS.Item
-                                   key={data.label}
-                                   label={data.label}
-                                   value={data.value}
+                                    key={data.label}
+                                    label={data.label}
+                                    value={data.value}
                                 />);
                             })}
                     </PickerIOS>
@@ -590,31 +583,32 @@ class DropDown extends React.Component {
                     //, flexBasis: 'sp'
                     <View style={{alignSelf: 'flex-end'}}>
                         <TouchableOpacity style={{flexDirection: 'row', justifyContent: 'space-between'}} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.setState({open: true})}}>
-                            <Text style={{marginRight: 5}}>
+                            <Text style={{marginRight: 5, fontSize: 16, fontFamily: 'Roboto', fontStyle: 'normal', fontWeight: 'normal'}}>
                                 {this.state.value == null ? "Select" : this.state.items.find(e => e.value == this.state.value).label} 
                             </Text>
-                            <AntDesign style={{marginRight: 5}} name="down" size={14} color="black"/>
+                            <AntDesign style={{alignSelf: 'center'}} name="down" size={14} color="black"/>
                         </TouchableOpacity>
                     </View>
                 )
             ) : (
-                <View>
+                <View style={{width: this.state.width}}>
                     <DropDownPicker
-                    open={open}
-                    value={value}
-                    items={items}
+                    open={this.state.open}
+                    value={this.state.value}
+                    items={this.state.items}
                     setOpen={this.setOpen}
                     setValue={this.setValue}
                     setItems={this.setItems}
                     listMode={"SCROLLVIEW"}
-                    style={{borderWidth: 0, height: 20}}
-                    dropDownContainerStyle={{borderWidth: 0}}
-                    maxHeight={120}
+                    textStyle={{fontSize: 14, fontFamily: 'Roboto'}}
+                    style={{borderWidth: 0, width: this.state.width}}
+                    dropDownContainerStyle={{borderWidth: 0, width: this.state.width}}
+                    maxHeight={80}
                     placeholder={"Select"}
                     />
 
-                    {open ? (
-                        <View style={{height: 120}}/>
+                    {this.state.open ? (
+                        <View style={{height: 90}}/>
                     ) : (
                         <View/>
                     )}
@@ -625,60 +619,6 @@ class DropDown extends React.Component {
 
             </View>
         )
-      );
-    }
-}
-
-class Slider extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            value: props.initialValue
-        }
-    }
-
-    render() {
-        return(
-            <MultiSlider
-                values = {this.value}
-                onValuesChange = {this.props.onChangeValue}
-                min={this.props.min}
-                max={this.props.max}
-                step={this.props.step}
-                sliderLength={300}
-                isMarkersSeparated = {true}
-                width={'100%'}
-                showSteps = {true}
-                showStepLabels = {true}
-                trackStyle = {{backgroundColor: '#b8b8b8', height: 4}}
-                selectedStyle={{backgroundColor: this.props.backgroundColor, height: 4}}
-                markerStyle={{backgroundColor: 'white', borderColor: '#b8b8b8', borderWidth: 1, padding: 8}}
-                ios_backgroundColor = {'#b8b8b8'}
-            />
         );
     }
-}
-
-//create a delete alert for deleting an attribute of id=id from
-// a json data structure with id attributes, each different.
-const deleteAlert = (frameComponent, DATA, id) => {
-    Alert.alert(
-        "Delete",
-        "Are you sure you want to delete this attribute?",
-        [
-            {
-                text: "Cancel",
-                onPress: () => {},
-                style: "cancel",
-            },
-            {
-                text: "Delete",
-                onPress: () => frameComponent.afterDeleteAlert(id, DATA),
-            }
-        ],
-        {
-            cancelable: true,
-        }
-    );
 }

@@ -144,7 +144,7 @@ export class AboutScreen extends React.Component {
                                 About
                             </Text>     
                             <Text style={attribute_styles.title_text}>
-                                This is who are are and what we are about.
+                                Developed by a UC Berkeley student, looking to help connect people. Made and solely produced by Morgan Higginbotham
                             </Text>                   
                         </View> 
                     </View>

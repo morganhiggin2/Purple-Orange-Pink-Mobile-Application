@@ -28,7 +28,7 @@ const main_styles = StyleSheet.create({
 
 const ActionBarIcon = (props) => {
     return(
-        <Image style={main_styles.logo} source={require("../../assets/images/fakelogo.png")} resizeMode='contain'/>
+        <Image style={main_styles.logo} source={require("../../assets/images/LogoWhiteHeader.jpg")} resizeMode='contain'/>
     );
 }
 

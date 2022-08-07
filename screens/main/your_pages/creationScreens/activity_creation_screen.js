@@ -62,7 +62,7 @@ const attribute_styles = StyleSheet.create({
         backgroundColor: 'white',
         flexDirection: "column",
         paddingHorizontal: 10,
-        paddingVertical: 2,
+        paddingVertical: 8,
     },
     input_text_view: {
         flexDirection:  'row',
@@ -216,15 +216,16 @@ const filter_snaps_styles = StyleSheet.create(
             borderRadius: 5,
             borderWidth: 2,
             paddingHorizontal: 3,
-            paddingVertical: 1,
+            paddingVertical: 0,
             fontFamily: 'Roboto',
             fontSize: 16,
+            textAlign: 'center',
             color: 'white', 
             fontWeight: 'bold',
-            alignSelf: 'flex-start',
+            alignSelf: 'center',
             marginHorizontal: 2,
-            marginBottom: 8,
-            textAlign: 'center',
+            marginVertical: 1,
+            marginBottom: 8
         },
         container: {
             flexDirection: 'row',
@@ -777,7 +778,7 @@ export class ActivityCreationScreen extends React.Component {
                                 It's about
                             </Text>
                             <View style={inline_attribute_styles.input_text_view}>
-                                <TextInput style={inline_attribute_styles.text_input} placeholder="biking, partying, gaming..." placeholderTextColor="gray" autoCorrect={false} editable={true} maxLength={160} ref={(input) => {this.state.attributes_input_handler = input}} onEndEditing={(event) => {this.addFilter(event.nativeEvent.text)}}/>
+                                <TextInput style={inline_attribute_styles.text_input} placeholder="biking, partying, gaming..." placeholderTextColor="gray" autoCapitalize={"none"} editable={true} maxLength={160} ref={(input) => {this.state.attributes_input_handler = input}} onEndEditing={(event) => {this.addFilter(event.nativeEvent.text)}}/>
                             </View>
                         </View>
                         <View style={filter_snaps_styles.container}> 
@@ -1262,7 +1263,7 @@ class DropDown extends React.Component {
                     //, flexBasis: 'sp'
                     <View style={{alignSelf: 'flex-end'}}>
                         <TouchableOpacity style={{flexDirection: 'row', justifyContent: 'space-between'}} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.setState({open: true})}}>
-                            <Text style={{marginRight: 5}}>
+                            <Text style={{marginRight: 5, fontSize: 16, fontFamily: 'Roboto', fontStyle: 'normal', fontWeight: 'normal'}}>
                                 {this.state.value == null ? "Select" : this.state.items.find(e => e.value == this.state.value).label} 
                             </Text>
                             <AntDesign style={{alignSelf: 'center'}} name="down" size={14} color="black"/>
@@ -1279,7 +1280,7 @@ class DropDown extends React.Component {
                     setValue={this.setValue}
                     setItems={this.setItems}
                     listMode={"SCROLLVIEW"}
-                    textStyle={{fontSize: 14}}
+                    textStyle={{fontSize: 14, fontFamily: 'Roboto'}}
                     style={{borderWidth: 0, width: this.state.width}}
                     dropDownContainerStyle={{borderWidth: 0, width: this.state.width}}
                     maxHeight={80}
@@ -1337,7 +1338,7 @@ class Slider extends React.Component {
                     showStepLabels = {true}
                     trackStyle = {{backgroundColor: GlobalValues.DISTINCT_GRAY, height: 4}}
                     selectedStyle={{backgroundColor: GlobalValues.ORANGE_COLOR, height: 4}}
-                    markerStyle={{backgroundColor: 'white', borderColor: GlobalValues.DISTINCT_GRAY, borderWidth: 1, padding: 8}}
+                    markerStyle={{backgroundColor: 'white', borderColor: GlobalValues.DISTINCT_GRAY, borderWidth: 2, width: 20, height: 20}}
                     ios_backgroundColor = {GlobalValues.DISTINCT_GRAY}
                 />
             );
@@ -1359,7 +1360,7 @@ class Slider extends React.Component {
                     showStepLabels = {true}
                     trackStyle = {{backgroundColor: GlobalValues.DISTINCT_GRAY, height: 4}}
                     selectedStyle={{backgroundColor: GlobalValues.ORANGE_COLOR, height: 4}}
-                    markerStyle={{backgroundColor: 'white', borderColor: GlobalValues.DISTINCT_GRAY, borderWidth: 1, padding: 8}}
+                    markerStyle={{backgroundColor: 'white', borderColor: GlobalValues.DISTINCT_GRAY, borderWidth: 2, width: 20, height: 20}}
                     ios_backgroundColor = {GlobalValues.DISTINCT_GRAY}
                 />
             );

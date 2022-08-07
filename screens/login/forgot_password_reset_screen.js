@@ -455,7 +455,7 @@ class DropDown extends React.Component {
                     //, flexBasis: 'sp'
                     <View style={{alignSelf: 'flex-end'}}>
                         <TouchableOpacity style={{flexDirection: 'row', justifyContent: 'space-between'}} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.setState({open: true})}}>
-                            <Text style={{marginRight: 5}}>
+                            <Text style={{marginRight: 5, fontSize: 16, fontFamily: 'Roboto', fontStyle: 'normal', fontWeight: 'normal'}}>
                                 {this.state.value == null ? "Select" : this.state.items.find(e => e.value == this.state.value).label} 
                             </Text>
                             <AntDesign style={{alignSelf: 'center'}} name="down" size={14} color="black"/>
@@ -529,7 +529,7 @@ class Slider extends React.Component {
                     showStepLabels = {true}
                     trackStyle = {{backgroundColor: GlobalValues.DISTINCT_GRAY, height: 4}}
                     selectedStyle={{backgroundColor: GlobalValues.ORANGE_COLOR, height: 4}}
-                    markerStyle={{backgroundColor: 'white', borderColor: GlobalValues.DISTINCT_GRAY, borderWidth: 1, padding: 8}}
+                    markerStyle={{backgroundColor: 'white', borderColor: GlobalValues.DISTINCT_GRAY, borderWidth: 2, width: 20, height: 20}}
                     ios_backgroundColor = {GlobalValues.DISTINCT_GRAY}
                 />
             );
@@ -551,7 +551,7 @@ class Slider extends React.Component {
                     showStepLabels = {true}
                     trackStyle = {{backgroundColor: GlobalValues.DISTINCT_GRAY, height: 4}}
                     selectedStyle={{backgroundColor: GlobalValues.ORANGE_COLOR, height: 4}}
-                    markerStyle={{backgroundColor: 'white', borderColor: GlobalValues.DISTINCT_GRAY, borderWidth: 1, padding: 8}}
+                    markerStyle={{backgroundColor: 'white', borderColor: GlobalValues.DISTINCT_GRAY, borderWidth: 2, width: 20, height: 20}}
                     ios_backgroundColor = {GlobalValues.DISTINCT_GRAY}
                 />
             );

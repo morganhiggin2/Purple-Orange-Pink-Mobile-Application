@@ -59,7 +59,7 @@ const attribute_styles = StyleSheet.create({
         backgroundColor: 'white',
         flexDirection: "column",
         paddingHorizontal: 10,
-        paddingVertical: 2,
+        paddingVertical: 8,
     },
     input_text_view: {
         flexDirection:  'row',
@@ -401,7 +401,7 @@ class DropDown extends React.Component {
                     //, flexBasis: 'sp'
                     <View style={{alignSelf: 'flex-end'}}>
                         <TouchableOpacity style={{flexDirection: 'row', justifyContent: 'space-between'}} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.setState({open: true})}}>
-                            <Text style={{marginRight: 5}}>
+                            <Text style={{marginRight: 5, fontSize: 16, fontFamily: 'Roboto', fontStyle: 'normal', fontWeight: 'normal'}}>
                                 {this.state.value == null ? "Select" : this.state.items.find(e => e.value == this.state.value).label} 
                             </Text>
                             <AntDesign style={{alignSelf: 'center'}} name="down" size={14} color="black"/>
@@ -418,7 +418,7 @@ class DropDown extends React.Component {
                     setValue={this.setValue}
                     setItems={this.setItems}
                     listMode={"SCROLLVIEW"}
-                    textStyle={{fontSize: 14}}
+                    textStyle={{fontSize: 14, fontFamily: 'Roboto'}}
                     style={{borderWidth: 0, width: this.state.width}}
                     dropDownContainerStyle={{borderWidth: 0, width: this.state.width}}
                     maxHeight={80}
@@ -476,7 +476,7 @@ class Slider extends React.Component {
                     showStepLabels = {true}
                     trackStyle = {{backgroundColor: GlobalValues.DISTINCT_GRAY, height: 4}}
                     selectedStyle={{backgroundColor: GlobalValues.ORANGE_COLOR, height: 4}}
-                    markerStyle={{backgroundColor: 'white', borderColor: GlobalValues.DISTINCT_GRAY, borderWidth: 2, padding: 8}}
+                    markerStyle={{backgroundColor: 'white', borderColor: GlobalValues.DISTINCT_GRAY, borderWidth: 2, width: 20, height: 20}}
                     containerStyle={{margin: 0, padding: 0, height: 30}}
                     ios_backgroundColor = {GlobalValues.ORANGE_COLOR}
                 />
@@ -499,7 +499,7 @@ class Slider extends React.Component {
                     showStepLabels = {true}
                     trackStyle = {{backgroundColor: GlobalValues.DISTINCT_GRAY, height: 4}}
                     selectedStyle={{backgroundColor: GlobalValues.ORANGE_COLOR, height: 4}}
-                    markerStyle={{backgroundColor: 'white', borderColor: GlobalValues.DISTINCT_GRAY, borderWidth: 2, padding: 8}}
+                    markerStyle={{backgroundColor: 'white', borderColor: GlobalValues.DISTINCT_GRAY, borderWidth: 2, width: 20, height: 20}}
                     ios_backgroundColor = {GlobalValues.ORANGE_COLOR}
                 />
             );

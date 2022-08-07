@@ -62,7 +62,7 @@ const attribute_styles = StyleSheet.create({
         backgroundColor: 'white',
         flexDirection: "column",
         paddingHorizontal: 10,
-        paddingVertical: 2,
+        paddingVertical: 8,
     },
     input_text_view: {
         flexDirection:  'row',
@@ -141,7 +141,7 @@ const inline_attribute_styles = StyleSheet.create({
         fontFamily: 'Roboto'
     },
     drop_down_selector: {
-        marginRight: -10
+        marginRight: 0
     },
     drop_down_selector_gap: {
         height: 100,
@@ -179,6 +179,7 @@ const post_button_styles = StyleSheet.create({
         marginVertical: 10,
         marginHorizontal: 10,
         flexDirection: 'row-reverse',
+        zIndex: 99
     },
     button: {
         flexDirection: "row",
@@ -204,15 +205,16 @@ const filter_snaps_styles = StyleSheet.create(
             borderRadius: 5,
             borderWidth: 2,
             paddingHorizontal: 3,
-            paddingVertical: 1,
+            paddingVertical: 0,
             fontFamily: 'Roboto',
             fontSize: 16,
+            textAlign: 'center',
             color: 'white', 
             fontWeight: 'bold',
-            alignSelf: 'flex-start',
+            alignSelf: 'center',
             marginHorizontal: 2,
-            marginBottom: 8,
-            textAlign: 'center',
+            marginVertical: 1,
+            marginBottom: 8
         },
         container: {
             flexDirection: 'row',
@@ -436,7 +438,7 @@ export class YourProfileScreen extends React.Component {
                             </View>
                         </View>
                         <View style={main_styles.horizontal_bar}/>
-                        <View style={[inline_attribute_styles.body, {marginVertical: 0, paddingVertical: 0}]}>
+                        <View style={inline_attribute_styles.body}>
                             <Text style={inline_attribute_styles.title_text}>
                                 Gender
                             </Text>
@@ -470,14 +472,11 @@ export class YourProfileScreen extends React.Component {
                         <View style={inline_attribute_styles.body}>
                             <View style={inline_attribute_styles.title_view}>
                                 <Text style={inline_attribute_styles.title_text}>
-                                    {"Attributes "}
+                                    I am into
                                 </Text>
-                                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Attributes", GlobalValues.ATTRIBUTES_INFORMATION);}}>
-                                    <AntDesign name="infocirlceo" size={14} color="black" />
-                                </TouchableOpacity>
                             </View>
                             <View style={inline_attribute_styles.input_text_view}>
-                                <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="gray" placeholder={"hiking, swimming, poker..."} editable={true} maxLength={160} ref={(input) => {this.state.attributes_input_handler = input}} onEndEditing={(event) => {this.addFilter(event.nativeEvent.text);}}/>
+                                <TextInput style={inline_attribute_styles.text_input} placeholderTextColor="gray" placeholder={"hiking, swimming, poker..."} autoCapitalize={"none"} editable={true} maxLength={160} ref={(input) => {this.state.attributes_input_handler = input}} onEndEditing={(event) => {this.addFilter(event.nativeEvent.text);}}/>
                             </View>
                         </View>
                         <View style={filter_snaps_styles.container}> 
@@ -533,27 +532,27 @@ export class YourProfileScreen extends React.Component {
         }
         else {
             return (
-                <View style={[main_styles.page, {flex: 1}]}>
+                <View style={[main_styles.page, {}]}>
                     <FlatList 
                         data={[{}]} 
                         keyExtractor={() => "dummy"} 
                         listEmptyComponent={null} 
                         renderItem={renderComponent} 
-                        style={{zIndex: 99, flex: 1}}
+                        style={{height: '50%'}}
                         refreshControl={<RefreshControl refreshing={false} 
                         onRefresh={() => {this.reloadResults();}}/>}
                         />
-                    <View style={post_button_styles.button_view}>
-                        {this.state.updateMade ? (
-                            <TouchableHighlight style={post_button_styles.button} underlayColor={'#ff6e6e'} onPress={() => {this.syncUpdates()}}>
-                            <Text style={post_button_styles.button_text}>
-                                Save Updates
-                            </Text>
-                            </TouchableHighlight>
-                        ) : (
-                            <View/>
-                        )}
-                    </View>
+                        <View style={post_button_styles.button_view}>
+                            {this.state.updateMade ? (
+                                <TouchableHighlight style={post_button_styles.button} underlayColor={'#ff6e6e'} onPress={() => {this.syncUpdates()}}>
+                                    <Text style={post_button_styles.button_text}>
+                                        Save Updates
+                                    </Text>
+                                </TouchableHighlight>
+                            ) : (
+                                <View />
+                            )}
+                        </View>
                 </View>
             );
         }
@@ -867,9 +866,9 @@ class DropDown extends React.Component {
                     </PickerIOS>
                 ) : (
                     //, flexBasis: 'sp'
-                    <View style={{alignSelf: 'flex-end'}}>
+                    <View style={{}}>
                         <TouchableOpacity style={{flexDirection: 'row', justifyContent: 'space-between'}} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.setState({open: true})}}>
-                            <Text style={{marginRight: 5}}>
+                            <Text style={{marginRight: 5, fontSize: 16, fontFamily: 'Roboto', fontStyle: 'normal', fontWeight: 'normal', fontSize: 16, fontFamily: 'Roboto', fontStyle: 'normal', fontWeight: 'normal'}}>
                                 {this.state.value == null ? "Select" : this.state.items.find(e => e.value == this.state.value).label} 
                             </Text>
                             <AntDesign style={{alignSelf: 'center'}} name="down" size={14} color="black"/>
@@ -886,7 +885,7 @@ class DropDown extends React.Component {
                     setValue={this.setValue}
                     setItems={this.setItems}
                     listMode={"SCROLLVIEW"}
-                    textStyle={{fontSize: 14}}
+                    textStyle={{fontSize: 14, fontFamily: 'Roboto'}}
                     style={{borderWidth: 0, width: this.state.width}}
                     dropDownContainerStyle={{borderWidth: 0, width: this.state.width}}
                     maxHeight={80}

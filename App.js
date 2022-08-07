@@ -15,7 +15,6 @@ import { LoadingScreen } from './screens/misc/loading_screen.js';
 import { MessageHandler } from './global/messages_handler.js';
 import 'react-native-get-random-values';
 import * as Font from 'expo-font';
-import mobileAds from 'react-native-google-mobile-ads';
 
 //expo
 Notifications.setNotificationHandler({
@@ -96,14 +95,6 @@ export class App extends React.Component {
       // Load a font `Montserrat` from a static resource
       Roboto: require('./assets/fonts/Roboto-Regular.ttf'),
     });
-
-    /*await mobileAds()
-    .initialize()
-    .then(adapterStatues => {
-      console.log(adapterStatues);
-      console.log("------");
-    })
-    .catch(e => {console.log(e);})*/
 	}
 
   async connect() {
@@ -256,7 +247,14 @@ export class App extends React.Component {
         }
       }
 
-      token = (await Notifications.getExpoPushTokenAsync()).data;
+      var pushTokenResult = await Notifications.getExpoPushTokenAsync().then((val) => {
+        return val;
+      })
+      .catch(err => {
+        return(err);
+      });
+
+      token = pushTokenResult.data;
 
     } else {
       token = "";
@@ -445,3 +443,7 @@ export class App extends React.Component {
 }
 
 export default App;
+
+/*It seems it was due to missing payment information. In the AdMob website it was stated that payment information is required to load ads. After reading that I have entered my payment information and waited for 24 hours. Now ads are loading with real ID.
+https://support.google.com/admob/thread/169917870/i-acs025031-admob-app-id-changed-original-new-nil?hl=en
+*/

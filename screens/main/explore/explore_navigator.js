@@ -37,14 +37,13 @@ const main_styles = StyleSheet.create(
             backgroundColor: GlobalValues.SEARCH_TEXT_INPUT_COLOR,
             borderRadius: 5,
             flexDirection: 'row',
-            paddingVertical: 0,
             width: Math.trunc(Dimensions.get('window').width * 0.89),
         },
         text_input: {
             backgroundColor: GlobalValues.SEARCH_TEXT_INPUT_COLOR,
             color: 'darkgray',
             fontFamily: 'Roboto',
-            fontSize: 14,
+            fontSize: 16,
             color: 'black',
             width: Math.trunc(Dimensions.get('window').width * 0.85) - 30 - 5 - 14,
             marginLeft: 5,
@@ -53,8 +52,8 @@ const main_styles = StyleSheet.create(
             flexDirection: 'column',
             backgroundColor: 'white',
             borderRadius: 5,
-            marginHorizontal: 6,
-            marginTop: 8,
+            paddingHorizontal: 6,
+            paddingTop: 8,
             borderBottomWidth: 1,
             borderColor: GlobalValues.DARKER_OUTLINE,
         },
@@ -83,17 +82,17 @@ const filter_snaps_styles = StyleSheet.create(
     {
         inner_text: {
             borderRadius: 5,
-            borderWidth: 1,
+            borderWidth: 2,
             paddingHorizontal: 3,
-            paddingVertical: 1,
+            paddingVertical: 0,
             fontFamily: 'Roboto',
             fontSize: 14,
+            textAlign: 'center',
             color: 'white', 
             fontWeight: 'bold',
-            alignSelf: 'flex-start',
+            alignSelf: 'center',
             marginHorizontal: 2,
             marginVertical: 1,
-            flexDirection: 'row',
         },
         container: {
             flexDirection: 'row',
@@ -158,7 +157,7 @@ export class ListScreen extends React.Component {
 
     render() {
         return (
-            <SafeAreaView style={{height: '100%', backgroundColor: 'white'}}>
+            <SafeAreaView style={{height: '100%', backgroundColor: GlobalValues.DARKER_WHITE}}>
                 <View style={main_styles.top_bar}>
                     <View style={main_styles.top_bar_area_top}>
                         <View style={main_styles.search_bar}>
@@ -166,7 +165,7 @@ export class ListScreen extends React.Component {
                             <TextInput style={main_styles.text_input} placeholder={"swimming, biking, poker..."} placeholderTextColor="gray" editable={true} maxLength={160} ref={(input) => {this.state.attributes_input_handler = input}} onEndEditing={(event) => {this.addFilter(event.nativeEvent.text)}}/>
                         </View>
                         <TouchableHighlight style={{alignSelf: 'center'}} underlayColor="white" onPress={() => {this.props.navigation.navigate("Explore Filters Screen");}}>
-                            <Feather name="list" size={26} color="gray"/>
+                            <Feather name="list" size={32} color="gray"/>
                         </TouchableHighlight>
                     </View>
                     <View style={main_styles.top_bar_gap}/>

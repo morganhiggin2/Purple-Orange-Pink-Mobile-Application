@@ -168,20 +168,24 @@ export class BasicInfoScreen extends React.Component {
                 //if not null
                 if (token) {
                     //add token to local
-                    GlobalProperties.auth_token = JSON.stringify(token);
+                    GlobalProperties.auth_token = token;
 
-                    var json = JSON.stringify(result);
-
-                    //set username and password
+                    //add username and password to memory to memory
                     GlobalProperties.put_key_value_pair("User_Username", JSON.stringify(this.state.username));
-                    GlobalProperties.put_key_value_pair("User_Password", JSON.stringify(this.state.password));
-                    GlobalProperties.put_key_value_pair("User_PurpleOrangePink_Api_Token", JSON.stringify(GlobalProperties.auth_token));
-    
+                    GlobalProperties.put_key_value_pair("User_PurpleOrangePink_Api_Token", GlobalProperties.auth_token);
+                    GlobalProperties.user_id = JSON.parse(result.request.response).user_id;
+
+                    //set logged in to true
+                    GlobalProperties.is_logged_in = true;
                     //go to next page
                     this.props.navigation.navigate("Profile Info");
+
+                    //return
+                    return;
                 }
+                //something went wrong, this should not happen
                 else {
-                    this.state.error_message = "Could not get token";
+                    this.state.error_message = "Try again, an error occured";
                 }
             }
             else {
@@ -241,7 +245,7 @@ export class BasicInfoScreen extends React.Component {
                     </Text>
                     <View style={main_styles.main_sub_section} >
                         <TextInput style={main_styles.text_field} onChangeText={(input)  => {this.updateUsername(input);}} textContentType="username" placeholder='Username' placeholderTextColor='gray' options={{}}/>
-                        <TextInput style={main_styles.text_field} onChangeText={(input)  => {this.updateEmailAddress(input);}} textContentType="emailAddress" placeholder='Email' placeholderTextColor='gray' options={{}}/>
+                        <TextInput style={main_styles.text_field} onChangeText={(input)  => {this.updateEmailAddress(input);}} textContentType="emailAddress" placeholder='Email' autoCorrect={false} placeholderTextColor='gray' options={{}}/>
                         <TextInput style={main_styles.text_field} onChangeText={(input)  => {this.updatePassword(input);}} textContentType="password" placeholder='Password' placeholderTextColor='gray' secureTextEntry={true}/>
                         <TextInput style={main_styles.text_field} onChangeText={(input)  => {this.updateValidationPassword(input);}} textContentType="password" placeholder='Confirm Password' placeholderTextColor='gray' secureTextEntry={true}/>
                     </View>

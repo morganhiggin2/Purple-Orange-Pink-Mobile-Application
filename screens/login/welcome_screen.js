@@ -12,6 +12,10 @@ const main_styles = StyleSheet.create(
             height: '100%',
             width: '100%',
         },
+        image_section: {
+            height: '60%',
+            justifyContent: 'center'
+        },
         quote_section: {
             paddingHorizontal: "10%",
             alignSelf: 'center',
@@ -21,11 +25,10 @@ const main_styles = StyleSheet.create(
             fontFamily: 'Roboto',
             fontSize: 28,
             textAlign: 'center',
-            color: 'white',
+            color: 'black',
             fontFamily: 'Roboto'
         },
         welcome_section: {
-            marginTop: '25%',
             paddingHorizontal: '10%',
         },
         button: {
@@ -68,11 +71,13 @@ export class WelcomeScreen extends React.Component {
     render() {
         return (
                 <View style={main_styles.page}>
-                    <Image style={main_styles.logo} source={require("../../assets/images/fakelogo.png")} resizeMode='contain'/>
-                    <View style={main_styles.quote_section}>
-                        <Text style={main_styles.quote_text}>
-                            This is an app, the best app, clearly ever made.
-                        </Text>
+                    <View style={main_styles.image_section}>
+                        <Image style={main_styles.logo} source={require("../../assets/images/LogoWhiteHeader.jpg")} resizeMode='contain'/>
+                        <View style={main_styles.quote_section}>
+                            <Text style={main_styles.quote_text}>
+                                Do something with someone new.
+                            </Text>
+                        </View>
                     </View>
                     <View style={main_styles.welcome_section}>
                         <TouchableHighlight style={main_styles.button} onPress={() => {this.props.navigation.navigate("Login Screen")}} underlayColor="#FFE1D6">

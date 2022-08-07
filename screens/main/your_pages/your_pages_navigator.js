@@ -1,8 +1,8 @@
 import 'react-native-gesture-handler';
 import { GlobalValues } from '../../../global/global_properties.js';
 import { createStackNavigator, CardStyleInterpolators} from '@react-navigation/stack';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import {Easing, Image, StyleSheet, Text, View, StatusBar} from 'react-native';
+import { createMaterialTopTabNavigator, MaterialTopTabBar } from '@react-navigation/material-top-tabs';
+import {Easing, Text, View, StatusBar, Dimensions, Platform} from 'react-native';
 import React from 'react';
 
 import {YourProfileScreen} from './your_profile_screen.js';
@@ -25,18 +25,10 @@ import { ViewMapScreen } from './view_map_screen.js';
 import { OtherActivityScreen } from '../explore/other_activity_screen.js';
 import { OtherActivityProfileScreen } from './manageScreens/other_activity_profile_screen.js';
 import { MakeAnnouncementScreen } from './manageScreens/make_announcement_screen.js';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 
 const Stack = createStackNavigator();
 const FeedStack = createMaterialTopTabNavigator();
-
-const main_styles = StyleSheet.create({
-    logo: {
-        width: 50,
-        height: 50,
-        alignSelf: 'center',
-        flexDirection: 'row-reverse',
-    }
-});
 
 const EmptyTitle = (props) => {
     return(
@@ -44,25 +36,24 @@ const EmptyTitle = (props) => {
     )
 }
 
-class FeedNavigator extends React.Component {
-    constructor(props) {
-        super(props);
-    }
+//style={{backgroundColor:'orange', maxHeight: Dimensions.get('window').height - btbh * 2 - 50}} screenOptions={{swipeEnabled: true, tabBarStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, tabBarIndicatorStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}}
 
-    render() {
-        return(
-        <FeedStack.Navigator initialRouteName="Manage" screenOptions={{swipeEnabled: true, tabBarStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, tabBarIndicatorStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}}>
+const FeedNavigator = (props) => {
+    const btbh = useBottomTabBarHeight();
+
+    return(
+        <FeedStack.Navigator initialRouteName="Manage" style={{maxHeight: Dimensions.get('window').height - btbh * 2}} screenOptions={{swipeEnabled: true, tabBarStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, tabBarIndicatorStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}}}>
             
             <FeedStack.Screen component={ManageScreen} name="Manage"/>
-            <FeedStack.Screen component={YourProfileScreen} name="Your Profile" />
+            <FeedStack.Screen component={YourProfileScreen} name="Your Profile"/>
             <FeedStack.Screen component={SettingsNavigator} name = "Settings"/>
 
         </FeedStack.Navigator>
         );
-    }
 }
 
 const HeaderTitle = (props) => {
+    const btbh = useBottomTabBarHeight();
     return(
         <Text style={{fontSize: 24, fontFamily: 'Roboto', color: 'black'}}>
             {props.title}
@@ -78,7 +69,7 @@ export class YourPagesNavigator extends React.Component {
 
     render() {
         return (
-            <Stack.Navigator >
+            <Stack.Navigator initialRouteName='Your Feed'>
                 <Stack.Screen name="Your Feed" component={FeedNavigator} options={{headerTitle: () => <EmptyTitle/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR, height: StatusBar.currentHeight}, headerShown: true, headerTitleAlign:'center'}}/>                
                 <Stack.Screen name="Activity Creation Screen" component={ActivityCreationScreen} options={{headerBackTitle: "back", headerTitle: () => <HeaderTitle title="Create Activity"/>, headerStyle: {backgroundColor: GlobalValues.HEADER_BACKGROUND_COLOR}, gestureEnabled: true, gestureDirection: 'horizontal', cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS, headerShown: true,  headerTitleAlign:'center', transitionSpec: { open: transition_config, close: transition_config, }}}/>
 

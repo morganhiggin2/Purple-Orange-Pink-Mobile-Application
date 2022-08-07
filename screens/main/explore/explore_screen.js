@@ -118,17 +118,17 @@ const filter_snaps_styles = StyleSheet.create(
     {
         inner_text: {
             borderRadius: 5,
-            borderWidth: 1,
+            borderWidth: 2,
             paddingHorizontal: 3,
-            paddingVertical: 1,
+            paddingVertical: 0,
             fontFamily: 'Roboto',
-            fontSize: 14,
+            fontSize: 16,
+            textAlign: 'center',
             color: 'white', 
             fontWeight: 'bold',
-            alignSelf: 'flex-start',
+            alignSelf: 'center',
             marginHorizontal: 2,
             marginVertical: 1,
-            flexDirection: 'row',
         },
         container: {
             flexDirection: 'row',
@@ -656,15 +656,6 @@ class FrameComponent extends React.Component{
                     }}
                 />
             );
-
-            /**
-                <BannerAd 
-                    unitId={adUnitID}
-                    size={BannerAdSize.LARGE_BANNER}
-                    requestOptions={{
-
-                    }}
-                /> */
         }
     }
 }
@@ -685,26 +676,6 @@ const EmptySpace = (props) => {
         <View style={{height: btbh, width: '100%'}}>
         </View>
     )
-}
-
-class FilterSnap extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
-    render() {
-        return( 
-            <TouchableOpacity activeOpacity={1} onPress={() => {deleteAlertAttributes(this.props.parent, this.props.innerText, this.props.id)}}>
-                <Text style={[filter_snaps_styles.inner_text, { backgroundColor: this.props.color, borderColor: this.props.color}]}>
-                    {this.props.innerText}
-                </Text>
-            </TouchableOpacity>
-        );
-    }
-}
-
-FilterSnap.defaultProps = {
-    color: GlobalValues.ORANGE_COLOR,
 }
 
 const deleteAlertAttributes = (frameComponent, attr) => {
