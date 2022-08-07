@@ -1,0 +1,20 @@
+2022-08-03 08:23:42.236 xcodebuild[1152:14880] Requested but did not find extension point with identifier Xcode.IDEKit.ExtensionSentinelHostApplications for extension Xcode.DebuggerFoundation.AppExtensionHosts.watchOS of plug-in com.apple.dt.IDEWatchSupportCore
+2022-08-03 08:23:42.237 xcodebuild[1152:14880] Requested but did not find extension point with identifier Xcode.IDEKit.ExtensionPointIdentifierToBundleIdentifier for extension Xcode.DebuggerFoundation.AppExtensionToBundleIdentifierMap.watchOS of plug-in com.apple.dt.IDEWatchSupportCore
+2022-08-03 08:23:42.974 xcodebuild[1152:14881]  DVTAssertions: Warning in /Library/Caches/com.apple.xbs/Sources/DVTiOSFrameworks/DVTiOSFrameworks-20038/DTDeviceKitBase/DTDKRemoteDeviceData.m:373
+Details:  (null) deviceType from 00008020-001878AA36E9002E was NULL when -platform called.
+Object:   <DTDKMobileDeviceToken: 0x7f8a1336e030>
+Method:   -platform
+Thread:   <NSThread: 0x600002d092c0>{number = 2, name = (null)}
+Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+2022-08-03 08:23:43.258 xcodebuild[1152:14882]  DVTAssertions: Warning in /Library/Caches/com.apple.xbs/Sources/DVTiOSFrameworks/DVTiOSFrameworks-20038/DTDeviceKitBase/DTDKRemoteDeviceData.m:373
+Details:  (null) deviceType from 00008020-001878AA36E9002E was NULL when -platform called.
+Object:   <DTDKMobileDeviceToken: 0x7f8a1336e030>
+Method:   -platform
+Thread:   <NSThread: 0x600002218e00>{number = 6, name = (null)}
+Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+2022-08-03 08:23:43.347 xcodebuild[1152:14882]  DVTAssertions: Warning in /Library/Caches/com.apple.xbs/Sources/DVTiOSFrameworks/DVTiOSFrameworks-20038/DTDeviceKitBase/DTDKRemoteDeviceData.m:373
+Details:  (null) deviceType from 00008020-001878AA36E9002E was NULL when -platform called.
+Object:   <DTDKMobileDeviceToken: 0x7f8a1336e030>
+Method:   -platform
+Thread:   <NSThread: 0x600002218e00>{number = 6, name = (null)}
+Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
