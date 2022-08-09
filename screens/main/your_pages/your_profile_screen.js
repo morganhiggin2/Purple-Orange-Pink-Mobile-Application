@@ -113,6 +113,14 @@ const inline_attribute_styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingHorizontal: 10,
         paddingVertical: 8,
+        flex: 1,
+    },
+    input_body: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        flex: 1,
     },
     title_view: {
         flexDirection: 'row',
@@ -121,7 +129,6 @@ const inline_attribute_styles = StyleSheet.create({
         paddingVertical: 4
     },
     title_text: {
-        alignSelf: 'flex-start',
         alignSelf: 'center',
         fontSize: 16,
         color: 'black',
@@ -129,7 +136,21 @@ const inline_attribute_styles = StyleSheet.create({
     },
     input_text_view: {
         flexDirection:  'row',
-        width: "70%",
+        flexShrink: 1
+    },
+    static_view: {
+        right: 0,
+        flexDirection: 'row'
+    },
+    numeric_text_input: {
+        fontFamily: 'Roboto',
+        fontSize: 16
+    },
+    numeric_input_text_view: {
+
+    },
+    input_text_view_continuation: {
+        flexDirection:  'row',
     },
     text_input: {
         textAlignVertical: "center",
@@ -140,8 +161,17 @@ const inline_attribute_styles = StyleSheet.create({
         fontSize: 16, 
         fontFamily: 'Roboto'
     },
+    text_input_continuation: {
+        textAlignVertical: "center",
+        paddingRight: 4,
+        width: '100%',
+        textAlign: 'left',
+        borderRadius: 4,
+        fontSize: 16, 
+        fontFamily: 'Roboto'
+    },
     drop_down_selector: {
-        marginRight: 0
+        marginRight: -10
     },
     drop_down_selector_gap: {
         height: 100,
@@ -202,19 +232,11 @@ const post_button_styles = StyleSheet.create({
 const filter_snaps_styles = StyleSheet.create(
     {
         inner_text: {
-            borderRadius: 5,
-            borderWidth: 2,
-            paddingHorizontal: 3,
-            paddingVertical: 0,
             fontFamily: 'Roboto',
             fontSize: 16,
             textAlign: 'center',
             color: 'white', 
             fontWeight: 'bold',
-            alignSelf: 'center',
-            marginHorizontal: 2,
-            marginVertical: 1,
-            marginBottom: 8
         },
         container: {
             flexDirection: 'row',
@@ -222,7 +244,16 @@ const filter_snaps_styles = StyleSheet.create(
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: 'white',
-            marginTop: 4
+        },
+        box: {
+            backgroundColor: GlobalValues.ORANGE_COLOR,
+            borderColor: GlobalValues.ORANGE_COLOR,
+            borderWidth: 2,
+            borderRadius: 5,
+            marginBottom: 8,
+            marginRight: 6,
+            alignSelf: 'center',
+            padding: 3
         }
     }
 );
@@ -429,7 +460,7 @@ export class YourProfileScreen extends React.Component {
                         />
                     </View>
                     <View style={info_styles.body}>
-                        <View style={inline_attribute_styles.body}>
+                        <View style={inline_attribute_styles.input_body}>
                             <Text style={inline_attribute_styles.title_text}>
                                 Name
                             </Text>
@@ -457,7 +488,7 @@ export class YourProfileScreen extends React.Component {
                             <Text style={inline_attribute_styles.title_text}>
                                 Birthdate
                             </Text>       
-                            <View style={inline_attribute_styles.text_view}>
+                            <View style={inline_attribute_styles.static_view}>
                                 <TouchableOpacity onPress={() => this.setState({showDatePicker: true})}>
                                     <Text style={{color: GlobalValues.ORANGE_COLOR}}>
                                             {this.showDate()} 
@@ -469,7 +500,7 @@ export class YourProfileScreen extends React.Component {
                         {this.showDatePicker()}
                     </View>
                     <View style={info_styles.body}>
-                        <View style={inline_attribute_styles.body}>
+                        <View style={inline_attribute_styles.input_body}>
                             <View style={inline_attribute_styles.title_view}>
                                 <Text style={inline_attribute_styles.title_text}>
                                     I am into
@@ -604,9 +635,10 @@ export class YourProfileScreen extends React.Component {
     }
     
     addFilter(input) {
+        var lowerInput = input.toLowerCase();
+
         //add it
-        //this.state.attributes.push({id: this.state.attributes.length, name: input});
-        this.state.attributes.push(input);
+        this.state.attributes.push(lowerInput);
         //clear the text input
         this.state.attributes_input_handler.clear();
         //update updatebody
@@ -915,17 +947,13 @@ class FilterSnap extends React.Component {
 
     render() {
         return( 
-            <TouchableOpacity activeOpacity={1} onPress={() => {deleteAlert(this.props.parent, this.props.data, this.props.id)}}>
-                <Text style={[filter_snaps_styles.inner_text, { backgroundColor: this.props.color, borderColor: this.props.color}]}>
+            <TouchableOpacity style={filter_snaps_styles.box} activeOpacity={1} onPress={() => {deleteAlert(this.props.parent, this.props.data, this.props.id)}}>
+                <Text style={filter_snaps_styles.inner_text}>
                     {this.props.innerText}
                 </Text>
             </TouchableOpacity>
         );
     }
-}
-
-FilterSnap.defaultProps = {
-    color: GlobalValues.ORANGE_COLOR,
 }
 
 //create a delete alert for deleting an attribute of id=id from

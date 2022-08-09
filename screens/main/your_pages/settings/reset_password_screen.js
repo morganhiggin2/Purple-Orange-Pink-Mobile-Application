@@ -84,10 +84,10 @@ const attribute_styles = StyleSheet.create({
     text_input: {
         flex: 1,
         maxHeight: 95,
-        paddingVertical: 2,
+        paddingVertical: 4,
         paddingHorizontal: 4,
         backgroundColor: GlobalValues.SEARCH_TEXT_INPUT_COLOR,
-        fontSize: 14,
+        fontSize: 16,
         fontFamily: 'Roboto',
         borderRadius: 4,
     },
@@ -175,6 +175,7 @@ export class ResetPasswordScreen extends React.Component {
                                 <TextInput style={attribute_styles.text_input} autoComplete={"password"} secureTextEntry={true} textContentType={"password"} placeholderTextColor="black" editable={true} maxLength={160} onChangeText={(value) => {this.updateOldPassword(value);}}/>
                             </View>
                         </View>
+                        <View style={main_styles.horizontal_bar}/>
                         <View style={attribute_styles.body}>
                             <Text style={attribute_styles.title_text}>
                                 New Password
@@ -183,6 +184,7 @@ export class ResetPasswordScreen extends React.Component {
                                 <TextInput style={attribute_styles.text_input} placeholderTextColor="black" secureTextEntry={true} textContentType={"password"} editable={true} maxLength={160} onChangeText={(value) => {this.updateNewPassword(value);}}/>
                             </View>
                         </View>
+                        <View style={main_styles.horizontal_bar}/>
                         <View style={attribute_styles.body}>
                             <Text style={attribute_styles.title_text}>
                                 Confirm

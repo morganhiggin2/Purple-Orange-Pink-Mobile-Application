@@ -1,0 +1,10 @@
+make sure android manifest file has google map api
+
+expo eject
+brew install watchman
+replace pod file
+replace androidmanifestfile
+
+remove /android and /ios folder from gitngore
+
+IF CRASH on ios, remember to gen with no ios folder.

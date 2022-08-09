@@ -243,7 +243,7 @@ export class YourMessagesScreen extends React.Component {
             //if result status is ok
             if (result.request.status ==  200) {
                 //clear badge count
-                Notifications.setBadgeNumberAsync(0);
+                Notifications.setBadgeCountAsync(0);
 
                 //get messages from json
                 var messages = JSON.parse(result.request.response).messages;

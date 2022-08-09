@@ -163,19 +163,28 @@ const inline_attribute_styles = StyleSheet.create({
 const filter_snaps_styles = StyleSheet.create(
     {
         inner_text: {
-            borderRadius: 5,
-            borderWidth: 2,
-            paddingHorizontal: 3,
-            paddingVertical: 0,
             fontFamily: 'Roboto',
             fontSize: 16,
             textAlign: 'center',
             color: 'white', 
             fontWeight: 'bold',
+        },
+        container: {
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'white',
+        },
+        box: {
+            backgroundColor: GlobalValues.ORANGE_COLOR,
+            borderColor: GlobalValues.ORANGE_COLOR,
+            borderWidth: 2,
+            borderRadius: 5,
+            marginBottom: 8,
+            marginRight: 6,
             alignSelf: 'center',
-            marginHorizontal: 2,
-            marginVertical: 1,
-            marginBottom: 8
+            padding: 3
         },
         tag_inner_text: {
             borderRadius: 5,
@@ -194,13 +203,6 @@ const filter_snaps_styles = StyleSheet.create(
             justifyContent: 'center',
             alignSelf: 'center'
         },
-        container: {
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            backgroundColor: 'white',
-            marginHorizontal: 8
-        },
         profile_container: {
             flexDirection: 'row',
             justifyContent: 'center',
@@ -210,7 +212,8 @@ const filter_snaps_styles = StyleSheet.create(
             width: '80%',
         },
         icon: {
-            alignSelf: 'center'
+            alignSelf: 'center',
+            marginRight: 4
         }
     }
 );
@@ -814,13 +817,11 @@ class FilterSnap extends React.Component {
 
     render() {
         return( 
-            <Text style={[filter_snaps_styles.inner_text, { backgroundColor: this.props.color, borderColor: this.props.color}]}>
-                {this.props.innerText}
-            </Text>
+            <View style={filter_snaps_styles.box}>
+                <Text style={filter_snaps_styles.inner_text}>
+                    {this.props.innerText}
+                </Text>
+            </View>
         );
     }
-}
-
-FilterSnap.defaultProps = {
-    color: GlobalValues.ORANGE_COLOR,
 }

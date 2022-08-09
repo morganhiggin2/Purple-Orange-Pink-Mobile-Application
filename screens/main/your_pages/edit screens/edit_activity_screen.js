@@ -114,6 +114,14 @@ const inline_attribute_styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingHorizontal: 10,
         paddingVertical: 8,
+        flex: 1,
+    },
+    input_body: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        flex: 1,
     },
     title_view: {
         flexDirection: 'row',
@@ -122,7 +130,6 @@ const inline_attribute_styles = StyleSheet.create({
         paddingVertical: 4
     },
     title_text: {
-        alignSelf: 'flex-start',
         alignSelf: 'center',
         fontSize: 16,
         color: 'black',
@@ -130,7 +137,18 @@ const inline_attribute_styles = StyleSheet.create({
     },
     input_text_view: {
         flexDirection:  'row',
-        width: "70%",
+        flexShrink: 1
+    },
+    static_view: {
+        right: 0,
+        flexDirection: 'row'
+    },
+    numeric_text_input: {
+        fontFamily: 'Roboto',
+        fontSize: 16
+    },
+    numeric_input_text_view: {
+
     },
     input_text_view_continuation: {
         flexDirection:  'row',
@@ -151,6 +169,7 @@ const inline_attribute_styles = StyleSheet.create({
         textAlign: 'left',
         borderRadius: 4,
         fontSize: 16, 
+        fontFamily: 'Roboto'
     },
     drop_down_selector: {
         marginRight: -10
@@ -213,19 +232,11 @@ const post_button_styles = StyleSheet.create({
 const filter_snaps_styles = StyleSheet.create(
     {
         inner_text: {
-            borderRadius: 5,
-            borderWidth: 2,
-            paddingHorizontal: 3,
-            paddingVertical: 0,
             fontFamily: 'Roboto',
             fontSize: 16,
             textAlign: 'center',
             color: 'white', 
             fontWeight: 'bold',
-            alignSelf: 'center',
-            marginHorizontal: 2,
-            marginVertical: 1,
-            marginBottom: 8
         },
         container: {
             flexDirection: 'row',
@@ -233,6 +244,16 @@ const filter_snaps_styles = StyleSheet.create(
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: 'white',
+        },
+        box: {
+            backgroundColor: GlobalValues.ORANGE_COLOR,
+            borderColor: GlobalValues.ORANGE_COLOR,
+            borderWidth: 2,
+            borderRadius: 5,
+            marginBottom: 8,
+            marginRight: 6,
+            alignSelf: 'center',
+            padding: 3
         }
     }
 );
@@ -257,17 +278,8 @@ export class EditActivityScreen extends React.Component {
             //attributes
             attributes: [],
 
-            //ids of points who's images have changed
-            new_point_images: [],
-
             //for managing points locally
             max_point_index: 0,
-
-            //if we need to add existing points to updateBody
-            addPointsToUpdateBody: false,
-
-            //if we need to include new points
-            addNewPointsToUpdateBody: false,
 
             //for the date selector
             date: new Date(Date.now()),
@@ -659,7 +671,7 @@ export class EditActivityScreen extends React.Component {
         if (!this.state.is_virtual_event) {
             physicalEventLocation = (
                 <View>
-                    <View style={inline_attribute_styles.body}>
+                    <View style={inline_attribute_styles.input_body}>
                         <Text style={inline_attribute_styles.title_text}>
                             It will be at
                         </Text>
@@ -745,7 +757,7 @@ export class EditActivityScreen extends React.Component {
                         <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
                     </TouchableOpacity>
                     <View style={main_styles.horizontal_bar}/>
-                    <View style={inline_attribute_styles.body}>
+                    <View style={inline_attribute_styles.input_body}>
                         <Text style={inline_attribute_styles.title_text}>
                             The link is
                         </Text>
@@ -905,7 +917,7 @@ export class EditActivityScreen extends React.Component {
             return (
                 <View>
                     <View style={info_styles.body}>
-                        <View style={inline_attribute_styles.body}>
+                        <View style={inline_attribute_styles.input_body}>
                             <Text style={inline_attribute_styles.title_text}>
                                 We are going to 
                             </Text>
@@ -920,7 +932,7 @@ export class EditActivityScreen extends React.Component {
                             <Text style={inline_attribute_styles.title_text}>
                                 It's at
                             </Text>       
-                            <View style={attribute_styles.input_text_view}>
+                            <View style={inline_attribute_styles.static_view}>
                                 <TouchableOpacity onPress={() => this.setState({showDatePicker: true})}>
                                     <Text style={{color: GlobalValues.ORANGE_COLOR}}>
                                         {this.showDate()} 
@@ -937,7 +949,7 @@ export class EditActivityScreen extends React.Component {
                         {this.showDatePicker()}
                         {this.showTimePicker()}
                         <View style={main_styles.horizontal_bar}/>
-                        <View style={inline_attribute_styles.body}>
+                        <View style={inline_attribute_styles.input_body}>
                             <Text style={inline_attribute_styles.title_text}>
                                 It's about
                             </Text>
@@ -1260,28 +1272,6 @@ export class EditActivityScreen extends React.Component {
         
         //if request was successful
         var successful = false;
-            
-        //if updated points
-        if (this.state.addPointsToUpdateBody) {
-            this.state.updateBody["points"] = [];
-
-            for (let [i, data] of this.state.points.entries()) {
-                if (!data.id.startsWith("new_point")) {
-                    this.state.updateBody["points"].push(data.id);
-                }
-            }
-        }
-
-        //if added new points
-        if (this.state.addNewPointsToUpdateBody) {
-            this.state.updateBody["new_points"] = [];
-
-            for (let [i, data] of this.state.points.entries()) {
-                if (data.id.startsWith("new_point")) {
-                    this.state.updateBody["new_points"].push(data.caption);
-                }
-            }
-        }
         
         //make request        
         var result = await GlobalEndpoints.makePostRequest(true, "/api/User/Friends/UpdateActivity", this.state.updateBody)
@@ -1303,38 +1293,9 @@ export class EditActivityScreen extends React.Component {
         if (successful) {
             //if result status is ok
             if (result.request.status ==  200) {
-                //get new points
-                var newPointIds = JSON.parse(result.request.response).new_point_ids;
-
-                for (let [i, id] of newPointIds.entries()) {
-                    //set indexes
-                    var newPointIdIndex = 0;
-
-                    for (let [i, data] of this.state.points.entries()) {
-                        if (data.id.startsWith("new_point")) {
-                            this.state.points[i].id = newPointIds[newPointIdIndex];
-                            newPointIdIndex++;
-                        }
-                    }
-
-                    //call async method to upload images of new points
-                }
-
-                if (this.state.addPointsToUpdateBody) {
-                    //upload images of points that were changed
-                    for (let [i, id] of this.state.new_point_images.entries()) {
-                        //get image uri (going to be local)
-                        var image_uri = this.state.points.find((p) => {return(p.id == id);}).image_uri;
-
-                        //uploadImageToServer(id, image_uri)
-                    }
-                }
-
-                //once done, clear updatebody and variables
+        
+                //once done, clear updatebody
                 this.state.updateBody = {};
-                this.state.addPointsToUpdateBody = false;
-                this.state.addNewPointsToUpdateBody = false;
-
                 //once done, go back
                 this.props.navigation.pop(1);
             }
@@ -1411,13 +1372,13 @@ export class EditActivityScreen extends React.Component {
         }
 
         //validate activity location
-        if (this.state.target_latitude == null || this.state.target_longitude == null) {
+        if (this.state.is_physical_event && (this.state.target_latitude == null || this.state.target_longitude == null)) {
             this.showError("must set activity location by pin");
             return false;
         }
 
         //validate set search
-        if (!this.state.setSearchLocationToTargetLocation && (this.state.search_latitude == null || this.state.search_longitude == null)) {
+        if (this.state.is_physical_event && !this.state.setSearchLocationToTargetLocation && (this.state.search_latitude == null || this.state.search_longitude == null)) {
             this.showError("must set search location if \"Search location is activity location\" is enabled");
             return false;
         } 
@@ -1621,17 +1582,13 @@ class FilterSnap extends React.Component {
 
     render() {
         return( 
-            <TouchableOpacity activeOpacity={1} onPress={() => {deleteAlert(this.props.parent, this.props.data, this.props.id)}}>
-                <Text style={[filter_snaps_styles.inner_text, { backgroundColor: this.props.color, borderColor: this.props.color}]}>
+            <TouchableOpacity style={filter_snaps_styles.box} activeOpacity={1} onPress={() => {deleteAlert(this.props.parent, this.props.data, this.props.id)}}>
+                <Text style={filter_snaps_styles.inner_text}>
                     {this.props.innerText}
                 </Text>
             </TouchableOpacity>
         );
     }
-}
-
-FilterSnap.defaultProps = {
-    color: GlobalValues.ORANGE_COLOR,
 }
 
 //create a delete alert for deleting an attribute of id=id from

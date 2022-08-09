@@ -1,8 +1,0 @@
-change the width, height, marginLeft, marginRight calculations in explore_screen since the standard unit adjusts for screen size
-  look to see if it keeps it proportional if the screen changes ratio (based on phone, so that the box could become not square).
-
-Make edit profile page
-
-Make messages
-
-make center world change

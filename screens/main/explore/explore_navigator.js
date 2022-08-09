@@ -81,19 +81,11 @@ const main_styles = StyleSheet.create(
 const filter_snaps_styles = StyleSheet.create(
     {
         inner_text: {
-            borderRadius: 5,
-            borderWidth: 2,
-            paddingHorizontal: 3,
-            paddingVertical: 0,
             fontFamily: 'Roboto',
-            fontSize: 14,
+            fontSize: 16,
             textAlign: 'center',
             color: 'white', 
             fontWeight: 'bold',
-            alignSelf: 'center',
-            marginHorizontal: 2,
-            marginVertical: 1,
-            marginBottom: 8,
         },
         container: {
             flexDirection: 'row',
@@ -101,6 +93,16 @@ const filter_snaps_styles = StyleSheet.create(
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: 'white',
+        },
+        box: {
+            backgroundColor: GlobalValues.ORANGE_COLOR,
+            borderColor: GlobalValues.ORANGE_COLOR,
+            borderWidth: 2,
+            borderRadius: 5,
+            marginBottom: 8,
+            marginRight: 6,
+            alignSelf: 'center',
+            padding: 3
         }
     }
 );
@@ -251,17 +253,13 @@ class FilterSnap extends React.Component {
 
     render() {
         return( 
-            <TouchableOpacity activeOpacity={1} onPress={() => {deleteAlertAttributes(this.props.parent, this.props.innerText, this.props.id)}}>
-                <Text style={[filter_snaps_styles.inner_text, { backgroundColor: this.props.color, borderColor: this.props.color}]}>
+            <TouchableOpacity style={filter_snaps_styles.box} activeOpacity={1} onPress={() => {deleteAlertAttributes(this.props.parent, this.props.innerText)}}>
+                <Text style={filter_snaps_styles.inner_text}>
                     {this.props.innerText}
                 </Text>
             </TouchableOpacity>
         );
     }
-}
-
-FilterSnap.defaultProps = {
-    color: GlobalValues.ORANGE_COLOR,
 }
 
 const deleteAlertAttributes = (frameComponent, attr) => {

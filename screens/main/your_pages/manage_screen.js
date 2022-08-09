@@ -171,6 +171,7 @@ export class ManageScreen extends React.Component {
         }
 
         this.fetchList = this.fetchList.bind(this);
+        this.deleteDataComponent = this.deleteDataComponent.bind(this);
         this.lazyUpdate = this.lazyUpdate.bind(this);
     }
 
@@ -272,7 +273,7 @@ export class ManageScreen extends React.Component {
         }
         else {
             const renderItem = ({ item }) => (
-                <FrameComponent item = {item} lazyUpdate = {this.lazyUpdate} navigation = {this.props.navigation}/>
+                <FrameComponent item = {item} lazyUpdate = {this.lazyUpdate} parent={this} navigation = {this.props.navigation}/>
             );
 
             return(
@@ -289,12 +290,21 @@ export class ManageScreen extends React.Component {
                     <FlatList 
                         data={this.state.frames}
                         renderItem={renderItem}
+                        extraData={{}}
                         keyExtractor={item => item.id}
                         refreshControl={<RefreshControl refreshing={false} 
                         onRefresh={() => {this.state.loading = true; this.fetchList()}}/>}
                     />
                 </SafeAreaView>
             );
+        }
+    }
+
+    deleteDataComponent(id) {
+        for (let [i, data] of this.state.frames.entries()) {
+            if (data.id == id) {
+                this.state.frames.splice(i, 1);
+            }
         }
     }
 
@@ -380,14 +390,6 @@ class FrameComponent extends React.Component {
         deleteAlert(this);
     }
 
-    deleteDataComponent(id) {
-        for (let [i, data] of this.state.frames.entries()) {
-            if (data.id == id) {
-                this.state.frames.splice(i, 1);
-            }
-        }
-    }
-
     async afterDeleteAlert() {
         //if request was successful
         var successful = false;
@@ -419,7 +421,7 @@ class FrameComponent extends React.Component {
             if (result.request.status ==  200) {
 
                 //delete data component from list
-                this.deleteDataComponent(this.state.item.id);
+                this.props.parent.deleteDataComponent(this.state.item.id);
 
                 this.props.lazyUpdate();
             }
@@ -461,7 +463,7 @@ function limitDescription(desc) {
 const deleteAlert = (frameComponent) => {
     Alert.alert(
         "Delete",
-        "Are you sure you want to delete this conversation?",
+        "Are you sure you want to delete this activity?",
         [
             {
                 text: "Cancel",

@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Image, Alert, ScrollView,  Dimensions, Platform} from 'react-native';
+import {StyleSheet, View, Image, Alert, ScrollView,  Dimensions, Platform, Text} from 'react-native';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import * as ImagePicker from 'expo-image-picker';
@@ -65,6 +65,32 @@ const image_styles = StyleSheet.create(
     }
 );
 
+const post_button_styles = StyleSheet.create({
+    button_view: {
+        marginVertical: 10,
+        marginHorizontal: 10,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        zIndex: 99
+    },
+    button: {
+        flexDirection: "row",
+        alignItems: 'flex-start',
+        borderRadius: 5,
+        backgroundColor: GlobalValues.DISTINCT_GRAY,
+        borderColor: GlobalValues.DISTINCT_GRAY,
+        paddingHorizontal: 20,
+        paddingVertical: 4,
+        alignSelf: 'center',
+        alignContent: 'center',
+    },
+    button_text: {
+        color: 'white',
+        fontSize: 18,
+        alignSelf: 'center',
+    }
+});
+
 export class EditImagesScreen extends React.Component {
     constructor(props) {
         super(props);
@@ -73,11 +99,12 @@ export class EditImagesScreen extends React.Component {
             //for the image selector
             selected_image_location: null,
 
+            uploading_image: false,
+
             profile_images: this.props.route.params.profile_images,
         }
 
         this.chooseImage = this.chooseImage.bind(this);
-        this.uploadImage = this.uploadImage.bind(this);
         this.renderProfileImages = this.renderProfileImages.bind(this);
     }
 
@@ -110,6 +137,17 @@ export class EditImagesScreen extends React.Component {
                         {this.renderProfileImages()}
                     <EmptySpace key={0}/>
                 </ScrollView>
+                <View style={post_button_styles.button_view}>
+                    {this.state.uploading_image ? (
+                        <View style={post_button_styles.button} onPress={() => {this.syncUpdates()}}>
+                            <Text style={post_button_styles.button_text}>
+                                Uploading Image
+                            </Text>
+                        </View>
+                    ) : (
+                        <View />
+                    )}
+                </View>
             </View>
         );
     }
@@ -124,8 +162,12 @@ export class EditImagesScreen extends React.Component {
         //check if we are not on the web and we have permission to the camera roll
         if (Platform.OS !== 'web') 
         {
-            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
+            .then((status) => {console.log("here2"); return (status);})
+            .catch((error) => {console.log("here"); console.log(error); return null;});
 
+            console.log("requested access");
+            
             if (status !== 'granted') 
             {
               alert('Sorry, we need camera roll permissions to make this work!');
@@ -137,11 +179,13 @@ export class EditImagesScreen extends React.Component {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [4, 4],
-            quality: 0,
+            quality: 1,
         });
 
         //handle the result if an image is selected
         if(!result.cancelled) {
+            //set uploading image to true
+            this.setState({uploading_image: true});
 
             //call the pass function, the function that will use this value
             //check if the pass function is null
@@ -150,9 +194,9 @@ export class EditImagesScreen extends React.Component {
             //convert image to compressed jpg
             const result_change = await manipulateAsync(
                 result.uri, [
-                    {resize: {width: 800, height: 800}}
+                    {resize: {width: 400, height: 400}}
                 ],
-                { format: SaveFormat.JPEG}
+                { compress: 1, format: SaveFormat.PNG} //compress: 0
             );
 
             var image_uri = Platform.OS === 'android' ? result_change.uri : result_change.uri.replace('file://', '');
@@ -162,14 +206,13 @@ export class EditImagesScreen extends React.Component {
             body.append('num', id);
             body.append('image', {
                 uri: image_uri,
-                type: 'image/jpg',
-                name: 'photo.jpg'
+                type: 'image/png',
+                name: 'photo.png'
             });
 
             //if request was successful
             var successful = false;
 
-            
             //make request
             result = await GlobalEndpoints.makePostRequestFormData(true, "/api/User/Friends/UploadProfileImage", body)
                 .then((result) => {
@@ -188,7 +231,6 @@ export class EditImagesScreen extends React.Component {
 
             //if there is no error message, request was good
             if (successful) {
-
                 //if result status is ok
                 if (result.request.status ==  200) {
                     GlobalProperties.return_screen = "Edit Images Screen";
@@ -231,6 +273,8 @@ export class EditImagesScreen extends React.Component {
                 }
             }
         }
+       
+        this.setState({uploading_image: false});
     }
     
     //delete a data component from a json data structure with id attributes, each different
@@ -246,11 +290,6 @@ export class EditImagesScreen extends React.Component {
     afterDeleteAlert(id, DATA) {
         this.deleteDataComponent(id, DATA);
         this.lazyUpdate();
-    }
-    
-    async uploadImage() {
-        //upload image to server
-        //have it or this handle overriding or new case
     }
 }
 
@@ -297,9 +336,9 @@ class ProfileImage extends React.Component {
         //default image
         else {
             return (
-            <TouchableOpacity style={image_styles.box} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.chooseImage(this.props.id)}}>
-                <Image style={image_styles.image} source={require("../../../assets/images/default_image.png")}/>
-            </TouchableOpacity>
+                <TouchableOpacity style={image_styles.box} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.props.chooseImage(this.props.id)}}>
+                    <Image style={image_styles.image} source={require("../../../assets/images/default_image.png")}/>
+                </TouchableOpacity>
             );
         }
     }

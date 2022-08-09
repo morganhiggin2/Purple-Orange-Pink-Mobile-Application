@@ -113,6 +113,14 @@ const inline_attribute_styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingHorizontal: 10,
         paddingVertical: 8,
+        flex: 1,
+    },
+    input_body: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        flex: 1,
     },
     title_view: {
         flexDirection: 'row',
@@ -121,7 +129,6 @@ const inline_attribute_styles = StyleSheet.create({
         paddingVertical: 4
     },
     title_text: {
-        alignSelf: 'flex-start',
         alignSelf: 'center',
         fontSize: 16,
         color: 'black',
@@ -129,7 +136,18 @@ const inline_attribute_styles = StyleSheet.create({
     },
     input_text_view: {
         flexDirection:  'row',
-        width: "60%",
+        flexShrink: 1
+    },
+    static_view: {
+        right: 0,
+        flexDirection: 'row'
+    },
+    numeric_text_input: {
+        fontFamily: 'Roboto',
+        fontSize: 16
+    },
+    numeric_input_text_view: {
+
     },
     input_text_view_continuation: {
         flexDirection:  'row',
@@ -213,19 +231,11 @@ const post_button_styles = StyleSheet.create({
 const filter_snaps_styles = StyleSheet.create(
     {
         inner_text: {
-            borderRadius: 5,
-            borderWidth: 2,
-            paddingHorizontal: 3,
-            paddingVertical: 0,
             fontFamily: 'Roboto',
             fontSize: 16,
             textAlign: 'center',
             color: 'white', 
             fontWeight: 'bold',
-            alignSelf: 'center',
-            marginHorizontal: 2,
-            marginVertical: 1,
-            marginBottom: 8
         },
         container: {
             flexDirection: 'row',
@@ -233,6 +243,16 @@ const filter_snaps_styles = StyleSheet.create(
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: 'white',
+        },
+        box: {
+            backgroundColor: GlobalValues.ORANGE_COLOR,
+            borderColor: GlobalValues.ORANGE_COLOR,
+            borderWidth: 2,
+            borderRadius: 5,
+            marginBottom: 8,
+            marginRight: 6,
+            alignSelf: 'center',
+            padding: 3
         }
     }
 );
@@ -494,7 +514,7 @@ export class ActivityCreationScreen extends React.Component {
         if (this.state.is_physical_event) {
             physicalEventLocation = (
                 <View>
-                    <View style={inline_attribute_styles.body}>
+                    <View style={inline_attribute_styles.input_body}>
                         <Text style={inline_attribute_styles.title_text}>
                             It will be at
                         </Text>
@@ -580,7 +600,7 @@ export class ActivityCreationScreen extends React.Component {
                         <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
                     </TouchableOpacity>
                     <View style={main_styles.horizontal_bar}/>
-                    <View style={inline_attribute_styles.body}>
+                    <View style={inline_attribute_styles.input_body}>
                         <Text style={inline_attribute_styles.title_text}>
                             The link is
                         </Text>
@@ -741,7 +761,7 @@ export class ActivityCreationScreen extends React.Component {
             return (
                 <View>
                     <View style={info_styles.body}>
-                        <View style={inline_attribute_styles.body}>
+                        <View style={inline_attribute_styles.input_body}>
                             <Text style={inline_attribute_styles.title_text}>
                                 We are going to 
                             </Text>
@@ -756,7 +776,7 @@ export class ActivityCreationScreen extends React.Component {
                             <Text style={inline_attribute_styles.title_text}>
                                 It's at
                             </Text>       
-                            <View style={attribute_styles.input_text_view}>
+                            <View style={inline_attribute_styles.static_view}>
                                 <TouchableOpacity onPress={() => this.setState({showDatePicker: true})}>
                                     <Text style={{color: GlobalValues.ORANGE_COLOR}}>
                                         {this.showDate()} 
@@ -773,7 +793,7 @@ export class ActivityCreationScreen extends React.Component {
                         {this.showDatePicker()}
                         {this.showTimePicker()}
                         <View style={main_styles.horizontal_bar}/>
-                        <View style={inline_attribute_styles.body}>
+                        <View style={inline_attribute_styles.input_body}>
                             <Text style={inline_attribute_styles.title_text}>
                                 It's about
                             </Text>
@@ -1062,10 +1082,42 @@ export class ActivityCreationScreen extends React.Component {
             }
         }
         else {
-            body["search_location"] = {
-                latitude: this.state.search_latitude,
-                longitude: this.state.search_longitude,
-            };
+            if (this.state.search_latitude == null || this.state.search_longitude == null) {
+                //attempt to get user location
+                var locationResult = await GlobalEndpoints.getLocation();
+
+                var location = locationResult.location;
+
+                if (!locationResult.granted) {
+                    Alert.alert("Permission to access location was denied.\nUsing map settings.");
+
+                    body["search_location"] = {
+                        latitude: GlobalProperties.default_map_params.latitude,
+                        longitude: GlobalProperties.default_map_params.longitude
+                    };
+                }
+                else if (location == null) {
+                    Alert.alert("Location could not be determined.\nUsing map settings.");
+
+                    body["search_location"] = {
+                        latitude: GlobalProperties.default_map_params.latitude,
+                        longitude: GlobalProperties.default_map_params.longitude
+                    };
+                }
+                else {
+                    body["search_location"] = {
+                        latitude: location.coords.latitude,
+                        longitude: location.coords.longitude
+                    }; 
+                }
+            }
+            else {
+                body["search_location"] = {
+                    latitude: this.state.search_latitude,
+                    longitude: this.state.search_longitude,
+                };
+            }
+
 
             body["address"] = this.state.virtual_link;
         }
@@ -1164,13 +1216,8 @@ export class ActivityCreationScreen extends React.Component {
             return false;
         }
 
-        if (!this.state.is_physical_event && (this.state.search_latitude == null || this.state.search_longitude == null)) {
-            this.showError("must set activity location by pin");
-            return false;
-        }
-
         //validate set search
-        if (!this.state.setSearchLocationToTargetLocation && (this.state.search_latitude == null || this.state.search_longitude == null)) {
+        if (this.state.is_physical_event && !this.state.setSearchLocationToTargetLocation && (this.state.search_latitude == null || this.state.search_longitude == null)) {
             this.showError("must set search location if \"Search location is activity location\" is enabled");
             return false;
         } 
@@ -1375,17 +1422,13 @@ class FilterSnap extends React.Component {
 
     render() {
         return( 
-            <TouchableOpacity activeOpacity={1} onPress={() => {deleteAlert(this.props.parent, this.props.data, this.props.id)}}>
-                <Text style={[filter_snaps_styles.inner_text, { backgroundColor: this.props.color, borderColor: this.props.color}]}>
+            <TouchableOpacity style={filter_snaps_styles.box} activeOpacity={1} onPress={() => {deleteAlert(this.props.parent, this.props.data, this.props.id)}}>
+                <Text style={filter_snaps_styles.inner_text}>
                     {this.props.innerText}
                 </Text>
             </TouchableOpacity>
         );
     }
-}
-
-FilterSnap.defaultProps = {
-    color: GlobalValues.ORANGE_COLOR,
 }
 
 //create a delete alert for deleting an attribute of id=id from

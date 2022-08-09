@@ -146,59 +146,6 @@ const actions_styles = StyleSheet.create(
     }
 );
 
-const filter_snaps_styles = StyleSheet.create(
-    {
-        profile_container: {
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignSelf: 'center',
-            marginBottom: 10,
-            flexWrap: 'wrap',
-            width: '80%',
-        },
-        inner_text: {
-            borderRadius: 5,
-            borderWidth: 2,
-            paddingHorizontal: 3,
-            paddingVertical: 0,
-            fontFamily: 'Roboto',
-            fontSize: 16,
-            textAlign: 'center',
-            color: 'white', 
-            fontWeight: 'bold',
-            alignSelf: 'center',
-            marginHorizontal: 2,
-            marginVertical: 1,
-        },
-        icon: {
-            alignSelf: 'center',
-            marginRight: 4
-        },
-        container: {
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-        }
-    }
-);
-
-class FilterSnap extends React.Component {
-    constructor(props) {
-        super(props)
-    }
-
-    render() {
-        return( 
-            <Text style={[filter_snaps_styles.inner_text, { backgroundColor: this.props.color, borderColor: this.props.color}]}>
-                {this.props.innerText}
-            </Text>
-        );
-    }
-}
-
-FilterSnap.defaultProps = {
-    color: GlobalValues.ORANGE_COLOR,
-}
-
 export class AnnouncementScreen extends React.Component {
     constructor(props) {
         super(props);

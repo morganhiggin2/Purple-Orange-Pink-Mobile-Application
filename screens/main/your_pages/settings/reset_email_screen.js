@@ -85,10 +85,10 @@ const attribute_styles = StyleSheet.create({
     text_input: {
         flex: 1,
         maxHeight: 95,
-        paddingVertical: 2,
+        paddingVertical: 4,
         paddingHorizontal: 4,
         backgroundColor: GlobalValues.SEARCH_TEXT_INPUT_COLOR,
-        fontSize: 14,
+        fontSize: 16,
         fontFamily: 'Roboto',
         borderRadius: 4,
     },
