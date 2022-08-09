@@ -56,6 +56,8 @@
     <array>
       <string>armv7</string>
     </array>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>To upload an image, photo library access is required to grab photos</string>
     <key>UIRequiresFullScreen</key>
     <false/>
     <key>UIStatusBarStyle</key>
