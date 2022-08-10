@@ -255,7 +255,7 @@ export class ExploreFiltersScreen extends React.Component {
                                         items={[{label: 'People', value: 'people'}, {label: 'Activities', value: 'activities'}]}
                                         onChangeValue = {this.updateTypeDropDownValue}
                                         currentValue = {this.state.type_dropdown_value}
-                                        width = {110}
+                                        width = {130}
                                         />
                             </View>
                         </View>

@@ -738,7 +738,7 @@ export class ManageActivityScreen extends React.Component {
                     style: "cancel",
                 },
                 {
-                    text: "Leaeve",
+                    text: "Leave",
                     onPress: () => this.leave(),
                 }
             ],
@@ -753,7 +753,7 @@ export class ManageActivityScreen extends React.Component {
         var successful = false;
 
         //make request
-        var result = await GlobalEndpoints.makeGetRequest(true, "/api/User/Friends/LeaveActivityAsUser?id=")
+        var result = await GlobalEndpoints.makeGetRequest(true, "/api/User/Friends/LeaveActivityAsUser?id=" + this.state.id)
             .then((result) => {
                 if (result == undefined) {
                     successful = false;

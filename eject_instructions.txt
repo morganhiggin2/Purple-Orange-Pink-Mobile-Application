@@ -8,3 +8,11 @@ replace androidmanifestfile
 remove /android and /ios folder from gitngore
 
 IF CRASH on ios, remember to gen with no ios folder.
+
+
+Android Preview:
+https://expo.dev/accounts/123mcole/projects/POP/builds/1654888b-328f-41c2-8cfc-32c118cd6f23
+
+Ios Preview:
+https://expo.dev/accounts/123mcole/projects/POP/builds/d355d273-4330-4c14-b272-c6ddcb80027e
+https://expo.dev/accounts/123mcole/projects/POP/builds/d355d273-4330-4c14-b272-c6ddcb80027e

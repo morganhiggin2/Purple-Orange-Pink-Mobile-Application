@@ -226,7 +226,12 @@ export class GlobalProperties {
 
       //create request for ad
       const interstitial = InterstitialAd.createForAdRequest(adUnitID, {
-        requestNonPersonalizedAdsOnly: true,
+        requestNonPersonalizedAdsOnly: false,
+        keywords: GlobalProperties.search_attributes,
+        location: {
+          latitude: GlobalProperties.default_map_params.latitude,
+          longitude: GlobalProperties.default_map_params.longitude
+        },
       });
 
       //set event listener for when it is done loading

@@ -652,7 +652,12 @@ class FrameComponent extends React.Component{
                     unitId={adUnitID}
                     size={BannerAdSize.LARGE_BANNER}
                     requestOptions={{
-
+                        requestNonPersonalizedAdsOnly: false,
+                        keywords: GlobalProperties.search_attributes,
+                        location: {
+                          latitude: GlobalProperties.default_map_params.latitude,
+                          longitude: GlobalProperties.default_map_params.longitude
+                        },
                     }}
                 />
             );
