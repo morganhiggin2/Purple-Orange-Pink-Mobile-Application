@@ -101,7 +101,7 @@ const HeaderTitle = (props) => {
     if (props.state.type == 0) {
         return(
             <TouchableOpacity activeOpacity={1.0} onPress={() => {this.viewOtherProfile(props.state.other_user_id);}} >
-                <Text style={{fontSize: 24, color: 'black', textAlign: 'center'}}>
+                <Text style={{fontSize: 24, color: 'black', textAlign: 'center'}} numberOfLines={1}>
                     {props.title}
                 </Text>
             </TouchableOpacity>
@@ -109,16 +109,16 @@ const HeaderTitle = (props) => {
     }
     else if (props.state.type == 1) {
         return (
-            <Text style={{fontSize: 24, color: 'black'}}>
+            <Text style={{fontSize: 24, color: 'black'}} numberOfLines={1}>
                 {props.title}
             </Text>
             );
     }
     else {
         return (
-        <Text style={{fontSize: 24, color: 'black'}}>
-            {props.title}
-        </Text>
+            <Text style={{fontSize: 24, color: 'black'}} numberOfLines={1}>
+                {props.title}
+            </Text>
         );
     }
 }
@@ -147,6 +147,7 @@ export class ConversationScreen extends React.Component {
             messages_input_handler: null,
             message: "",
             showSendButton: false,
+            is_sending: false,
 
             keyboardShowListener: null,
             keyboardHideListener: null,
@@ -293,120 +294,141 @@ export class ConversationScreen extends React.Component {
     } 
 
     async sendMessage() {
-        GlobalProperties.screen_props.sent_message = true;
+        
+        if (!this.state.is_sending) {
+            //is sending message
+            this.state.is_sending = true;
 
-        var url = "";
-        var body = "";
+            GlobalProperties.screen_props.sent_message = true;
 
-        if (this.state.type == 0) {
-            //send direct message
-            url = "/api/User/Friends/Messages/SendDirectMessage";
-            body = {
-                other_id: this.state.subHeader.other_user_id,
-                body: this.state.message,
-                expo_token: GlobalProperties.expo_push_token
-            };
-        }
-        else if (this.state.type == 1) {
-            //send conversation message
+            var url = "";
+            var body = "";
 
-            url = "/api/User/Friends/Messages/SendConversationMessage";
-            body = {
-                conversation_id: this.state.subHeader.conversation_id,
-                body: this.state.message,
-                expo_token: GlobalProperties.expo_push_token
-            };
-        }
+            if (this.state.type == 0) {
+                //send direct message
+                url = "/api/User/Friends/Messages/SendDirectMessage";
+                body = {
+                    other_id: this.state.subHeader.other_user_id,
+                    body: this.state.message,
+                    expo_token: GlobalProperties.expo_push_token
+                };
+            }
+            else if (this.state.type == 1) {
+                //send conversation message
 
-        //get pending messages
+                url = "/api/User/Friends/Messages/SendConversationMessage";
+                body = {
+                    conversation_id: this.state.subHeader.conversation_id,
+                    body: this.state.message,
+                    expo_token: GlobalProperties.expo_push_token
+                };
+            }
 
-        //if request was successful
-        var successful = false;
+            //get pending messages
 
-        //make request
-        var result = await GlobalEndpoints.makePostRequest(true, url, body)
-            .then((result) => {
-                if (result == undefined) {
+            //if request was successful
+            var successful = false;
+
+            //make request
+            var result = await GlobalEndpoints.makePostRequest(true, url, body)
+                .then((result) => {
+                    if (result == undefined) {
+                        successful = false;
+                    }
+                    else {
+                        successful = true;
+                    }
+
+                    //is sending message
+                    this.state.is_sending = false;
+
+                    return(result);
+                })
+                .catch((error) => {
                     successful = false;
+
+                    //is sending message
+                    this.state.is_sending = false;
+
+                    return(error);
+                });
+
+            //if there is no error message, request was good
+            if (successful) {
+
+                //if result status is ok
+                if (result.request.status ==  200) {
+                    
+                    //clear messages field
+                    this.state.messages_input_handler.clear();
+
+                    this.state.showSendButton = false;
+
+                    //get timestamp
+                    var timestamp = JSON.parse(result.request.response).timestamp;
+
+                    if (this.state.type == 0) {
+                        //add message to local storage
+                        GlobalProperties.messagesHandler.insertMessages([
+                            {
+                                type: "direct",
+                                timestamp: timestamp,
+                                body: this.state.message,
+                                user_id: GlobalProperties.user_id,
+                                other_user_id: this.state.subHeader.other_user_id,
+                                user_name: "Me",
+                                is_you: true,
+                            }
+                        ]);
+                    }
+                    else if (this.state.type == 1) {
+                        //add message to local storage
+                        GlobalProperties.messagesHandler.insertMessages([
+                            {
+                                type: "conversation",
+                                timestamp: timestamp,
+                                body: this.state.message,
+                                user_id: GlobalProperties.user_id,
+                                conversation_id: this.state.subHeader.conversation_id,
+                                user_name: "Me",
+                                is_you: true,
+                            }
+                        ]);
+                    }
+
+                    GlobalProperties.reload_messages = true;
                 }
                 else {
-                    successful = true;
+                    //returned bad response, fetch server generated error message
+                    Alert.alert(result.data);
                 }
-                return(result);
-            })
-            .catch((error) => {
-                successful = false;
-                return(error);
-            });
-
-        //if there is no error message, request was good
-        if (successful) {
-
-            //if result status is ok
-            if (result.request.status ==  200) {
-                
-                //clear messages field
-                this.state.messages_input_handler.clear();
-
-                this.state.showSendButton = false;
-
-                //get timestamp
-                var timestamp = JSON.parse(result.request.response).timestamp;
-
-                if (this.state.type == 0) {
-                    //add message to local storage
-                    GlobalProperties.messagesHandler.insertMessages([
-                        {
-                            type: "direct",
-                            timestamp: timestamp,
-                            body: this.state.message,
-                            user_id: GlobalProperties.user_id,
-                            other_user_id: this.state.subHeader.other_user_id,
-                            user_name: "Me",
-                            is_you: true,
-                        }
-                    ]);
-                }
-                else if (this.state.type == 1) {
-                    //add message to local storage
-                    GlobalProperties.messagesHandler.insertMessages([
-                        {
-                            type: "conversation",
-                            timestamp: timestamp,
-                            body: this.state.message,
-                            user_id: GlobalProperties.user_id,
-                            conversation_id: this.state.subHeader.conversation_id,
-                            user_name: "Me",
-                            is_you: true,
-                        }
-                    ]);
-                }
-
-                GlobalProperties.reload_messages = true;
             }
             else {
-                //returned bad response, fetch server generated error message
-                Alert.alert(result.data);
+
+                //invalid request
+                if (result == undefined) {
+
+                }
+                else if (result.response.status == 400 && result.response.data) {
+                    Alert.alert(JSON.stringify(result.response.data));
+
+                    //is sending message
+                    this.state.is_sending = false;
+
+                    return;
+                }
+                //handle not found case
+                else if (result.response.status == 404) {
+                    GlobalEndpoints.handleNotFound(false);
+                }
             }
+
+            //is sending message
+            this.state.is_sending = false;
+
+            //once done, lazy update
+            this.lazyUpdate();
         }
-        else {
-
-            //invalid request
-            if (result == undefined) {
-
-            }
-            else if (result.response.status == 400 && result.response.data) {
-                Alert.alert(JSON.stringify(result.response.data));
-                return;
-            }
-            //handle not found case
-            else if (result.response.status == 404) {
-                GlobalEndpoints.handleNotFound(false);
-            }
-        }
-
-        //once done, lazy update
-        this.lazyUpdate();
     }
     
     lazyUpdate() {
