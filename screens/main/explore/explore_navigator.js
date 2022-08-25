@@ -87,10 +87,10 @@ const filter_snaps_styles = StyleSheet.create(
             color: 'white', 
             fontWeight: 'bold',
         },
+        
         container: {
             flexDirection: 'row',
             flexWrap: 'wrap',
-            alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: 'white',
         },
@@ -101,7 +101,6 @@ const filter_snaps_styles = StyleSheet.create(
             borderRadius: 5,
             marginBottom: 8,
             marginRight: 6,
-            alignSelf: 'center',
             padding: 3
         }
     }

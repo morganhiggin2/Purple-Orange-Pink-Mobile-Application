@@ -172,7 +172,7 @@ const inline_attribute_styles = StyleSheet.create({
         fontFamily: 'Roboto'
     },
     drop_down_selector: {
-        marginRight: -10
+        marginRight: Platform.OS == "ios" ? 0 : -10
     },
     drop_down_selector_gap: {
         height: 100,
@@ -238,10 +238,10 @@ const filter_snaps_styles = StyleSheet.create(
             color: 'white', 
             fontWeight: 'bold',
         },
+        
         container: {
             flexDirection: 'row',
             flexWrap: 'wrap',
-            alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: 'white',
         },
@@ -252,7 +252,6 @@ const filter_snaps_styles = StyleSheet.create(
             borderRadius: 5,
             marginBottom: 8,
             marginRight: 6,
-            alignSelf: 'center',
             padding: 3
         }
     }
@@ -704,7 +703,7 @@ export class EditActivityScreen extends React.Component {
                                 <Text style={inline_attribute_styles.title_text}>
                                     {"Activity location is Search Location "}
                                 </Text>
-                                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Invitation Type", GlobalValues.SEARCH_LOCATION_IS_ACTIVITY_LOCATION_INFORMATION);}}>
+                                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Search Location", GlobalValues.SEARCH_LOCATION_IS_ACTIVITY_LOCATION_INFORMATION);}}>
                                     <AntDesign name="infocirlceo" size={14} color="black" />
                                 </TouchableOpacity>
                             </View>
@@ -771,19 +770,19 @@ export class EditActivityScreen extends React.Component {
             if (this.state.advanced_settings_enabled) {
                 advancedPhysicalEventLocation = (
                     <View style={info_styles.body}>
-                        <View style={attribute_styles.body}>
-                            <View style={attribute_styles.title_with_value}>
-                                <Text style={attribute_styles.title_text}>
-                                    Search Range
-                                </Text>
-                                <Text style={attribute_styles.title_value}>
-                                    {(this.state.search_range == -1 ? "max" : this.state.search_range + " miles")}
-                                </Text>
-                            </View>
-                            <View style={attribute_styles.slider}>
-                                <Slider twoSlider={false} onChangeValue={this.updateSearchRange} min={0} max={20} step={1} initialValue={this.state.search_range} backgroundColor={'#FF7485'}/> 
-                            </View>
+                        <View style={inline_attribute_styles.body}>
+                            <Text style={inline_attribute_styles.title_text}>
+                                Only show to people in search radius
+                            </Text>
+                            <Switch
+                                trackColor = {{false: GlobalValues.DISTINCT_GRAY, true: GlobalValues.ORANGE_COLOR}}
+                                thumbColor = {'white'}
+                                ios_backgroundColor = {GlobalValues.DISTINCT_GRAY}
+                                onValueChange = {this.updateSetSearchRadiusToEnable}
+                                value = {this.state.setSearchRadiusToEnable}
+                            />
                         </View>
+                        {searchRadiusRender}
                     </View>
                 );
             }
@@ -866,7 +865,7 @@ export class EditActivityScreen extends React.Component {
                                 <Text style={inline_attribute_styles.title_text}>
                                     {"Cap invitation count "}
                                 </Text>
-                                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Attributes", GlobalValues.INVITATION_CAP_INFORMATION);}}>
+                                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Invitation Cap", GlobalValues.INVITATION_CAP_INFORMATION);}}>
                                         <AntDesign name="infocirlceo" size={14} color="black" />
                                 </TouchableOpacity>
                             </View>
@@ -885,7 +884,7 @@ export class EditActivityScreen extends React.Component {
                                 <Text style={inline_attribute_styles.title_text}>
                                     {"Cap participant count "}
                                 </Text>
-                                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Attributes", GlobalValues.PARTICIPANT_CAP_INFORMATION);}}>
+                                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} activeOpacity={1} onPress={() => {Alert.alert("Participant Cap", GlobalValues.PARTICIPANT_CAP_INFORMATION);}}>
                                         <AntDesign name="infocirlceo" size={14} color="black" />
                                 </TouchableOpacity>
                             </View>

@@ -171,7 +171,7 @@ const inline_attribute_styles = StyleSheet.create({
         fontFamily: 'Roboto'
     },
     drop_down_selector: {
-        marginRight: -10
+        marginRight: Platform.OS == "ios" ? 0 : -10
     },
     drop_down_selector_gap: {
         height: 100,
@@ -241,7 +241,6 @@ const filter_snaps_styles = StyleSheet.create(
         container: {
             flexDirection: 'row',
             flexWrap: 'wrap',
-            alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: 'white',
         },
@@ -252,7 +251,6 @@ const filter_snaps_styles = StyleSheet.create(
             borderRadius: 5,
             marginBottom: 8,
             marginRight: 6,
-            alignSelf: 'center',
             padding: 3
         }
     }
