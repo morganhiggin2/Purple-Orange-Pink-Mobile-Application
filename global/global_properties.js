@@ -7,7 +7,7 @@ import { Platform } from 'react-native';
 //static values
 export const GlobalValues = {
   //for server
-  HOST: "https://apitesting.purpleorangepink.com",
+  HOST: "https://api.purpleorangepink.com",
   //timout value
   CONNECTION_RETRY_TIME: 8000,
 
