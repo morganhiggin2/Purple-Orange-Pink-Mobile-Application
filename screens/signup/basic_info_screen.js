@@ -1,8 +1,9 @@
 import React from 'react';
 import {StyleSheet, View, Text, TextInput, Alert} from 'react-native';
-import { TouchableHighlight } from 'react-native-gesture-handler';
+import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 import { GlobalEndpoints } from '../../global/global_endpoints';
 import { GlobalValues, GlobalProperties } from '../../global/global_properties';
+import { WebView } from 'react-native-webview';
 
 const main_styles = StyleSheet.create(
     {
@@ -16,6 +17,10 @@ const main_styles = StyleSheet.create(
         },
         main_sub_section: {
             alignItems: 'center',
+        },
+        webview: {
+            maxWidth: 200,
+            height: 200
         },
         text_field: {
             width: "80%",
@@ -74,6 +79,8 @@ export class BasicInfoScreen extends React.Component {
             validationPassword: '',
             error_message: '',
             error_message: "",
+            eulaColor: 'blue',
+            viewedEULA: false
         };
 
         this.validateEmailAddress = this.validateEmailAddress.bind(this);
@@ -85,12 +92,20 @@ export class BasicInfoScreen extends React.Component {
         this.updatePassword = this.updatePassword.bind(this);
         this.updateValidationPassword = this.updateValidationPassword.bind(this);
         this.updateUsername = this.updateUsername.bind(this);
+        this.viewEULA = this.viewEULA.bind(this);
     }
     
     //attempt to login with the information in the text fields
     async register() {
         //validate username and password before
         if (!this.validateUserName() || !this.validateEmailAddress() || !this.validatePasswords()) {
+            this.lazyUpdate();
+            return;
+        }
+
+        //if they have not viewed the eula policy
+        if (!this.state.viewedEULA) {
+            this.state.error_message = "Must view EULA Policy";
             this.lazyUpdate();
             return;
         }
@@ -232,6 +247,14 @@ export class BasicInfoScreen extends React.Component {
         }
     }
 
+    viewEULA() {
+        this.setState({
+            eulaColor: GlobalValues.DISTINCT_GRAY,
+            viewedEULA: true
+        });
+        this.props.navigation.navigate("EULA Policy Screen");
+    }
+
     lazyUpdate() {
         this.forceUpdate();
     }
@@ -250,8 +273,14 @@ export class BasicInfoScreen extends React.Component {
                         <TextInput style={main_styles.text_field} onChangeText={(input)  => {this.updateValidationPassword(input);}} textContentType="password" placeholder='Confirm Password' placeholderTextColor='gray' secureTextEntry={true}/>
                     </View>
                     {this.renderErrorMessage()}
+                    <WebView source={{ uri: 'https://reactnative.dev/' }} />
+                    <TouchableHighlight style={[main_styles.button, {backgroundColor: this.state.eulaColor, borderColor: this.state.eulaColor}]} underlayColor={this.state.eulaColor} onPress={() => {this.viewEULA();}}>
+                        <Text style={main_styles.button_text}>
+                            View EULA Policy
+                        </Text>
+                    </TouchableHighlight>
                     <TouchableHighlight style={main_styles.button} underlayColor={GlobalValues.ORANGE_COLOR} onPress={() => this.register()}>
-                        <Text style={main_styles.button_text} underlayColor={GlobalValues.ORANGE_COLOR}>
+                        <Text style={main_styles.button_text}>
                             Next
                         </Text>
                     </TouchableHighlight>
@@ -264,7 +293,7 @@ export class BasicInfoScreen extends React.Component {
         return (new Promise((resolve, reject) => {
             Alert.alert(
                 "Verify Age",
-                "Are you 18 years of age or older?\nClick confirm if so.",
+                "Are you 18 years of age or older and agree to the terms and conditions of the eula agreement?\nClick confirm if so.",
                 [
                     {
                         text: "Cancel",

@@ -277,6 +277,10 @@ export class ManageActivityScreen extends React.Component {
         this.makeAnnouncement = this.makeAnnouncement.bind(this);
         this.leave = this.leave.bind(this);
         this.leaveAlert = this.leaveAlert.bind(this);
+        this.block = this.block.bind(this);
+        this.blockAlert = this.blockAlert.bind(this);
+        this.report = this.report.bind(this);
+        this.reportAlert = this.reportAlert.bind(this);
 
         this.lazyUpdate = this.lazyUpdate.bind(this);
     }
@@ -603,6 +607,21 @@ export class ManageActivityScreen extends React.Component {
                                 {actionsRender}
                             </View>
                         </View>
+                        <View style={info_styles.body}> 
+                            <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.reportAlert();}}>
+                                <Text style={actions_styles.action_button_text}>
+                                    Report
+                                </Text>
+                                <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
+                            </TouchableOpacity>
+                            <View style={main_styles.horizontal_bar} /> 
+                            <TouchableOpacity style={actions_styles.actions_button} activeOpacity={GlobalValues.ACTIVE_OPACITY} onPress={() => {this.blockAlert();}}>
+                                <Text style={actions_styles.action_button_text}>
+                                    Block
+                                </Text>
+                                <AntDesign name="right" size={20} color="black" style={actions_styles.action_button_icon}/>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 );
             }
@@ -805,6 +824,171 @@ export class ManageActivityScreen extends React.Component {
                 return;
             }
         }
+    }
+
+    
+    async block() {
+        //if request was successful
+        var successful = false;
+
+        //make request
+        var result = await GlobalEndpoints.makeGetRequest(true, "/api/User/Friends/Block/UserActivity?activity_id=" + this.state.id)
+            .then((result) => {
+                if (result == undefined) {
+                    successful = false;
+                }
+                else {
+                    successful = true;
+                }
+                return(result);
+            })
+            .catch((error) => {
+                successful = false;
+                return(error);
+            });
+
+        //if there is no error message, request was good
+        if (successful) {
+            //if result status is ok
+            if (result.request.status ==  200) {
+                //go back, pass id of user to delete
+                GlobalProperties.return_screen = "Manage Activity Screen"
+                GlobalProperties.screen_props = {
+                    action: "remove",
+                    id: this.state.id,
+                }
+
+                //then go back
+                this.props.navigation.pop(1);
+            }
+            else {
+                //returned bad response, fetch server generated error message
+                //and set 
+                Alert.alert(result.data);
+                return;
+            }
+        }
+        else {
+            //invalid request
+            if (result == undefined) {            
+                return;
+            }
+            else if (result.response.status == 400 && result.response.data) {
+                Alert.alert(JSON.stringify(result.response.data));
+                return;
+            }
+            //handle not found case
+            else if (result.response.status == 404) {
+                GlobalEndpoints.handleNotFound(false);
+            }
+            else {
+                Alert.alert("There seems to be a network connection issue.\nCheck your internet.");
+                return;
+            }
+        }
+    }
+
+    async report() {
+        //if request was successful
+        var successful = false;
+
+        //make request
+        var result = await GlobalEndpoints.makeGetRequest(true, "/api/User/Friends/Report/Activity?activity_id=" + this.state.id)
+            .then((result) => {
+                if (result == undefined) {
+                    successful = false;
+                }
+                else {
+                    successful = true;
+                }
+                return(result);
+            })
+            .catch((error) => {
+                successful = false;
+                return(error);
+            });
+
+        //if there is no error message, request was good
+        if (successful) {
+            //if result status is ok
+            if (result.request.status ==  200) {
+                //go back, pass id of user to delete
+                GlobalProperties.return_screen = "Manage Activity Screen"
+                GlobalProperties.screen_props = {
+                    action: "remove",
+                    id: this.state.id,
+                }
+
+                //then go back
+                this.props.navigation.pop(1);
+            }
+            else {
+                //returned bad response, fetch server generated error message
+                //and set 
+                Alert.alert(result.data);
+                return;
+            }
+        }
+        else {
+            //invalid request
+            if (result == undefined) {            
+                return;
+            }
+            else if (result.response.status == 400 && result.response.data) {
+                Alert.alert(JSON.stringify(result.response.data));
+                return;
+            }
+            //handle not found case
+            else if (result.response.status == 404) {
+                GlobalEndpoints.handleNotFound(false);
+            }
+            else {
+                Alert.alert("There seems to be a network connection issue.\nCheck your internet.");
+                return;
+            }
+        }
+    }
+
+    reportAlert() {
+        Alert.alert(
+            "Report",
+            "Are you sure you want to report this activity?",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => {},
+                    style: "cancel",
+                },
+                {
+                    text: "Report",
+                    onPress: () => this.report(),
+                }
+            ],
+            {
+                cancelable: true,
+            }
+        );
+    }
+
+    blockAlert() {
+        Alert.alert(
+            "Block",
+            "Are you sure you want to block this activity?",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => {},
+                    style: "cancel",
+                },
+                {
+                    text: "Block",
+                    onPress: () => this.block(),
+                }
+            ],
+            {
+                cancelable: true,
+            }
+        );
     }
 }
 

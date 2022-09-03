@@ -323,7 +323,7 @@ export class MapScreen extends React.Component {
                             </Text>
                         </TouchableOpacity> 
                         <TouchableOpacity style={main_styles.map_button} disabled={this.state.grayout_reset_location_button} activeOpacity={this.state.grayout_reset_location_button ? 0.5 : GlobalValues.ACTIVE_OPACITY} onPress={() => {this.resetLocation();}}>
-                            <MaterialIcons name="my-location" size={24} color="white" />
+                            <MaterialIcons name="my-location" size={22} color="white" />
                         </TouchableOpacity> 
                     </View>
                 </View>); 
@@ -394,7 +394,7 @@ export class MapScreen extends React.Component {
                         pinColor={GlobalValues.ACTIVITY_COLOR}
                         tappable={false}
                     >
-                        <Text style={{color: 'white', fontWeight: 'bold', fontSize: 18, textAlign: 'center', backgroundColor: GlobalValues.PEOPLE_COLOR, borderRadius: 15, padding: 3, minWidth: 30, minHeight: 30}}>
+                        <Text style={{color: 'white', fontWeight: 'bold', fontSize: 18, textAlign: 'center', backgroundColor: GlobalValues.PEOPLE_COLOR, borderRadius: 15, borderWidth: 3, borderColor: GlobalValues.PEOPLE_COLOR, minWidth: 30, minHeight: 30}}>
                             {marker.count}
                         </Text>
                     </Marker>

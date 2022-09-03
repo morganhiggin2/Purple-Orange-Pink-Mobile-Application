@@ -163,10 +163,8 @@ export class EditImagesScreen extends React.Component {
         if (Platform.OS !== 'web') 
         {
             const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
-            .then((status) => {console.log("here2"); return (status);})
-            .catch((error) => {console.log("here"); console.log(error); return null;});
-
-            console.log("requested access");
+            .then((status) => {return (status);})
+            .catch((error) => {return null;});
             
             if (status !== 'granted') 
             {

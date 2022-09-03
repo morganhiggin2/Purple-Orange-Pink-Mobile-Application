@@ -5,6 +5,7 @@ import { Feather } from '@expo/vector-icons';
 import { GlobalProperties, GlobalValues } from '../../../global/global_properties';
 import { GlobalEndpoints } from '../../../global/global_endpoints';
 import * as Notifications from 'expo-notifications';
+import { ALWAYS_THIS_DEVICE_ONLY } from 'expo-secure-store';
 
 const frame_styles = StyleSheet.create(
     {
@@ -114,6 +115,9 @@ const blip_styles = StyleSheet.create(
             flexDirection: "row",
             justifyContent: 'flex-end',
             alignItems: 'flex-start',
+        },
+        icons_inner_top_bar_right: {
+            flexDirection: 'row'
         }
     }
 );
@@ -351,11 +355,18 @@ class FrameComponent extends React.Component {
             read: this.props.item.read,
 
             trashColor: "black",
+            flagColor: "black"
         };
+
+        if (this.state.title.length > 38) {
+            this.state.title = this.state.title.substring(0, 35) + "...";
+        }
         
         this.colorCode = this.colorCode.bind(this);
         this.onTrashButtonPress = this.onTrashButtonPress.bind(this);
         this.onTrashButtonRelease = this.onTrashButtonRelease.bind(this);
+        this.onFlagButtonPress = this.onFlagButtonPress.bind(this);
+        this.onFlagButtonRelease = this.onFlagButtonRelease.bind(this);
     }
 
     createBody() {
@@ -429,6 +440,19 @@ class FrameComponent extends React.Component {
     }
 
     render() { 
+        var viewReport = {};
+
+        if (this.state.type != 2) {
+            viewReport = (
+                <TouchableHighlight style={{marginRight: 8}} underlayColor="white" onPress={() => {}} onHideUnderlay={() => {this.onFlagButtonRelease()}} onShowUnderlay={() => {this.onFlagButtonPress()}}> 
+                    <Feather name="flag" size={20} color={this.state.flagColor} />
+                </TouchableHighlight>
+        );
+        }
+        else {
+            viewReport = (<View/>);
+        }
+
         return (
         <TouchableOpacity activeOpacity={1} onPress={() => this.navigate()}style={[frame_styles.box, {borderColor: this.colorCode()}]}>
             <View style={blip_styles.top_bar}>
@@ -437,9 +461,10 @@ class FrameComponent extends React.Component {
                         {this.state.title}
                     </Text>
                 </View>
-                <View style={blip_styles.inner_top_bar_right}>                            
-                    <TouchableHighlight style={{marginLeft: 10}} underlayColor="white" onPress={() => {}} onHideUnderlay={() => {this.onTrashButtonRelease()}} onShowUnderlay={() => {this.onTrashButtonPress()}}> 
-                        <Feather name="trash-2" size={20} color={this.state.trashColor} />
+                <View style={blip_styles.inner_top_bar_right}>   
+                    {viewReport}                         
+                    <TouchableHighlight underlayColor="white" onPress={() => {}} onHideUnderlay={() => {this.onTrashButtonRelease()}} onShowUnderlay={() => {this.onTrashButtonPress()}}> 
+                            <Feather name="trash-2" size={20} color={this.state.trashColor} />
                     </TouchableHighlight>
                 </View>
             </View>
@@ -459,12 +484,124 @@ class FrameComponent extends React.Component {
         deleteAlert(this);
     }
 
+    onFlagButtonPress() {
+        this.setState({flagColor: "red"});
+    }
+
+    onFlagButtonRelease() {
+        this.setState({flagColor: "black"});
+        flagAlert(this);
+    }
+
     async deleteDataComponent() {
         await GlobalProperties.messagesHandler.delete(this.state._id);
     }
 
+    async flagDataComponent() {
+        //get content
+        jsonContent = await GlobalProperties.messagesHandler.getJsonContentAndDelete(this.state._id);
+
+        //convert to string
+        content = JSON.stringify(jsonContent);
+
+        //if request was successful
+        var successful = false;
+        var url = "";
+        var body = {}
+
+        if (jsonContent["master"]["type"] == 0) {
+            url = "/api/User/Friends/Report/DirectMessage";
+            
+            body = {
+                "user_id": jsonContent["sub"]["other_user_id"],
+                "content": content
+            }
+        }
+        else if (jsonContent["master"]["type"] == 1) {
+            url = "/api/User/Friends/Report/Conversation";
+
+            body = {
+                "conversation_id": jsonContent["sub"]["conversation_id"],
+                "content": content
+            }
+        }
+        else if (jsonContent["master"]["type"] == 3) {
+            if (jsonContent["sub"]["other_type"] == "activity") {
+                url = "/api/User/Friends/Report/Announcement";
+
+                body = {
+                    "activity_id": jsonContent["sub"]["other_id"],
+                    "content": content
+                }
+            }
+            else {
+                return;
+            }
+        }
+        else {
+            return;
+        }
+
+        //make request
+        var result = await GlobalEndpoints.makePostRequest(true, url, body)
+            .then((result) => {
+                if (result == undefined) {
+                    successful = false;
+                }
+                else {
+                    successful = true;
+                }
+                return(result);
+            })
+            .catch((error) => {
+                successful = false;
+                return(error);
+            });
+
+        //if there is no error message, request was good
+        if (successful) {
+
+            //if result status is ok
+            if (result.request.status ==  200) {
+
+            }
+            else {
+                //returned bad response, fetch server generated error message
+                //and set 
+                this.state.reload = true;
+
+                Alert.alert(result.data);
+            }
+        }
+        else {
+
+            //invalid request
+            if (result == undefined) {
+
+            }
+            else if (result.response.status == 400 && result.response.data) {
+                Alert.alert(JSON.stringify(result.response.data));
+
+            }
+            //handle not found case
+            else if (result.response.status == 404) {
+                GlobalEndpoints.handleNotFound(false);
+            }
+            else {
+
+            }
+        }
+    }
+
     afterDeleteAlert() {
         this.deleteDataComponent()
+        .then(() => {
+            this.state.lazyUpdate();
+        });
+    }
+
+    afterFlagAlert() {
+        this.flagDataComponent()
         .then(() => {
             this.state.lazyUpdate();
         });
@@ -505,6 +642,27 @@ const deleteAlert = (frameComponent) => {
             {
                 text: "Delete",
                 onPress: () => frameComponent.afterDeleteAlert(),
+            }
+        ],
+        {
+            cancelable: true,
+        }
+    );
+}
+
+const flagAlert = (frameComponent) => {
+    Alert.alert(
+        "Report",
+        "Are you sure you want to report this?",
+        [
+            {
+                text: "Cancel",
+                onPress: () => {},
+                style: "cancel",
+            },
+            {
+                text: "Report",
+                onPress: () => frameComponent.afterFlagAlert(),
             }
         ],
         {

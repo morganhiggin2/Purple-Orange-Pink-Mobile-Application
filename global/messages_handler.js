@@ -608,4 +608,78 @@ export class MessageHandler {
 			this.masterRealm.deleteAll();
 		});
 	}
+
+	async getJsonContentAndDelete(_id) {
+		//get header
+		var headerRow = await this.masterRealm.objectForPrimaryKey("Messages_Header_Record", _id);
+
+		//get headerRow json
+		var masterJsonContent = headerRow.toJSON();
+
+		//subheader
+		var subHeader = null;
+
+		//if it was found
+		if (headerRow != null) {
+			if (headerRow.type == 0) {
+				//get the subHeader
+				subHeader = await this.masterRealm.objectForPrimaryKey("Messages_Sub_Header_Direct_Message_Record", headerRow.sub_header_id);
+
+				var jsonContent = subHeader.toJSON()
+
+				//delete headers
+				this.masterRealm.write(() => {
+					this.masterRealm.delete(subHeader);
+					this.masterRealm.delete(headerRow);
+				});
+
+				return (
+					{
+						master: masterJsonContent,
+						sub: jsonContent
+					}
+				);
+			}
+			else if (headerRow.type == 1) {
+				//get the subHeader
+				subHeader = await this.masterRealm.objectForPrimaryKey("Messages_Sub_Header_Conversation_Record", headerRow.sub_header_id);
+
+				var jsonContent = subHeader.toJSON()
+
+				//delete headers
+				this.masterRealm.write(() => {
+					this.masterRealm.delete(subHeader);
+					this.masterRealm.delete(headerRow);
+				});
+
+				return (
+					{
+						master: masterJsonContent,
+						sub: jsonContent
+					}
+				);
+			}
+			else if (headerRow.type == 3) {
+				//get the subHeader
+				subHeader = await this.masterRealm.objectForPrimaryKey("Messages_Sub_Header_Announcement_Record", headerRow.sub_header_id);
+
+				var jsonContent = subHeader.toJSON()
+
+				//delete headers
+				this.masterRealm.write(() => {
+					this.masterRealm.delete(subHeader);
+					this.masterRealm.delete(headerRow);
+				});
+
+				return (
+					{
+						master: masterJsonContent,
+						sub: jsonContent
+					}
+				);
+			}
+		}
+
+		return {};
+	}
 }

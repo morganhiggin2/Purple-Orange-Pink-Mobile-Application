@@ -13,11 +13,26 @@
       }
     },
     "preview": {
-      "distribution": "internal"
+		"distribution": "internal",
+		"env": {
+			"GOOGLE_SERVICES_FILE": "./android/app/google-services.json"
+		}
     },
-    "production": {}
+    "production": {
+		"ios": {
+			"autoIncrement": true
+		},
+		"android": {
+			"autoIncrement": true
+		},
+		"env": {
+			"GOOGLE_SERVICES_FILE": "./android/app/google-services.json"
+		}
+	}
   },
   "submit": {
-    "production": {}
+    "production": {
+		
+	}
   }
 }

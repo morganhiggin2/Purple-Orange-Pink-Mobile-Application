@@ -14,6 +14,7 @@ import { ValidatePasswordKeyCodeScreen } from './validate_password_keycode_scree
 import { ForgotPasswordScreen } from './forgot_password_screen.js';
 import { ResetPasswordScreen } from '../main/your_pages/settings/reset_password_screen.js';
 import { ResetForgotPasswordScreen } from './forgot_password_reset_screen.js';
+import { EULAPolicyScreen } from '../signup/eula_policy_screen.js';
 
 const Stack = createStackNavigator();
 
@@ -61,6 +62,7 @@ export class WelcomeNavigator extends React.Component {
                     <Stack.Screen name="Forgot Password Screen" component={ForgotPasswordScreen} options={{headerTitle: () => <ActionBarIcon/>}}/>
                     <Stack.Screen name="Validate Password Keycode Screen" component={ValidatePasswordKeyCodeScreen} options={{headerTitle: () => <ActionBarIcon/>}}/>
                     <Stack.Screen name="Reset Forgot Password Screen" component={ResetForgotPasswordScreen} options={{headerTitle: () => <ActionBarIcon/>}}/>
+                    <Stack.Screen name="EULA Policy Screen" component={EULAPolicyScreen} options={{headerTitle: () => <ActionBarIcon/>}}/>
                 </Stack.Navigator>
             </NavigationContainer>
         );
