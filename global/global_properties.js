@@ -74,8 +74,10 @@ export const GlobalValues = {
   MESSAGES_PAGE_AMOUNT: 40,
 
   //ads
-  ADMOB_ANDROID_ID: "ca-app-pub-4589296191079889~6156806437",
-  ADMOB_IOS_ID: "ca-app-pub-4589296191079889~5676610078"
+  ADMOB_ANDROID_INTERSTITIAL_ID: "ca-app-pub-4589296191079889~6156806437",
+  ADMOB_ANDROID_BANNER_ID: "ca-app-pub-4589296191079889~6156806437",
+  ADMOB_IOS_BANNER_ID: "ca-app-pub-4589296191079889/4173677285",
+  ADMOB_IOS_INTERSTITIAL_ID: "ca-app-pub-4589296191079889/5486758950"
 }
 
 export class GlobalProperties {
@@ -219,7 +221,7 @@ export class GlobalProperties {
     }
 
     static showInterstitialAdd() {
-      const productionID = GlobalProperties.isAndroid ? GlobalValues.ADMOB_ANDROID_ID : GlobalValues.ADMOB_IOS_ID;
+      const productionID = GlobalProperties.isAndroid ? GlobalValues.ADMOB_ANDROID_INTERSTITIAL_ID : GlobalValues.ADMOB_IOS_INTERSTITIAL_ID;
 
       // Is a real device and running in production.
       const adUnitID = Device.isDevice && !__DEV__ ? productionID : TestIds.INTERSTITIAL;

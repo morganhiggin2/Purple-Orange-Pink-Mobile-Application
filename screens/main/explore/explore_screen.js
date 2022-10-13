@@ -642,7 +642,7 @@ class FrameComponent extends React.Component{
             }
         }
         else {
-            const productionID = GlobalProperties.isAndroid ? GlobalValues.ADMOB_ANDROID_ID : GlobalValues.ADMOB_IOS_ID;
+            const productionID = GlobalProperties.isAndroid ? GlobalValues.ADMOB_ANDROID_BANNER_ID : GlobalValues.ADMOB_IOS_BANNER_ID;
       
             // Is a real device and running in production.
             const adUnitID = Device.isDevice && !__DEV__ ? productionID : TestIds.BANNER;

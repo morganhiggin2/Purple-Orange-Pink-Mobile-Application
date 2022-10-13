@@ -1,9 +1,8 @@
 import React from 'react';
 import {StyleSheet, View, Text, TextInput, Alert} from 'react-native';
-import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableHighlight} from 'react-native-gesture-handler';
 import { GlobalEndpoints } from '../../global/global_endpoints';
 import { GlobalValues, GlobalProperties } from '../../global/global_properties';
-import { WebView } from 'react-native-webview';
 
 const main_styles = StyleSheet.create(
     {
@@ -273,7 +272,6 @@ export class BasicInfoScreen extends React.Component {
                         <TextInput style={main_styles.text_field} onChangeText={(input)  => {this.updateValidationPassword(input);}} textContentType="password" placeholder='Confirm Password' placeholderTextColor='gray' secureTextEntry={true}/>
                     </View>
                     {this.renderErrorMessage()}
-                    <WebView source={{ uri: 'https://reactnative.dev/' }} />
                     <TouchableHighlight style={[main_styles.button, {backgroundColor: this.state.eulaColor, borderColor: this.state.eulaColor}]} underlayColor={this.state.eulaColor} onPress={() => {this.viewEULA();}}>
                         <Text style={main_styles.button_text}>
                             View EULA Policy
